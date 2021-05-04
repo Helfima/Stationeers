@@ -1,0 +1,96 @@
+# Adv Furnace Fire Controller
+alias DisplayFuel d0
+alias DisplayPurge d1
+alias GasInput d2
+# Alias Register
+alias Stage r0 # Current Stage
+alias Choose r1 # Dial setting
+alias PFuel r2 # Pressure Fuel
+alias PPurge r3 # Pressure Purge
+#Contant
+define TYPE_FURNACE 545937711
+define TYPE_DIAL 554524804
+define TYPE_MEMORY -851746783
+#Settings
+s DisplayFuel On 1
+s DisplayFuel Color 11
+s DisplayPurge On 1
+s DisplayPurge Color 11
+start:
+yield
+lb Stage TYPE_MEMORY Setting 1 # Read unique memory
+lb Choose TYPE_DIAL Setting 1 # Read unique dial
+jal getValues
+s DisplayFuel Setting PFuel
+s DisplayPurge Setting PPurge
+beq Stage 4 request # Stage 4
+j start
+request:
+lb r8 TYPE_FURNACE Pressure 1 # Current Pressure
+sb TYPE_FURNACE SettingOutput 100 # Purge On
+brgt r8 PPurge -2
+sb TYPE_FURNACE SettingOutput 0 # Purge Off
+s GasInput Setting 1 # Fuel Gas
+brlt r8 PFuel -2 # Loop Fuel
+s GasInput Setting 0 # Stop Gas
+sb TYPE_FURNACE Activate 1 # Furnace Fire
+nextStage:
+add Stage Stage 1
+sb TYPE_MEMORY Setting Stage
+j start
+
+getValues:
+mul r10 Choose 3
+add r10 r10 1
+jr r10
+move PFuel 200 # Copper Ingot
+move PPurge 5
+j ra
+move PFuel 200 # Iron Ingot
+move PPurge 5
+j ra
+move PFuel 200 # Nickel Ingot
+move PPurge 5
+j ra
+move PFuel 200 # Silver Ingot
+move PPurge 5
+j ra
+move PFuel 200 # Gold Ingot
+move PPurge 5
+j ra
+move PFuel 200 # Lead Ingot
+move PPurge 5
+j ra
+move PFuel 200 # Silicon Ingot
+move PPurge 5
+j ra
+move PFuel 900 # Constantan Ingot
+move PPurge 5
+j ra
+move PFuel 900 # Invar Ingot
+move PPurge 5
+j ra
+move PFuel 200 # Steel Ingot
+move PPurge 5
+j ra
+move PFuel 200 # Electrum Ingot
+move PPurge 5
+j ra
+move PFuel 50 # Solder Ingot
+move PPurge 5
+j ra
+move PFuel 1400 # Astroloy Ingot
+move PPurge 5
+j ra
+move PFuel 1200 # Inconel Ingot
+move PPurge 5
+j ra
+move PFuel 2000 # Waspaloy Ingot
+move PPurge 5
+j ra
+move PFuel 1200 # Hastelloy Ingot
+move PPurge 5
+j ra
+move PFuel 800 # Stellite Ingot
+move PPurge 5
+j ra

@@ -1,0 +1,67 @@
+# Adv Furnace Input Controller
+alias FuelPump d0
+alias N2Pump d1
+alias PurgePump d2
+alias Analyser d3
+alias DisplayP d4
+alias DisplayState d5
+# Alias Register
+alias CurrDB r0
+alias LastDB r1
+alias P r2
+#Contant
+define TYPE_FURNACE 545937711
+define TYPE_DIAL 554524804
+define Pmin 1
+define Pmid 250
+define Pmax 500
+define ActionNone 0
+define ActionFuel 1
+define ActionN2 2
+#Settings
+s Analyser On 1
+s DisplayP On 1
+s DisplayState On 1
+start:
+yield
+jal loadPressure
+l CurrDB db Setting
+s DisplayState Setting CurrDB
+# Purge if state change
+bne CurrDB LastDB purge
+# Control Pump
+breq CurrDB ActionNone 4
+brgt P Pmax 3
+jal startPump
+j start
+jal stopPump
+j start
+purge:
+jal stopPump
+yield
+jal loadPressure
+brlt P Pmin 3
+s PurgePump On 1
+jr -4
+s PurgePump On 0
+move LastDB CurrDB
+j start
+
+loadPressure:
+l P Analyser Pressure
+s DisplayP Setting P
+j ra
+
+stopPump:
+sb TYPE_FURNACE SettingInput 0
+s FuelPump On 0
+s N2Pump On 0
+j ra
+
+startPump:
+sb TYPE_FURNACE SettingInput 50
+breq CurrDB ActionN2 3
+s FuelPump On 1
+j ra
+s N2Pump On 1
+j ra

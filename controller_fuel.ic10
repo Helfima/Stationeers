@@ -1,0 +1,17 @@
+# Fuel Control
+alias Analyser d0
+alias Mixer d1
+#Contant
+define PMAX 2000
+define PMIN 1000
+move r1 1
+start:
+yield
+l r0 Analyser Pressure
+s db Setting r0
+brgt r0 PMIN 2
+move r1 1
+brlt r0 PMAX 2
+move r1 0
+s Mixer On r1
+j start

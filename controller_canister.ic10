@@ -1,0 +1,56 @@
+# Storage Canister Control
+alias Storage d0
+alias Pump d1
+alias Display d2
+# Settings
+s Pump Setting 100
+s Display On 1
+#Contant
+define PMAX 7000
+define PMID 4000
+define PMIN 0
+start:
+yield
+l r0 Storage Pressure
+ls r1 Storage 0 Occupied
+jal LEDFill
+jal StorageFill
+j start
+
+LEDFill:
+s Display Setting r0
+brgt r0 PMAX 6
+brgt r0 PMID 3
+s Display Color 4 #red
+j ra
+s Display Color 2 #red
+j ra
+s Display Color 0 #blue
+j ra
+
+LEDWaste:
+s Display Setting r0
+brle r0 PMIN 6
+brlt r0 PMID 3
+s Display Color 4 #red
+j ra
+s Display Color 5 #yellow
+j ra
+s Display Color 0 #blue
+j ra
+
+StorageFill:
+breq r1 0 4 #No Canister
+brgt r0 PMAX 3
+s Pump On 1 #Pump On
+j ra
+s Pump On 0 #Pump Off
+j ra
+
+StorageWaste:
+breq r1 0 4 #No Canister
+brle r0 PMIN 3
+s Pump On 1 #Pump On
+j ra
+s Pump On 0 #Pump Off
+j ra

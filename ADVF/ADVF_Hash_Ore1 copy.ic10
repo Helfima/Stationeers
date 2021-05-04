@@ -1,0 +1,119 @@
+# Adv Furnace Hash Ore1 Controller
+alias DisplayOre d0
+alias GasInput d1
+alias Furnace d2
+# Alias Register
+alias Stage r0 # Current Stage
+alias Choose r1 # Dial setting
+alias Hash r2 # Ore Hash
+alias Qty r3 # Ore Quantity
+alias StackQty r4 # Stack Quantity
+alias CurrentQty r5 # Reagent Quantity
+alias TargetQty r6 # Target Quantity
+#Contant
+define TYPE_FURNACE 545937711
+define TYPE_DIAL 554524804
+define TYPE_MEMORY -851746783
+define TYPE_MIRROR 2096189278
+define STACK 50
+define FACTOR 200
+define PFUEL 100
+start:
+yield
+lb Stage TYPE_MEMORY Setting 1 # Read unique memory
+lb Choose TYPE_DIAL Setting 1 # Read unique dial
+jal getValues
+mul Qty Qty FACTOR
+s db Setting Hash
+s DisplayOre Setting Qty
+beq Stage 1 request # Stage 1
+j start
+request:
+beq Qty 0 nextStage
+lr CurrentQty Furnace 0 Hash # Load current reagent
+bge CurrentQty Qty nextStage
+add StackQty CurrentQty STACK
+sb TYPE_MIRROR Setting Hash # Request Ore
+lb r10 TYPE_MIRROR Setting 1 # Read is OK
+brne r10 0 -1
+loopReagent:
+s DisplayOre Setting CurrentQty
+lr CurrentQty Furnace 0 Hash # Load current reagent
+jal checkTemperature
+yield
+s DisplayOre Setting Qty
+yield
+bne CurrentQty StackQty loopReagent # Loop Reagent
+j request # Loop request
+nextStage:
+add Stage Stage 1
+sb TYPE_MEMORY Setting Stage
+j start
+checkTemperature:
+lb r7 TYPE_FURNACE Temperature 1 # Current Temperature
+lb r8 TYPE_FURNACE Pressure 1 # Current Pressure
+bgt r7 374 ra
+sb TYPE_FURNACE SettingOutput 100 # Purge On
+bgt r8 1 checkTemperature
+sb TYPE_FURNACE SettingOutput 0 # Purge Off
+lb r8 TYPE_FURNACE Pressure 1
+s GasInput Setting 1 # Fuel Gas
+brlt r8 PFUEL -2 # Loop Fuel
+s GasInput Setting 0 # Stop Gas
+sb TYPE_FURNACE Activate 1 # Furnace Fire
+j ra
+getValues:
+mul r10 Choose 3
+add r10 r10 1
+jr r10
+move Hash -707307845 # Copper Ore => Copper Ingot
+move Qty 1
+j ra
+move Hash 1758427767 # Iron Ore => Iron Ingot
+move Qty 1
+j ra
+move Hash 1830218956 # Nickel Ore => Nickel Ingot
+move Qty 1
+j ra
+move Hash -916518678 # Silver Ore => Silver Ingot
+move Qty 1
+j ra
+move Hash -1348105509 # Gold Ore => Gold Ingot
+move Qty 1
+j ra
+move Hash -190236170 # Lead Ore => Lead Ingot
+move Qty 1
+j ra
+move Hash 1103972403 # Silicon Ore => Silicon Ingot
+move Qty 1
+j ra
+move Hash -707307845 # Copper Ore => Constantan Ingot
+move Qty 0.5
+j ra
+move Hash 1758427767 # Iron Ore => Invar Ingot
+move Qty 0.5
+j ra
+move Hash 1758427767 # Iron Ore => Steel Ingot
+move Qty 0.75
+j ra
+move Hash -1348105509 # Gold Ore => Electrum Ingot
+move Qty 0.5
+j ra
+move Hash 1758427767 # Iron Ore => Solder Ingot
+move Qty 0.5
+j ra
+move Hash -707307845 # Copper Ore => Astroloy Ingot
+move Qty 0.25
+j ra
+move Hash -1348105509 # Gold Ore => Inconel Ingot
+move Qty 0.5
+j ra
+move Hash -916518678 # Silver Ore => Waspaloy Ingot
+move Qty 0.25
+j ra
+move Hash -916518678 # Silver Ore => Hastelloy Ingot
+move Qty 0.5
+j ra
+move Hash -916518678 # Silver Ore => Stellite Ingot
+move Qty 0.25
+j ra

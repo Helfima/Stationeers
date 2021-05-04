@@ -1,0 +1,30 @@
+#Unload Controller
+alias Crusher d0
+alias Unloader d1
+# Alias Register
+alias IsCrushing r0
+alias IsOccupied r1
+alias Time r10
+#Contant
+define DELAY 3
+#Setting
+s Unloader On 1
+s Unloader Mode 1
+s Crusher On 1
+start:
+yield
+ls IsCrushing Crusher 0 Occupied
+breq IsCrushing 1 -3 # if occupied re check
+jal controlUnloader
+j start
+#Function Control Unloader
+controlUnloader:
+ls IsOccupied Unloader 0 Occupied
+beq IsOccupied 0 ra
+s Unloader Output 1
+#Sleep Function
+move Time 0 #Reset timer
+add Time Time 1
+yield
+brne Time DELAY -2 #Test timer
+j ra

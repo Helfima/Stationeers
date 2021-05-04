@@ -1,0 +1,55 @@
+#Room Controller
+alias Sensor d0
+alias AirVent d1
+alias Door d2
+alias LED d3
+alias DisplayPcur d4
+
+alias Pcur r0
+alias Opened r1
+alias TypeAirVent r2
+alias TypeLED r3
+#Contant
+define PMAX 1
+define PMIN 0
+#settings
+sb TypeLED On 1 #Batch LED
+s DisplayPcur On 1
+start:
+yield
+l Pcur Sensor Pressure
+l Opened Door Open
+l TypeAirVent AirVent PrefabHash
+l TypeLED LED PrefabHash
+s DisplayPcur Setting Pcur
+jal controlLED
+breq Opened 1 3
+jal doorClosed
+j start
+jal doorOpened
+j start
+#Function Control LED
+controlLED:
+brgt Pcur PMIN 4
+sb TypeLED Color 2 #Batch LED
+s DisplayPcur Color 2
+j ra
+sb TypeLED Color 4 #Batch LED
+s DisplayPcur Color 4
+j ra
+#Function Control Door close
+doorClosed:
+brgt Pcur PMIN 3
+sb TypeAirVent On 0 #Batch AirVent
+j ra
+sb TypeAirVent On 1 #Batch AirVent
+sb TypeAirVent Mode 1 #Batch AirVent
+j ra
+#Function Control Door Open
+doorOpened:
+brle Pcur PMAX 3
+sb TypeAirVent On 0 #Batch AirVent
+j ra
+sb TypeAirVent On 1 #Batch AirVent
+sb TypeAirVent Mode 0 #Batch AirVent
+j ra

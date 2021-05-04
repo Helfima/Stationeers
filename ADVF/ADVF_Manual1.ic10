@@ -1,0 +1,32 @@
+# Adv Furnace Manual1 Controller
+alias LeverLPurge d0
+alias LeverHPurge d1
+alias LightLPurge d3
+alias LightHPurge d4
+# Alias Register
+alias ValueL r0
+alias ValueH r1
+alias IsActive r2
+#Contant
+define TYPE_FURNACE 545937711
+define TYPE_DIAL 554524804
+start:
+yield
+l ValueL LeverLPurge Setting
+l ValueH LeverHPurge Setting
+s LightLPurge On ValueL
+s LightHPurge On ValueH
+beq ValueL 1 lowPurge
+beq ValueH 1 highPurge
+beq IsActive 0 start
+sb TYPE_FURNACE SettingOutput 0
+move IsActive 0
+j start
+lowPurge:
+sb TYPE_FURNACE SettingOutput 10
+move IsActive 1
+j start
+highPurge:
+sb TYPE_FURNACE SettingOutput 100
+move IsActive 1
+j start

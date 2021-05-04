@@ -1,0 +1,47 @@
+#Steam Control
+alias Sensor d0
+alias AirVent d1
+alias LED d3
+alias Button d4
+alias Door d5
+#Contant
+define PMAX 1
+define PMIN 0
+start:
+yield
+l r0 Sensor Pressure
+l r1 Button Setting
+l r2 AirVent PrefabHash
+l r3 LED PrefabHash
+jal controlLED
+breq r1 1 3
+jal controlDoorClose
+j start
+jal controlDoorOpen
+j start
+#Function Control LED
+controlLED:
+sb r3 On 1 #Batch LED
+brgt r0 PMIN 3
+sb r3 Color 2 #Batch LED
+j ra
+sb r3 Color 4 #Batch LED
+j ra
+#Function Control Door close
+controlDoorClose:
+s Door Open 0
+brgt r0 PMIN 3
+sb r2 On 0 #Batch AirVent
+j ra
+sb r2 On 1 #Batch AirVent
+sb r2 Mode 1 #Batch AirVent
+j ra
+#Function Control Door Open
+controlDoorOpen:
+brle r0 PMAX 4
+sb r2 On 0 #Batch AirVent
+s Door Open 1
+j ra
+sb r2 On 1 #Batch AirVent
+sb r2 Mode 0 #Batch AirVent
+j ra

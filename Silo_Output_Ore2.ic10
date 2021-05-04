@@ -1,0 +1,65 @@
+# Silo Output 2 Controller
+alias Silo0 d0
+alias Silo1 d1
+alias Silo2 d2
+alias Silo3 d3
+alias Silo4 d4
+alias Silo5 d5
+# Alias Register
+alias Silo r0
+alias Hash r1
+#Contant
+define TYPE_SILO 1155865682 # Silo Hash
+define TYPE_SORTER -1009150565 # Sorter Hash
+define TYPE_STACKER1 -2020231820 # Stacker Hash
+define TYPE_STACKER2 1585641623 # Stacker Hash
+define HASH0 1830218956 # Nickel Ore
+define HASH1 1103972403 # Silicon Ore
+define HASH2 -916518678 # Silver Ore
+define HASH3 -1516581844 # Uranium Ore
+define HASH4 -1 # Empty Ore
+define HASH5 -654790771 # Steel Ingot
+#Settings
+sb TYPE_SILO On 1
+sb TYPE_SORTER On 1
+sb TYPE_STACKER1 On 1
+sb TYPE_STACKER1 Setting 50
+sb TYPE_STACKER2 On 1
+sb TYPE_STACKER2 Setting 50
+start:
+yield
+l Hash db Setting
+beq Hash 0 start
+brne Hash HASH0 4
+move Silo 0
+jal openSilo
+j start
+brne Hash HASH1 4
+move Silo 1
+jal openSilo
+j start
+brne Hash HASH2 4
+move Silo 2
+jal openSilo
+j start
+brne Hash HASH3 4
+move Silo 3
+jal openSilo
+j start
+brne Hash HASH4 4
+move Silo 4
+jal openSilo
+j start
+brne Hash HASH5 4
+move Silo 5
+jal openSilo
+j start
+s db Setting 0 # Init finish
+j start
+
+openSilo:
+s rr0 Open 1
+sleep 1
+s rr0 Open 0
+s db Setting 0 # Init finish
+j ra

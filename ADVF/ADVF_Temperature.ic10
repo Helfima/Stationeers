@@ -1,0 +1,96 @@
+# Adv Furnace Temperature Controller
+alias DisplayTmin d0
+alias DisplayTcur d1
+alias DisplayTmax d2
+# Alias Register
+alias Choose r0
+alias Tmin r1
+alias Tcur r2
+alias Tmax r3
+#Contant
+define TYPE_FURNACE 545937711
+define TYPE_DIAL 554524804
+#settings
+s DisplayTmin On 1
+s DisplayTmin Color 0
+s DisplayTcur On 1
+s DisplayTmax On 1
+s DisplayTmax Color 4
+start:
+yield
+lb Choose TYPE_DIAL Setting 1
+lb Tcur TYPE_FURNACE Temperature 1
+s db Setting Choose
+jal getPressure
+jal setColor
+s DisplayTmin Setting Tmin
+s DisplayTcur Setting Tcur
+s DisplayTmax Setting Tmax
+
+j start
+
+setColor:
+brgt Tcur Tmax 6
+brgt Tcur Tmin 3
+s DisplayTcur Color 0 #Blue
+j ra
+s DisplayTcur Color 2 #Green
+j ra
+s DisplayTcur Color 4 #Red
+j ra
+
+getPressure:
+mul r10 Choose 3
+add r10 r10 1
+jr r10
+move Tmin 600 # Copper Ingot
+move Tmax 99999
+j ra
+move Tmin 800 # Iron Ingot
+move Tmax 99999
+j ra
+move Tmin 800 # Nickel Ingot
+move Tmax 99999
+j ra
+move Tmin 600 # Silver Ingot
+move Tmax 99999
+j ra
+move Tmin 600 # Gold Ingot
+move Tmax 99999
+j ra
+move Tmin 400 # Lead Ingot
+move Tmax 99999
+j ra
+move Tmin 900 # Silicon Ingot
+move Tmax 99999
+j ra
+move Tmin 1000 # Constantan Ingot
+move Tmax 10000
+j ra
+move Tmin 1200 # Invar Ingot
+move Tmax 1500
+j ra
+move Tmin 900 # Steel Ingot
+move Tmax 99999
+j ra
+move Tmin 600 # Electrum Ingot
+move Tmax 99999
+j ra
+move Tmin 350 # Solder Ingot
+move Tmax 550
+j ra
+move Tmin 1000 # Astroloy Ingot
+move Tmax 99999
+j ra
+move Tmin 600 # Inconel Ingot
+move Tmax 99999
+j ra
+move Tmin 400 # Waspaloy Ingot
+move Tmax 800
+j ra
+move Tmin 950 # Hastelloy Ingot
+move Tmax 1000
+j ra
+move Tmin 1800 # Stellite Ingot
+move Tmax 99999
+j ra

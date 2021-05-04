@@ -1,0 +1,22 @@
+#Staker Control
+alias Stacker d0
+alias Display d1
+alias Machine d2
+alias Lever d3
+#Settings
+s Stacker On 1
+s Stacker Setting 50
+s Display On 1
+s Display Color 10
+start:
+yield
+ls r0 Stacker 2 Quantity
+ls r1 Stacker 2 OccupantHash
+ls r2 Stacker 1 Occupied
+l r3 Lever Open
+s Display Setting r0
+s db Setting r1
+and r10 r2 r3
+bne r10 1 start #Infinity Loop
+s Machine On 0
+j start

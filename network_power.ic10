@@ -1,0 +1,12 @@
+# Network Global Control
+alias Analyser0 d0
+alias Display0 d3
+# Settings
+s Display0 On 1
+s Display0 Mode 2
+start:
+yield
+l r0 Analyser0 PrefabHash
+lb r1 r0 PowerActual 1
+s Display0 Setting r1
+j start

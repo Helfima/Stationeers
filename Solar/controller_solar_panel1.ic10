@@ -1,0 +1,51 @@
+# Solar Panel Control
+# Sensor: port see south
+# Solar Panel: port see west
+alias Sensor d0
+alias SolarPanel d1
+alias DisplayWatt d2
+
+alias H r0
+alias V r1
+alias PowerCur r2
+alias PowerTotal r3
+alias Type r10
+#Contant
+define TYPE_SOLAR -2045627372
+define TYPE_DUAL_SOLAR -539224550
+define TYPE_ADV_SOLAR -934345724
+define TYPE_DUAL_ADV_SOLAR -1545574413
+#Settings
+s Sensor Mode 0
+s DisplayWatt Mode 0
+start:
+move PowerTotal 0
+l H Sensor Horizontal
+l V Sensor Vertical
+sub V 75 V
+div V V 1.5
+move Type TYPE_SOLAR
+jal movePanel
+jal readPower
+move Type TYPE_DUAL_SOLAR
+jal movePanel
+jal readPower
+move Type TYPE_ADV_SOLAR
+jal movePanel
+jal readPower
+move Type TYPE_DUAL_ADV_SOLAR
+jal movePanel
+jal readPower
+
+s DisplayWatt Setting PowerTotal
+j start
+
+movePanel:
+sb Type Horizontal H # r2 hash of Solar Panel
+sb Type Vertical V # r2 hash of Solar Panel
+j ra
+
+readPower:
+lb PowerCur Type Charge 1 # read sum power
+add PowerTotal PowerTotal PowerCur
+j ra

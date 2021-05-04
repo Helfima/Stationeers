@@ -1,0 +1,38 @@
+# Temparature Control
+alias Sensor d0
+alias Heater d1
+alias Cooler d2
+#Contant
+define TMIN 20
+define TMID 25
+define TMAX 30
+move r1 0
+move r2 0
+start:
+yield
+l r0 Sensor Temperature
+l r3 Heater PrefabHash
+l r4 Cooler PrefabHash
+add r10 TMIN 273
+add r11 TMID 273
+add r12 TMAX 273
+s db Setting r0
+jal ControlHeater
+jal ControlCooler
+j start
+
+ControlHeater:
+brgt r0 r10 2 #TMIN
+move r1 1
+brlt r0 r11 2 #TMID
+move r1 0
+sb r3 On r1 #Heater
+j ra
+
+ControlCooler:
+brlt r0 r12 2 #TMAX
+move r2 1
+brgt r0 r11 2 #TMID
+move r2 0
+sb r4 On r2 #Cooler
+j ra

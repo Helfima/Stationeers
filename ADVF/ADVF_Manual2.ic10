@@ -1,0 +1,26 @@
+# Adv Furnace Manual2 Controller
+alias LeverFuel d0
+alias LeverN2 d1
+alias GasInput d2
+alias LightFuel d3
+alias LightN2 d4
+# Alias Register
+alias ValueFuel r0
+alias ValueN2 r1
+#Contant
+define TYPE_FURNACE 545937711
+define TYPE_DIAL 554524804
+start:
+yield
+l ValueFuel LeverFuel Setting
+l ValueN2 LeverN2 Setting
+s LightFuel On ValueFuel
+s LightN2 On ValueN2
+breq ValueFuel 1 4
+breq ValueN2 1 5
+s GasInput Setting 0 # Stop Gas
+j start
+s GasInput Setting 1 # Fuel Gas
+j start
+s GasInput Setting 2 # N2 Gas
+j start

@@ -1,0 +1,27 @@
+# Adv Furnace Manual3 Controller
+alias LeverOpen d0
+alias ButtonFire d1
+alias LightOpen d3
+alias LEDFire d4
+# Alias Register
+alias ValueOpen r0
+alias ValueH r1
+#Contant
+define TYPE_FURNACE 545937711
+define TYPE_DIAL 554524804
+#setting
+s LEDFire Color 4
+start:
+yield
+l ValueOpen LeverOpen Setting
+l ValueH ButtonFire Setting
+s LightOpen On ValueOpen
+s LEDFire On ValueH
+breq ValueOpen 1 4
+breq ValueH 1 5
+sb TYPE_FURNACE Open 0
+j start
+sb TYPE_FURNACE Open 1
+j start
+sb TYPE_FURNACE Activate 1
+j start

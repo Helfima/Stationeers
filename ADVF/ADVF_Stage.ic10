@@ -1,0 +1,26 @@
+# Adv Furnace Stage Controller
+alias Button d0
+alias DisplayStage d1
+# Alias Register
+alias Active r0
+alias IsActive r1
+alias Stage r2
+#Contant
+define TYPE_FURNACE 545937711
+define TYPE_DIAL 554524804
+define TYPE_MEMORY -851746783
+#Settings
+s DisplayStage On 1
+start:
+yield
+lb Stage TYPE_MEMORY Setting 1
+s DisplayStage Setting Stage
+l Active Button Setting
+beq Active 0 start
+breq IsActive 0 4
+sb TYPE_MEMORY Setting 0 # Stop stage
+move IsActive 0
+j start
+sb TYPE_MEMORY Setting 1 # Start stage
+move IsActive 1
+j start

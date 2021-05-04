@@ -1,0 +1,8 @@
+alias Furnace d0
+alias Hash r2 # Ore Hash
+move Hash 1758427767 # Iron Ore => Iron Ingot
+start:
+yield
+lr r0 Furnace 0 Hash # Load current reagent
+s db Setting r0
+j start

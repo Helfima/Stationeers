@@ -1,0 +1,15 @@
+# Solar Panel Control
+# Sensor: port see south
+# Solar Panel: port see west
+alias Sensor d0
+alias SolarPanel d1
+s Sensor Mode 0
+start:
+l r0 Sensor Horizontal
+l r1 Sensor Vertical
+l r2 SolarPanel PrefabHash
+sub r1 75 r1
+div r1 r1 1.5
+sb r2 Horizontal r0
+sb r2 Vertical r1
+j start
