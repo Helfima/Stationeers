@@ -2,8 +2,8 @@
 alias Analyser d0
 alias Mixer d1
 #Contant
-define PMAX 2000
-define PMIN 1000
+define PMAX 3000
+define PMIN 2000
 move r1 1
 start:
 yield

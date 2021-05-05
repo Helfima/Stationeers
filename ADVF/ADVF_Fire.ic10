@@ -49,7 +49,7 @@ getValues:
 mul r10 Choose 3
 add r10 r10 1
 jr r10
-move PFuel 400 # Copper Ingot
+move PFuel 600 # Copper Ingot
 move PPurge 5
 j ra
 move PFuel 400 # Iron Ingot
@@ -76,7 +76,7 @@ j ra
 move PFuel 1000 # Invar Ingot
 move PPurge 5
 j ra
-move PFuel 400 # Steel Ingot
+move PFuel 800 # Steel Ingot
 move PPurge 5
 j ra
 move PFuel 400 # Electrum Ingot

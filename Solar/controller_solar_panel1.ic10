@@ -2,8 +2,7 @@
 # Sensor: port see south
 # Solar Panel: port see west
 alias Sensor d0
-alias SolarPanel d1
-alias DisplayWatt d2
+alias DisplayWatt d1
 
 alias H r0
 alias V r1
@@ -17,7 +16,7 @@ define TYPE_ADV_SOLAR -934345724
 define TYPE_DUAL_ADV_SOLAR -1545574413
 #Settings
 s Sensor Mode 0
-s DisplayWatt Mode 0
+s DisplayWatt Mode 2
 start:
 move PowerTotal 0
 l H Sensor Horizontal

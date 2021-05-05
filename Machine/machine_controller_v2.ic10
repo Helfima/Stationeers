@@ -1,0 +1,85 @@
+# Machine Controller
+alias Machine d0
+alias Stacker d1
+alias DisplayMachine d2
+alias DisplayStacker d3
+alias MemoryMachine d4
+alias MemoryStacker d5
+# Alias Register
+alias IsActivate r0
+alias IsOccupied r1
+alias IsTrigger r2
+alias IsRunning r3
+alias Completion r4
+alias HashMachine r5
+alias HashStacker r6
+alias Qty r7
+alias Timer r8
+alias Dial r9
+alias Stack r10
+#Contant
+define TYPE_DIAL 554524804
+define TYPE_LIGHT -1535893860
+define TYPE_TRIGGER 1269458680 # Medium:1269458680 large:-2008706143
+define TYPE_TRANSFO 1054059374 # Transformer:-890946730 reverted:1054059374
+#Settings
+s DisplayMachine On 1
+s DisplayMachine Color 5
+s DisplayStacker On 1
+s DisplayStacker Color 10
+s Stacker On 1
+s Stacker Setting 50
+move IsRunning 0
+move Stack 0
+start:
+yield
+s db Setting Stack
+jal checkTriggerPlate
+beq IsRunning 0 start
+l Completion Machine CompletionRatio
+l HashMachine Machine RecipeHash
+l IsActivate Machine Activate
+ls Qty Stacker 2 Quantity
+ls HashStacker Stacker 2 OccupantHash
+ls IsOccupied Stacker 1 Occupied
+lb Dial TYPE_DIAL Setting 1 # Read unique dial
+# Light
+sb TYPE_LIGHT On IsActivate
+# Display Machine
+s DisplayMachine Mode 1
+s DisplayMachine Setting Completion
+s MemoryMachine Setting HashMachine
+# Display Stacker
+s DisplayStacker Setting Qty
+s MemoryStacker Setting HashStacker
+jal timerOff
+jal checkStack
+j start
+
+timerOff:
+beq IsActivate 1 ra
+sub Timer Timer 1
+s DisplayMachine Mode 0
+s DisplayMachine Setting Timer
+bne Timer 0 ra
+s Stacker Activate 1 # Clear stacker
+sb TYPE_TRANSFO On 0
+j ra
+
+checkTriggerPlate:
+lb IsTrigger TYPE_TRIGGER Setting 1
+bne IsTrigger 1 ra
+sb TYPE_TRANSFO On 1
+move IsRunning 1
+move Timer 60
+j ra
+
+checkStack:
+brne IsActivate 0 2
+s Stacker ClearMemory 1
+beq Dial 0 ra # Continious Mode
+bne IsOccupied 0 ra
+l Stack Stacker ExportCount
+blt Stack Dial ra
+s Machine Activate 0 # Stop machine
+j ra

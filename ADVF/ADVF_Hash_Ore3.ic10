@@ -15,7 +15,7 @@ define TYPE_DIAL 554524804
 define TYPE_MEMORY -851746783
 define TYPE_MIRROR 2096189278
 define STACK 50
-define FACTOR 200
+define FACTOR 800
 define PFUEL 100
 start:
 s DisplayOre Color 2 # Green
@@ -114,7 +114,7 @@ j ra
 move Hash 1830218956 # Nickel Ore => Inconel Ingot
 move Qty 0.25
 j ra
-move Hash 1830218956 # Nickel Ore => Waspaloy Ingot
+move Hash -190236170 # Lead Ore => Waspaloy Ingot
 move Qty 0.5
 j ra
 move Hash -983091249 # Colbalt Ore => Hastelloy Ingot
