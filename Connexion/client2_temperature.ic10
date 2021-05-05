@@ -1,0 +1,21 @@
+alias Server d0
+# Alias Register
+alias Choose r0
+alias Tmin r1
+alias Tmax r2
+alias Request r3
+#Contant
+define TYPE_DIAL 554524804
+start:
+yield
+lb Choose TYPE_DIAL Setting 1
+jal readTmin
+s db Setting Tmin
+j start
+
+readTmin:
+s Server Setting 1
+l Request Server Setting
+breq Request 1 -1
+move Tmin Request
+j ra

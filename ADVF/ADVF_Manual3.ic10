@@ -6,6 +6,7 @@ alias LEDFire d4
 # Alias Register
 alias ValueOpen r0
 alias ValueH r1
+alias IsActive r2
 #Contant
 define TYPE_FURNACE 545937711
 define TYPE_DIAL 554524804
@@ -13,15 +14,22 @@ define TYPE_DIAL 554524804
 s LEDFire Color 4
 start:
 yield
+s db Setting IsActive
 l ValueOpen LeverOpen Setting
 l ValueH ButtonFire Setting
 s LightOpen On ValueOpen
 s LEDFire On ValueH
-breq ValueOpen 1 4
-breq ValueH 1 5
+beq ValueOpen 1 furnaceOpen
+beq ValueH 1 furnaceActive
+beq IsActive 0 start
 sb TYPE_FURNACE Open 0
+move IsActive 0
 j start
+furnaceOpen:
 sb TYPE_FURNACE Open 1
+move IsActive 1
 j start
+furnaceActive:
 sb TYPE_FURNACE Activate 1
+move IsActive 0
 j start

@@ -3,13 +3,15 @@ alias DisplayPmin d0
 alias DisplayPcur d1
 alias DisplayPmax d2
 # Alias Register
-alias Choose r0
-alias Pmin r1
-alias Pcur r2
-alias Pmax r3
+alias Stage r0 # Current Stage
+alias Choose r1 # Dial setting
+alias Pmin r2
+alias Pcur r3
+alias Pmax r4
 #Contant
 define TYPE_FURNACE 545937711
 define TYPE_DIAL 554524804
+define TYPE_MEMORY -851746783
 #settings
 s DisplayPmin On 1
 s DisplayPmin Color 0
@@ -18,7 +20,8 @@ s DisplayPmax On 1
 s DisplayPmax Color 4
 start:
 yield
-lb Choose TYPE_DIAL Setting 1
+lb Stage TYPE_MEMORY Setting 1 # Read unique memory
+lb Choose TYPE_DIAL Setting 1 # Read unique dial
 lb Pcur TYPE_FURNACE Pressure 1
 s db Setting Choose
 jal getValues
@@ -26,7 +29,22 @@ jal setColor
 s DisplayPmin Setting Pmin
 s DisplayPcur Setting Pcur
 s DisplayPmax Setting Pmax
-
+beq Stage 5 request # Stage 5
+j start
+request:
+lb Pcur TYPE_FURNACE Pressure 1
+blt Pcur Pmin failure
+blt Pcur Pmax nextStage
+sb TYPE_FURNACE SettingOutput 10
+j request
+nextStage:
+sb TYPE_FURNACE SettingOutput 0
+add Stage Stage 1
+sb TYPE_MEMORY Setting Stage
+j start
+failure:
+sb TYPE_FURNACE SettingOutput 0
+sb TYPE_MEMORY Setting -1
 j start
 
 setColor:

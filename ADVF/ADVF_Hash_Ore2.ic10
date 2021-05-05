@@ -1,4 +1,4 @@
-# Adv Furnace Hash Ore1 Controller
+# Adv Furnace Hash Ore2 Controller
 alias DisplayOre d0
 alias GasInput d1
 # Alias Register
@@ -18,6 +18,7 @@ define STACK 50
 define FACTOR 200
 define PFUEL 100
 start:
+s DisplayOre Color 2 # Green
 yield
 lb Stage TYPE_MEMORY Setting 1 # Read unique memory
 lb Choose TYPE_DIAL Setting 1 # Read unique dial
@@ -25,9 +26,10 @@ jal getValues
 mul Qty Qty FACTOR
 s db Setting Hash
 s DisplayOre Setting Qty
-beq Stage 2 request # Stage 2
+beq Stage 3 request # Stage 3
 j start
 request:
+s DisplayOre Color 10 # Pink
 beq Qty 0 nextStage
 lb CurrentQty TYPE_FURNACE Reagents 1 # Load current reagent
 add TargetQty CurrentQty Qty # Target Quantity
@@ -38,14 +40,13 @@ sb TYPE_MIRROR Setting Hash
 lb r10 TYPE_MIRROR Setting 1 # Read is OK
 brne r10 0 -1
 loopReagent:
+s DisplayOre Color 10 # Pink
 lb CurrentQty TYPE_FURNACE Reagents 1 # Load current reagent
-s DisplayOre Setting StackQty
 jal checkTemperature
 yield
-s DisplayOre Setting Qty
+s DisplayOre Color 2 # Green
 yield
 bne CurrentQty StackQty loopReagent # Check Reagent
-yield
 bne CurrentQty TargetQty loopOre # Call next Ore
 nextStage:
 add Stage Stage 1
@@ -55,14 +56,17 @@ checkTemperature:
 lb r7 TYPE_FURNACE Temperature 1 # Current Temperature
 lb r8 TYPE_FURNACE Pressure 1 # Current Pressure
 bgt r7 374 ra
+s DisplayOre Color 0 # Blue
 sb TYPE_FURNACE SettingOutput 100 # Purge On
 bgt r8 1 checkTemperature
 sb TYPE_FURNACE SettingOutput 0 # Purge Off
+s DisplayOre Color 4 # Red
 lb r8 TYPE_FURNACE Pressure 1
 s GasInput Setting 1 # Fuel Gas
 brlt r8 PFUEL -2 # Loop Fuel
 s GasInput Setting 0 # Stop Gas
 sb TYPE_FURNACE Activate 1 # Furnace Fire
+s DisplayOre Color 3 # Orange
 j ra
 getValues:
 mul r10 Choose 3

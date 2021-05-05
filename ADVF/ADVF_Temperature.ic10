@@ -2,14 +2,17 @@
 alias DisplayTmin d0
 alias DisplayTcur d1
 alias DisplayTmax d2
+alias GasInput d3
 # Alias Register
-alias Choose r0
-alias Tmin r1
-alias Tcur r2
-alias Tmax r3
+alias Stage r0 # Current Stage
+alias Choose r1 # Dial setting
+alias Tmin r2
+alias Tcur r3
+alias Tmax r4
 #Contant
 define TYPE_FURNACE 545937711
 define TYPE_DIAL 554524804
+define TYPE_MEMORY -851746783
 #settings
 s DisplayTmin On 1
 s DisplayTmin Color 0
@@ -18,7 +21,8 @@ s DisplayTmax On 1
 s DisplayTmax Color 4
 start:
 yield
-lb Choose TYPE_DIAL Setting 1
+lb Stage TYPE_MEMORY Setting 1 # Read unique memory
+lb Choose TYPE_DIAL Setting 1 # Read unique dial
 lb Tcur TYPE_FURNACE Temperature 1
 s db Setting Choose
 jal getPressure
@@ -26,7 +30,22 @@ jal setColor
 s DisplayTmin Setting Tmin
 s DisplayTcur Setting Tcur
 s DisplayTmax Setting Tmax
-
+beq Stage 6 request # Stage 6
+j start
+request:
+lb Tcur TYPE_FURNACE Temperature 1
+blt Tcur Tmin failure
+blt Tcur Tmax nextStage
+s GasInput Setting 2 # N2 Gas
+j request
+nextStage:
+s GasInput Setting 0 # Stop Gas
+add Stage Stage 1
+sb TYPE_MEMORY Setting Stage
+j start
+failure:
+s GasInput Setting 0 # Stop Gas
+sb TYPE_MEMORY Setting -2
 j start
 
 setColor:

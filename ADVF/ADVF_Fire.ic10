@@ -23,16 +23,22 @@ lb Choose TYPE_DIAL Setting 1 # Read unique dial
 jal getValues
 s DisplayFuel Setting PFuel
 s DisplayPurge Setting PPurge
-beq Stage 4 request # Stage 4
+beq Stage 1 purge # Stage 1
 j start
-request:
+purge:
+s DisplayPurge Color 4
 lb r8 TYPE_FURNACE Pressure 1 # Current Pressure
 sb TYPE_FURNACE SettingOutput 100 # Purge On
-brgt r8 PPurge -2
+bgt r8 PPurge purge
 sb TYPE_FURNACE SettingOutput 0 # Purge Off
+s DisplayPurge Color 11
+fuel:
+s DisplayFuel Color 4
+lb r8 TYPE_FURNACE Pressure 1 # Current Pressure
 s GasInput Setting 1 # Fuel Gas
-brlt r8 PFuel -2 # Loop Fuel
+blt r8 PFuel fuel # Loop Fuel
 s GasInput Setting 0 # Stop Gas
+s DisplayFuel Color 11
 sb TYPE_FURNACE Activate 1 # Furnace Fire
 nextStage:
 add Stage Stage 1
@@ -43,40 +49,40 @@ getValues:
 mul r10 Choose 3
 add r10 r10 1
 jr r10
-move PFuel 200 # Copper Ingot
+move PFuel 400 # Copper Ingot
 move PPurge 5
 j ra
-move PFuel 200 # Iron Ingot
+move PFuel 400 # Iron Ingot
 move PPurge 5
 j ra
-move PFuel 200 # Nickel Ingot
+move PFuel 400 # Nickel Ingot
 move PPurge 5
 j ra
-move PFuel 200 # Silver Ingot
+move PFuel 400 # Silver Ingot
 move PPurge 5
 j ra
-move PFuel 200 # Gold Ingot
+move PFuel 400 # Gold Ingot
 move PPurge 5
 j ra
-move PFuel 200 # Lead Ingot
+move PFuel 400 # Lead Ingot
 move PPurge 5
 j ra
-move PFuel 200 # Silicon Ingot
+move PFuel 400 # Silicon Ingot
 move PPurge 5
 j ra
-move PFuel 900 # Constantan Ingot
+move PFuel 1000 # Constantan Ingot
 move PPurge 5
 j ra
-move PFuel 900 # Invar Ingot
+move PFuel 1000 # Invar Ingot
 move PPurge 5
 j ra
-move PFuel 200 # Steel Ingot
+move PFuel 400 # Steel Ingot
 move PPurge 5
 j ra
-move PFuel 200 # Electrum Ingot
+move PFuel 400 # Electrum Ingot
 move PPurge 5
 j ra
-move PFuel 50 # Solder Ingot
+move PFuel 200 # Solder Ingot
 move PPurge 5
 j ra
 move PFuel 1400 # Astroloy Ingot

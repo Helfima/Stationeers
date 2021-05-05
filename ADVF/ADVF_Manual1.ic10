@@ -12,6 +12,7 @@ define TYPE_FURNACE 545937711
 define TYPE_DIAL 554524804
 start:
 yield
+s db Setting IsActive
 l ValueL LeverLPurge Setting
 l ValueH LeverHPurge Setting
 s LightLPurge On ValueL

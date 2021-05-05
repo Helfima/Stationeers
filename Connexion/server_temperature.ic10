@@ -1,0 +1,77 @@
+# Alias Register
+alias Choose r0
+alias Tmin r1
+alias Tmax r2
+alias Request r3
+#Contant
+define TYPE_DIAL 554524804
+s db Setting 0
+start:
+yield
+lb Choose TYPE_DIAL Setting 1
+jal getPressure
+l Request db Setting
+beq Request 0 start
+bne Request 1 2
+s db Setting Tmin
+yield
+bne Request 2 2
+s db Setting Tmax
+yield
+j start
+
+getPressure:
+mul r10 Choose 3
+add r10 r10 1
+jr r10
+move Tmin 600 # Copper Ingot
+move Tmax 99999
+j ra
+move Tmin 800 # Iron Ingot
+move Tmax 99999
+j ra
+move Tmin 800 # Nickel Ingot
+move Tmax 99999
+j ra
+move Tmin 600 # Silver Ingot
+move Tmax 99999
+j ra
+move Tmin 600 # Gold Ingot
+move Tmax 99999
+j ra
+move Tmin 400 # Lead Ingot
+move Tmax 99999
+j ra
+move Tmin 900 # Silicon Ingot
+move Tmax 99999
+j ra
+move Tmin 1000 # Constantan Ingot
+move Tmax 10000
+j ra
+move Tmin 1200 # Invar Ingot
+move Tmax 1500
+j ra
+move Tmin 900 # Steel Ingot
+move Tmax 99999
+j ra
+move Tmin 600 # Electrum Ingot
+move Tmax 99999
+j ra
+move Tmin 350 # Solder Ingot
+move Tmax 550
+j ra
+move Tmin 1000 # Astroloy Ingot
+move Tmax 99999
+j ra
+move Tmin 600 # Inconel Ingot
+move Tmax 99999
+j ra
+move Tmin 400 # Waspaloy Ingot
+move Tmax 800
+j ra
+move Tmin 950 # Hastelloy Ingot
+move Tmax 1000
+j ra
+move Tmin 1800 # Stellite Ingot
+move Tmax 99999
+j ra

@@ -1,0 +1,28 @@
+alias Server d0
+alias Display d1
+# Alias Register
+alias Choose r0
+alias Value r1
+alias Request r3
+#Contant
+define TYPE_DIAL 554524804
+start:
+s db Setting -1
+yield
+lb Choose TYPE_DIAL Setting 1
+jal readValue
+s db Setting Value
+s Display Setting Value
+yield
+j start
+
+readValue:
+l Request Server Setting
+brne Request 0 -1 # Wait free server
+s Server Setting 1 # Send request
+sleep 1
+l Request Server Setting
+breq Request 1 -1
+move Value Request
+s Server Setting 0 # Close request
+j ra

@@ -5,6 +5,7 @@ alias DisplayStage d1
 alias Active r0
 alias IsActive r1
 alias Stage r2
+alias CurrentQty r5 # Reagent Quantity
 #Contant
 define TYPE_FURNACE 545937711
 define TYPE_DIAL 554524804
@@ -16,6 +17,7 @@ yield
 lb Stage TYPE_MEMORY Setting 1
 s DisplayStage Setting Stage
 l Active Button Setting
+beq Stage 7 request # Stage 7
 beq Active 0 start
 breq IsActive 0 4
 sb TYPE_MEMORY Setting 0 # Stop stage
@@ -23,4 +25,13 @@ move IsActive 0
 j start
 sb TYPE_MEMORY Setting 1 # Start stage
 move IsActive 1
+j start
+request:
+lb CurrentQty TYPE_FURNACE Reagents 1 # Load current reagent
+sb TYPE_FURNACE Open 1
+bne CurrentQty 0 request
+nextStage:
+sb TYPE_FURNACE Open 0
+sb TYPE_MEMORY Setting 0
+move IsActive 0
 j start
