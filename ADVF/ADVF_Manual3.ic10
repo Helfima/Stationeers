@@ -5,8 +5,11 @@ alias LightOpen d3
 alias LEDFire d4
 # Alias Register
 alias ValueOpen r0
-alias ValueH r1
+alias ValueFire r1
 alias IsActive r2
+alias CurrDB r3
+alias CheckOpen r4
+alias CheckFire r5
 #Contant
 define TYPE_FURNACE 545937711
 define TYPE_DIAL 554524804
@@ -14,13 +17,12 @@ define TYPE_DIAL 554524804
 s LEDFire Color 4
 start:
 yield
-s db Setting IsActive
+l CurrDB db Setting
 l ValueOpen LeverOpen Setting
-l ValueH ButtonFire Setting
-s LightOpen On ValueOpen
-s LEDFire On ValueH
+l ValueFire ButtonFire Setting
+jal checklight
 beq ValueOpen 1 furnaceOpen
-beq ValueH 1 furnaceActive
+beq ValueFire 1 furnaceActive
 beq IsActive 0 start
 sb TYPE_FURNACE Open 0
 move IsActive 0
@@ -33,3 +35,16 @@ furnaceActive:
 sb TYPE_FURNACE Activate 1
 move IsActive 0
 j start
+
+checklight:
+move CheckOpen 0
+move CheckFire 0
+brne CurrDB 1 2
+move CheckOpen 1
+brne CurrDB 2 2
+move CheckFire 1
+or CheckOpen CheckOpen ValueOpen
+or CheckFire CheckFire ValueFire
+s LightOpen On CheckOpen
+s LEDFire On CheckFire
+j ra

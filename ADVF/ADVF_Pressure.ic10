@@ -29,7 +29,7 @@ jal setColor
 s DisplayPmin Setting Pmin
 s DisplayPcur Setting Pcur
 s DisplayPmax Setting Pmax
-beq Stage 5 request # Stage 5
+beq Stage 6 request # Stage 6
 j start
 request:
 lb Pcur TYPE_FURNACE Pressure 1

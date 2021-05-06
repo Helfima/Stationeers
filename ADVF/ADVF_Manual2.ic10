@@ -8,16 +8,18 @@ alias LightN2 d4
 alias ValueFuel r0
 alias ValueN2 r1
 alias IsActive r2
+alias CurrDB r3
+alias CheckFuel r4
+alias CheckN2 r5
 #Contant
 define TYPE_FURNACE 545937711
 define TYPE_DIAL 554524804
 start:
 yield
-s db Setting IsActive
+l CurrDB db Setting
 l ValueFuel LeverFuel Setting
 l ValueN2 LeverN2 Setting
-s LightFuel On ValueFuel
-s LightN2 On ValueN2
+jal checklight
 beq ValueFuel 1 gasFuel
 beq ValueN2 1 gasN2
 beq IsActive 0 start
@@ -32,3 +34,16 @@ gasN2:
 s GasInput Setting 2 # N2 Gas
 move IsActive 1
 j start
+
+checklight:
+move CheckFuel 0
+move CheckN2 0
+brne CurrDB 1 2
+move CheckFuel 1
+brne CurrDB 2 2
+move CheckN2 1
+or CheckFuel CheckFuel ValueFuel
+or CheckN2 CheckN2 ValueN2
+s LightFuel On CheckFuel
+s LightN2 On CheckN2
+j ra

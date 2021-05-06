@@ -7,16 +7,19 @@ alias LightHPurge d4
 alias ValueL r0
 alias ValueH r1
 alias IsActive r2
+alias CurrDB r3
+alias CheckL r4
+alias CheckH r5
+
 #Contant
 define TYPE_FURNACE 545937711
 define TYPE_DIAL 554524804
 start:
 yield
-s db Setting IsActive
+l CurrDB db Setting
 l ValueL LeverLPurge Setting
 l ValueH LeverHPurge Setting
-s LightLPurge On ValueL
-s LightHPurge On ValueH
+jal checkLight
 beq ValueL 1 lowPurge
 beq ValueH 1 highPurge
 beq IsActive 0 start
@@ -31,3 +34,16 @@ highPurge:
 sb TYPE_FURNACE SettingOutput 100
 move IsActive 1
 j start
+
+checkLight:
+move CheckL 0
+move CheckH 0
+brne CurrDB 1 2
+move CheckL 1
+brne CurrDB 2 2
+move CheckH 1
+or CheckL CheckL ValueL
+or CheckH CheckH ValueH
+s LightLPurge On CheckL
+s LightHPurge On CheckH
+j ra

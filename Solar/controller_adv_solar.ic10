@@ -1,0 +1,43 @@
+# Solar Panel Control
+# Sensor: port see south
+# Solar Panel: port see west
+alias Sensor d0
+alias DisplayWatt d1
+
+alias H r0
+alias V r1
+alias PowerRatio r2
+alias PowerTotal r3
+#Contant
+define TYPE_SOLAR -934345724 # Advance Solar Panel
+#Settings
+s Sensor Mode 0
+s DisplayWatt Mode 2
+
+start:
+move PowerTotal 0
+l H Sensor Horizontal
+l V Sensor Vertical
+sub V 75 V
+div V V 1.5
+sb TYPE_SOLAR Horizontal H # r2 hash of Solar Panel
+sb TYPE_SOLAR Vertical V # r2 hash of Solar Panel
+lb PowerTotal TYPE_SOLAR Charge 1 # read sum power
+lb PowerRatio TYPE_SOLAR Ratio 0 # read average ratio
+s db Setting PowerRatio
+s DisplayWatt Setting PowerTotal
+jal setColor
+j start
+
+setColor:
+brgt PowerRatio 0.99 9
+brgt PowerRatio 0.66 6
+brgt PowerRatio 0.33 3
+s DisplayWatt Color 4 #Red
+j ra
+s DisplayWatt Color 3 #Orange
+j ra
+s DisplayWatt Color 5 #Yellow
+j ra
+s DisplayWatt Color 2 #Green
+j ra

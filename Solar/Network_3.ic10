@@ -1,0 +1,29 @@
+# Network Control
+alias AnalyserGreen d0
+alias AnalyserYellow d1
+alias AnalyserRed d2
+alias DisplayGreen d3
+alias DisplayYellow d4
+alias DisplayRed d5
+# Settings
+s DisplayGreen On 1
+s DisplayGreen Mode 2 # Watt
+s DisplayGreen Color 2 # Green
+s DisplayYellow On 1
+s DisplayYellow Mode 2 # Watt
+s DisplayYellow Color 5 # Yellow
+s DisplayRed On 1
+s DisplayRed Mode 2 # Watt
+s DisplayRed Color 4 # Red
+start:
+yield
+l r0 AnalyserGreen PowerActual
+l r1 AnalyserYellow PowerActual
+l r2 AnalyserRed PowerActual
+trunc r0 r0
+trunc r1 r1
+trunc r2 r2
+s DisplayGreen Setting r0
+s DisplayYellow Setting r1
+s DisplayRed Setting r2
+j start

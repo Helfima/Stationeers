@@ -1,0 +1,39 @@
+# Network Global Control
+alias Battery d0
+alias Analyser d1
+alias DisplayRatio d3
+alias DisplayTotal d4
+
+alias HashBattery r0
+alias HashAnalyser r1
+alias PowerRatio r2
+alias PowerTotal r3
+# Settings
+s DisplayRatio On 1
+s DisplayRatio Mode 1
+s DisplayTotal On 1
+s DisplayTotal Mode 2
+s DisplayTotal Color 10
+start:
+yield
+l HashBattery Battery PrefabHash
+lb PowerRatio HashBattery Ratio 0
+s DisplayRatio Setting PowerRatio
+l HashAnalyser Analyser PrefabHash
+lb PowerTotal HashAnalyser PowerActual 1
+s DisplayTotal Setting PowerTotal
+jal setColor
+j start
+
+setColor:
+brgt PowerRatio 0.99 9
+brgt PowerRatio 0.66 6
+brgt PowerRatio 0.33 3
+s DisplayRatio Color 4 #Red
+j ra
+s DisplayRatio Color 3 #Orange
+j ra
+s DisplayRatio Color 5 #Yellow
+j ra
+s DisplayRatio Color 2 #Green
+j ra

@@ -29,43 +29,30 @@ s DisplayOre Setting Qty
 beq Stage 4 request # Stage 4
 j start
 request:
-s DisplayOre Color 10 # Pink
 beq Qty 0 nextStage
 lb CurrentQty TYPE_FURNACE Reagents 1 # Load current reagent
 add TargetQty CurrentQty Qty # Target Quantity
+move CurrentQty 0
 loopOre:
-lb CurrentQty TYPE_FURNACE Reagents 1 # Load current reagent
-add StackQty CurrentQty STACK # Stack Quantity
 sb TYPE_MIRROR Setting Hash
 lb r10 TYPE_MIRROR Setting 1 # Read is OK
 brne r10 0 -1
-loopReagent:
-s DisplayOre Color 10 # Pink
+add CurrentQty CurrentQty 50
+jal checkLight
+blt CurrentQty Qty loopOre # Call next Ore
 lb CurrentQty TYPE_FURNACE Reagents 1 # Load current reagent
-jal checkTemperature
-yield
-s DisplayOre Color 2 # Green
-yield
-bne CurrentQty StackQty loopReagent # Check Reagent
-bne CurrentQty TargetQty loopOre # Call next Ore
+jal checkLight
+brlt CurrentQty TargetQty -2 # Wait
 nextStage:
 add Stage Stage 1
 sb TYPE_MEMORY Setting Stage
 j start
-checkTemperature:
-lb r7 TYPE_FURNACE Temperature 1 # Current Temperature
-lb r8 TYPE_FURNACE Pressure 1 # Current Pressure
-bgt r7 374 ra
-s DisplayOre Color 0 # Blue
-sb TYPE_FURNACE SettingOutput 100 # Purge On
-bgt r8 1 checkTemperature
-sb TYPE_FURNACE SettingOutput 0 # Purge Off
-s DisplayOre Color 4 # Red
-lb r8 TYPE_FURNACE Pressure 1
-s GasInput Setting 1 # Fuel Gas
-brlt r8 PFUEL -2 # Loop Fuel
-s GasInput Setting 0 # Stop Gas
-sb TYPE_FURNACE Activate 1 # Furnace Fire
+checkLight:
+yield
+l r11 DisplayOre Color
+breq r11 10 3
+s DisplayOre Color 10 # Pink
+j ra
 s DisplayOre Color 3 # Orange
 j ra
 getValues:

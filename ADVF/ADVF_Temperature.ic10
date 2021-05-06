@@ -30,7 +30,7 @@ jal setColor
 s DisplayTmin Setting Tmin
 s DisplayTcur Setting Tcur
 s DisplayTmax Setting Tmax
-beq Stage 6 request # Stage 6
+beq Stage 5 request # Stage 5
 j start
 request:
 lb Tcur TYPE_FURNACE Temperature 1

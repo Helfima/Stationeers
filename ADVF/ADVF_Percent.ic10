@@ -1,0 +1,37 @@
+# Adv Furnace Percent Controller
+alias DisplayX d0
+alias DisplayCO2 d1
+alias DisplayO2 d2
+alias DisplayH2 d3
+alias DisplayN2 d4
+alias DisplayN2O d5
+#Contant
+define TYPE_FURNACE 545937711
+#Settings
+s DisplayX On 1
+s DisplayX Mode 1
+s DisplayCO2 On 1
+s DisplayCO2 Mode 1
+s DisplayO2 On 1
+s DisplayO2 Mode 1
+s DisplayH2 On 1
+s DisplayH2 Mode 1
+s DisplayN2 On 1
+s DisplayN2 Mode 1
+s DisplayN2O On 1
+s DisplayN2O Mode 1
+start:
+yield
+lb r0 TYPE_FURNACE RatioPollutant 1
+s DisplayX Setting r0
+lb r0 TYPE_FURNACE RatioCarbonDioxide 1
+s DisplayCO2 Setting r0
+lb r0 TYPE_FURNACE RatioOxygen 1
+s DisplayO2 Setting r0
+lb r0 TYPE_FURNACE RatioVolatiles 1
+s DisplayH2 Setting r0
+lb r0 TYPE_FURNACE RatioNitrogen 1
+s DisplayN2 Setting r0
+lb r0 TYPE_FURNACE RatioNitrousOxide 1
+s DisplayN2O Setting r0
+j start
