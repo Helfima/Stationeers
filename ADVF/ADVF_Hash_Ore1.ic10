@@ -53,7 +53,7 @@ l r11 DisplayOre Color
 breq r11 10 3
 s DisplayOre Color 10 # Pink
 j ra
-s DisplayOre Color 1 # Orange
+s DisplayOre Color 1 # Gray
 j ra
 getValues:
 mul r10 Choose 3

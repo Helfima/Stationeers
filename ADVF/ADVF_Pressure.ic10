@@ -2,6 +2,7 @@
 alias DisplayPmin d0
 alias DisplayPcur d1
 alias DisplayPmax d2
+alias Manual1 d3
 # Alias Register
 alias Stage r0 # Current Stage
 alias Choose r1 # Dial setting
@@ -27,7 +28,6 @@ s db Setting Choose
 jal getValues
 jal setColor
 s DisplayPmin Setting Pmin
-s DisplayPcur Setting Pcur
 s DisplayPmax Setting Pmax
 beq Stage 6 request # Stage 6
 j start
@@ -36,18 +36,22 @@ lb Pcur TYPE_FURNACE Pressure 1
 blt Pcur Pmin failure
 blt Pcur Pmax nextStage
 sb TYPE_FURNACE SettingOutput 10
+s Manual1 Setting 1 # Manual1
 j request
 nextStage:
 sb TYPE_FURNACE SettingOutput 0
+s Manual1 Setting 0 # Manual1
 add Stage Stage 1
 sb TYPE_MEMORY Setting Stage
 j start
 failure:
 sb TYPE_FURNACE SettingOutput 0
-sb TYPE_MEMORY Setting -1
+s Manual1 Setting 0 # Manual1
+sb TYPE_MEMORY Setting 16
 j start
 
 setColor:
+s DisplayPcur Setting Pcur
 brgt Pcur Pmax 6
 brgt Pcur Pmin 3
 s DisplayPcur Color 0 #Blue
@@ -86,7 +90,7 @@ move Pmin 20000 # Constantan Ingot
 move Pmax 99999
 j ra
 move Pmin 18000 # Invar Ingot
-move Pmax 99999
+move Pmax 20000
 j ra
 move Pmin 1000 # Steel Ingot
 move Pmax 99999

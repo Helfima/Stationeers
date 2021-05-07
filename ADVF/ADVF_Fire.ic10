@@ -14,9 +14,7 @@ define TYPE_FURNACE 545937711
 define TYPE_DIAL 554524804
 define TYPE_MEMORY -851746783
 #Settings
-s DisplayFuel On 1
 s DisplayFuel Color 11
-s DisplayPurge On 1
 s DisplayPurge Color 11
 start:
 yield
@@ -25,76 +23,98 @@ lb Choose TYPE_DIAL Setting 1 # Read unique dial
 jal getValues
 s DisplayFuel Setting PFuel
 s DisplayPurge Setting PPurge
-beq Stage 1 purge # Stage 1
+ble Stage 0 start # normal loop
+beq Stage 1 normalFire # Fire for Ore
+bgt Stage 10 otherFire # Fire must return
 j start
-purge:
-s DisplayPurge Color 4
-lb r8 TYPE_FURNACE Pressure 1 # Current Pressure
-sb TYPE_FURNACE SettingOutput 100 # Purge On
-s Manual1 Setting 2
-bgt r8 PPurge purge
-sb TYPE_FURNACE SettingOutput 0 # Purge Off
-s Manual1 Setting 0
-s DisplayPurge Color 11
-fuel:
-s DisplayFuel Color 4
-lb r8 TYPE_FURNACE Pressure 1 # Current Pressure
-s GasInput Setting 1 # Fuel Gas
-s Manual2 Setting 1
-blt r8 PFuel fuel # Loop Fuel
-s GasInput Setting 0 # Stop Gas
-s Manual2 Setting 0
-s DisplayFuel Color 11
-sb TYPE_FURNACE Activate 1 # Furnace Fire
+otherFire:
+move r4 PFuel
+move r5 PPurge
+jal purge
+sleep 1
+#sub Stage Stage 10
+sb TYPE_MEMORY Setting 5
+j start
+normalFire:
+breq Choose 14 6
+lb r6 TYPE_FURNACE Temperature 1
+bgt r6 1200 nextStage # Bypass Fire
+move r4 200
+move r5 5
+jr 3
+move r4 PFuel
+move r5 PPurge
+jal purge
 nextStage:
 add Stage Stage 1
 sb TYPE_MEMORY Setting Stage
 j start
-
+purge:
+s DisplayPurge Setting r5
+s DisplayPurge Color 4
+lb r8 TYPE_FURNACE Pressure 1 # Current Pressure
+sb TYPE_FURNACE SettingOutput 100 # Purge On
+s Manual1 Setting 2 # Manual1
+bgt r8 r5 purge
+sb TYPE_FURNACE SettingOutput 0 # Purge Off
+s Manual1 Setting 0 # Manual1
+s DisplayPurge Color 11
+fuel:
+s DisplayFuel Setting r4
+s DisplayFuel Color 4
+lb r8 TYPE_FURNACE Pressure 1 # Current Pressure
+s GasInput Setting 1 # Fuel Gas
+s Manual2 Setting 1 # Manual2
+blt r8 r4 fuel # Loop Fuel
+s GasInput Setting 0 # Stop Gas
+s Manual2 Setting 0 # Manual2
+s DisplayFuel Color 11
+sb TYPE_FURNACE Activate 1 # Furnace Fire
+j ra
 getValues:
 mul r10 Choose 3
 add r10 r10 1
 jr r10
-move PFuel 600 # For 800 Copper Ingot (Validated)
+move PFuel 100 # For 800 Copper Ingot (Validated)
 move PPurge 5
 j ra
-move PFuel 600 # Iron Ingot
+move PFuel 100 # Iron Ingot
 move PPurge 5
 j ra
-move PFuel 600 # Nickel Ingot
+move PFuel 100 # Nickel Ingot
 move PPurge 5
 j ra
-move PFuel 600 # Silver Ingot
+move PFuel 100 # Silver Ingot
 move PPurge 5
 j ra
-move PFuel 600 # Gold Ingot
+move PFuel 100 # Gold Ingot
 move PPurge 5
 j ra
-move PFuel 600 # Lead Ingot
+move PFuel 100 # Lead Ingot
 move PPurge 5
 j ra
-move PFuel 800 # For 800 Silicon Ingot (Validated)
+move PFuel 100 # For 800 Silicon Ingot (Validated)
 move PPurge 5
 j ra
 move PFuel 1000 # Constantan Ingot
 move PPurge 5
 j ra
-move PFuel 1000 # Invar Ingot
+move PFuel 900 # Invar Ingot
 move PPurge 5
 j ra
-move PFuel 1100 # For 800 Steel Ingot
+move PFuel 100 # For 800 Steel Ingot
 move PPurge 5
 j ra
 move PFuel 400 # Electrum Ingot
 move PPurge 5
 j ra
-move PFuel 200 # Solder Ingot
+move PFuel 50 # Solder Ingot
 move PPurge 5
 j ra
-move PFuel 1400 # Astroloy Ingot
+move PFuel 1200 # Astroloy Ingot
 move PPurge 5
 j ra
-move PFuel 1200 # Inconel Ingot
+move PFuel 900 # Inconel Ingot
 move PPurge 5
 j ra
 move PFuel 1600 # Waspaloy Ingot

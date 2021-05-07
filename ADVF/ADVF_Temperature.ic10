@@ -3,6 +3,7 @@ alias DisplayTmin d0
 alias DisplayTcur d1
 alias DisplayTmax d2
 alias GasInput d3
+alias Manual2 d4
 # Alias Register
 alias Stage r0 # Current Stage
 alias Choose r1 # Dial setting
@@ -28,27 +29,31 @@ s db Setting Choose
 jal getPressure
 jal setColor
 s DisplayTmin Setting Tmin
-s DisplayTcur Setting Tcur
 s DisplayTmax Setting Tmax
 beq Stage 5 request # Stage 5
 j start
 request:
+jal setColor
 lb Tcur TYPE_FURNACE Temperature 1
 blt Tcur Tmin failure
 blt Tcur Tmax nextStage
 s GasInput Setting 2 # N2 Gas
+s Manual2 Setting 2 # Manual2
 j request
 nextStage:
 s GasInput Setting 0 # Stop Gas
+s Manual2 Setting 0 # Manual2
 add Stage Stage 1
 sb TYPE_MEMORY Setting Stage
 j start
 failure:
 s GasInput Setting 0 # Stop Gas
-sb TYPE_MEMORY Setting -2
+s Manual2 Setting 0 # Manual2
+sb TYPE_MEMORY Setting 15
 j start
 
 setColor:
+s DisplayTcur Setting Tcur
 brgt Tcur Tmax 6
 brgt Tcur Tmin 3
 s DisplayTcur Color 0 #Blue
