@@ -1,0 +1,75 @@
+# Adv Furnace Requesr Ingot Controller
+alias Button d0
+# Alias Register
+alias Choose r0 # Dial setting
+alias Hash r1 # Ingot Hash
+alias Action r2 # Action Button
+#Constant
+define TYPE_DIAL 554524804
+define TYPE_MIRROR 2096189278
+define TYPE_LED 1944485013
+start:
+yield
+sb TYPE_LED On 0
+l Action Button Setting
+lb Choose TYPE_DIAL Setting 1 # Read unique dial
+jal getValues
+s db Setting Hash
+beq Action 0 start # Do Nothing
+sb TYPE_MIRROR Setting Hash
+sb TYPE_LED On 1
+request:
+lb r10 TYPE_MIRROR Setting 1 # Read is OK
+jal changeColor
+bne r10 0 request
+j start
+
+changeColor:
+yield
+lb r11 TYPE_LED Color 1
+breq r11 10 3
+sb TYPE_LED Color 10 # Pink
+j ra
+sb TYPE_LED Color 1 # Gray
+j ra
+
+getValues:
+mul r10 Choose 2
+add r10 r10 1
+jr r10
+move Hash 2134647745 # Lead Ingot
+j ra
+move Hash 252561409 # Charcoal
+j ra
+move Hash -404336834 # Copper Ingot
+j ra
+move Hash -929742000 # Silver Ingot
+j ra
+move Hash 226410516 # Gold Ingot
+j ra
+move Hash -1301215609 # Iron Ingot
+j ra
+move Hash -1406385572 # Nickel Ingot
+j ra
+move Hash -290196476 # Silicon Ingot
+j ra
+move Hash -654790771 # Steel Ingot
+j ra
+move Hash 502280180 # Electrum Ingot
+j ra
+move Hash -82508479 # Solder Ingot
+j ra
+move Hash 1058547521 # Constantan Ingot
+j ra
+move Hash -297990285 # Invar Ingot
+j ra
+move Hash 412924554 # Astroloy Ingot
+j ra
+move Hash -787796599 # Inconel Ingot
+j ra
+move Hash 156348098 # Waspaloy Ingot
+j ra
+move Hash 1579842814 # Hastelloy Ingot
+j ra
+move Hash -1897868623 # Stellite Ingot
+j ra

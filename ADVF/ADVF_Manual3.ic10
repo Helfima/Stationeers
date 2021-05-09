@@ -10,7 +10,7 @@ alias IsActive r2
 alias CurrDB r3
 alias CheckOpen r4
 alias CheckFire r5
-#Contant
+#Constant
 define TYPE_FURNACE 545937711
 define TYPE_DIAL 554524804
 #setting

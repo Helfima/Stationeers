@@ -5,7 +5,7 @@ alias Display d2
 # Settings
 s Pump Setting 100
 s Display On 1
-#Contant
+#Constant
 define PMAX 7000
 define PMID 4000
 define PMIN 0

@@ -10,7 +10,7 @@ alias Choose r1 # Dial setting
 alias Tmin r2
 alias Tcur r3
 alias Tmax r4
-#Contant
+#Constant
 define TYPE_FURNACE 545937711
 define TYPE_DIAL 554524804
 define TYPE_MEMORY -851746783
@@ -64,57 +64,39 @@ s DisplayTcur Color 4 #Red
 j ra
 
 getPressure:
-mul r10 Choose 3
-add r10 r10 1
-jr r10
-move Tmin 600 # Copper Ingot
-move Tmax 99999
-j ra
-move Tmin 800 # Iron Ingot
-move Tmax 99999
-j ra
-move Tmin 800 # Nickel Ingot
-move Tmax 99999
-j ra
-move Tmin 600 # Silver Ingot
-move Tmax 99999
-j ra
-move Tmin 600 # Gold Ingot
-move Tmax 99999
-j ra
-move Tmin 400 # Lead Ingot
-move Tmax 99999
-j ra
-move Tmin 900 # Silicon Ingot
-move Tmax 99999
-j ra
-move Tmin 1000 # Constantan Ingot
-move Tmax 10000
-j ra
-move Tmin 1200 # Invar Ingot
-move Tmax 1500
-j ra
-move Tmin 900 # Steel Ingot
-move Tmax 99999
-j ra
-move Tmin 600 # Electrum Ingot
-move Tmax 99999
-j ra
-move Tmin 350 # Solder Ingot
+move Tmin 600 # Default
+move Tmax 99999 # Default
+brne Choose 0 2 # Lead Ingot
+move Tmin 400
+brne Choose 1 2 # Charcoal Ingot
+move Tmin 580
+brne Choose 5 2 # Iron Ingot
+move Tmin 800
+brne Choose 6 2 # Nickel Ingot
+move Tmin 800
+brne Choose 7 2 # Silicon Ingot
+move Tmin 900
+brne Choose 8 2 # Steel Ingot
+move Tmin 900
+brne Choose 10 3 # Solder Ingot
+move Tmin 350
 move Tmax 550
-j ra
-move Tmin 1000 # Astroloy Ingot
-move Tmax 99999
-j ra
-move Tmin 600 # Inconel Ingot
-move Tmax 99999
-j ra
-move Tmin 400 # Waspaloy Ingot
+brne Choose 11 3 # Constantan Ingot
+move Tmin 1000
+move Tmax 10000
+brne Choose 12 3 # Invar Ingot
+move Tmin 1200
+move Tmax 1500
+brne Choose 13 2 # Astroloy Ingot
+move Tmin 1000
+brne Choose 14 2 # Inconel Ingot
+move Tmin 600
+brne Choose 15 3 # Waspaloy Ingot
+move Tmin 400
 move Tmax 800
-j ra
-move Tmin 950 # Hastelloy Ingot
+brne Choose 16 3 # Hastelloy Ingot
+move Tmin 950
 move Tmax 1000
-j ra
-move Tmin 1800 # Stellite Ingot
-move Tmax 99999
+brne Choose 17 2 # Stellite Ingot
+move Tmin 1800
 j ra

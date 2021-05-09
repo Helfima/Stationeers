@@ -9,7 +9,7 @@ alias Choose r1 # Dial setting
 alias Pmin r2
 alias Pcur r3
 alias Pmax r4
-#Contant
+#Constant
 define TYPE_FURNACE 545937711
 define TYPE_DIAL 554524804
 define TYPE_MEMORY -851746783
@@ -32,21 +32,25 @@ s DisplayPmax Setting Pmax
 beq Stage 6 request # Stage 6
 j start
 request:
+jal setColor
 lb Pcur TYPE_FURNACE Pressure 1
 blt Pcur Pmin failure
 blt Pcur Pmax nextStage
+purge:
+jal setColor
+lb Pcur TYPE_FURNACE Pressure 1
 sb TYPE_FURNACE SettingOutput 10
 s Manual1 Setting 1 # Manual1
-j request
-nextStage:
+bgt Pcur Pmax purge
 sb TYPE_FURNACE SettingOutput 0
 s Manual1 Setting 0 # Manual1
+sb TYPE_MEMORY Setting 5 # Recheck Temperature
+j start
+nextStage:
 add Stage Stage 1
 sb TYPE_MEMORY Setting Stage
 j start
 failure:
-sb TYPE_FURNACE SettingOutput 0
-s Manual1 Setting 0 # Manual1
 sb TYPE_MEMORY Setting 16
 j start
 
@@ -62,57 +66,33 @@ s DisplayPcur Color 4 #Red
 j ra
 
 getValues:
-mul r10 Choose 3
-add r10 r10 1
-jr r10
-move Pmin 100 # Copper Ingot
-move Pmax 99999
-j ra
-move Pmin 100 # Iron Ingot
-move Pmax 99999
-j ra
-move Pmin 100 # Nickel Ingot
-move Pmax 99999
-j ra
-move Pmin 100 # Silver Ingot
-move Pmax 99999
-j ra
-move Pmin 100 # Gold Ingot
-move Pmax 99999
-j ra
-move Pmin 100 # Lead Ingot
-move Pmax 99999
-j ra
-move Pmin 100 # Silicon Ingot
-move Pmax 99999
-j ra
-move Pmin 20000 # Constantan Ingot
-move Pmax 99999
-j ra
-move Pmin 18000 # Invar Ingot
-move Pmax 20000
-j ra
-move Pmin 1000 # Steel Ingot
-move Pmax 99999
-j ra
-move Pmin 800 # Electrum Ingot
+move Pmin 100 # Default
+move Pmax 99999 # Default
+blt Choose 8 ra # Bypass
+brne Choose 8 2 # Steel Ingot
+move Pmin 1000
+brne Choose 9 3 # Electrum Ingot
+move Pmin 800
 move Pmax 2400
-j ra
-move Pmin 1000 # Solder Ingot
-move Pmax 99999
-j ra
-move Pmin 30000 # Astroloy Ingot
+brne Choose 10 2 # Solder Ingot
+move Pmin 1000
+brne Choose 11 2 # Constantan Ingot
+move Pmin 20000
+brne Choose 12 3 # Invar Ingot
+move Pmin 18000
+move Pmax 20000
+brne Choose 13 3 # Astroloy Ingot
+move Pmin 30000
 move Pmax 40000
-j ra
-move Pmin 23500 # Inconel Ingot
+brne Choose 14 3 # Inconel Ingot
+move Pmin 23500
 move Pmax 24000
-j ra
-move Pmin 50000 # Waspaloy Ingot
-move Pmax 99999
-j ra
-move Pmin 25000 # Hastelloy Ingot
+brne Choose 15 2 # Waspaloy Ingot
+move Pmin 50000
+brne Choose 16 3 # Hastelloy Ingot
+move Pmin 25000
 move Pmax 30000
-j ra
-move Pmin 10000 # Stellite Ingot
+brne Choose 17 3 # Stellite Ingot
+move Pmin 10000
 move Pmax 20000
 j ra

@@ -5,7 +5,7 @@ alias Unloader d1
 alias IsCrushing r0
 alias IsOccupied r1
 alias Time r10
-#Contant
+#Constant
 define DELAY 3
 #Setting
 s Unloader On 1

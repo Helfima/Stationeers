@@ -2,7 +2,7 @@
 alias Sensor d0
 alias Heater d1
 alias Cooler d2
-#Contant
+#Constant
 define TMIN 20
 define TMID 25
 define TMAX 30

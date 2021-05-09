@@ -1,4 +1,4 @@
-# Silo Output Controller
+# Silo Output 2 Controller
 alias Silo0 d0
 alias Silo1 d1
 alias Silo2 d2
@@ -13,12 +13,12 @@ define TYPE_SILO 1155865682 # Silo Hash
 define TYPE_SORTER -1009150565 # Sorter Hash
 define TYPE_STACKER1 -2020231820 # Stacker Hash
 define TYPE_STACKER2 1585641623 # Stacker Hash
-define HASH0 1724793494 # Coal Ore
-define HASH1 -983091249 # Colbalt Ore
-define HASH2 -707307845 # Copper Ore
-define HASH3 -1348105509 # Gold Ore
-define HASH4 1758427767 # Iron Ore
-define HASH5 -190236170 # Lead Ore
+define HASH0 -1406385572 # Nickel Ingot
+define HASH1 -290196476 # Silicon Ingot
+define HASH2 -654790771 # Steel Ingot
+define HASH3 502280180 # Electrum Ingot
+define HASH4 -82508479 # Solder Ingot
+define HASH5 1058547521 # Constantan Ingot
 #Settings
 sb TYPE_SILO On 1
 sb TYPE_SORTER On 1

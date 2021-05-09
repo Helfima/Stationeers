@@ -9,7 +9,7 @@ alias Pcur r0
 alias Opened r1
 alias TypeAirVent r2
 alias TypeLED r3
-#Contant
+#Constant
 define PMAX 1
 define PMIN 0
 #settings

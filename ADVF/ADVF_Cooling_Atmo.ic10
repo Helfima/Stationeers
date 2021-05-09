@@ -1,0 +1,34 @@
+# Adv Furnace Atmo Cooling Controller
+alias AnalyserCoolant d0
+alias AnalyserExt d1
+alias ValveExt d2
+# Alias Register
+alias TCooling r0
+alias TExt r1
+alias TDelta r2
+#Constant
+define TYPE_ATMO -2087593337
+define Tmin -50
+define DeltaMin 10
+start:
+yield
+l TCooling AnalyserCoolant Temperature
+l TExt AnalyserExt Temperature
+jal StopOrStartAtmo
+jal StopOrStartValve
+j start
+
+StopOrStartAtmo:
+brgt TCooling Tmin 3
+sb TYPE_ATMO On 0 # Stop Atmo
+j ra
+sb TYPE_ATMO On 1 # Start Atmo
+j ra
+
+StopOrStartValve:
+sub TDelta TCooling TExt
+brgt TDelta DeltaMin 3
+s ValveExt On 0 # Stop Valve
+j ra
+s ValveExt On 1 # Start Valve
+j ra

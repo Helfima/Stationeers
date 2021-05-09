@@ -4,7 +4,7 @@ alias AirVent d1
 alias LED d3
 alias Button d4
 alias Door d5
-#Contant
+#Constant
 define PMAX 1
 define PMIN 0
 start:

@@ -8,7 +8,7 @@ alias H r0
 alias V r1
 alias PowerRatio r2
 alias PowerTotal r3
-#Contant
+#Constant
 define TYPE_SOLAR -934345724 # Advance Solar Panel
 #Settings
 s Sensor Mode 0

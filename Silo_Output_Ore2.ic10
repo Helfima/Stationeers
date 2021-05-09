@@ -8,7 +8,7 @@ alias Silo5 d5
 # Alias Register
 alias Silo r0
 alias Hash r1
-#Contant
+#Constant
 define TYPE_SILO 1155865682 # Silo Hash
 define TYPE_SORTER -1009150565 # Sorter Hash
 define TYPE_STACKER1 -2020231820 # Stacker Hash

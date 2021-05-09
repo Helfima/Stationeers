@@ -9,7 +9,7 @@ alias Qty r3 # Ore Quantity
 alias StackQty r4 # Stack Quantity
 alias CurrentQty r5 # Reagent Quantity
 alias TargetQty r6 # Target Quantity
-#Contant
+#Constant
 define TYPE_FURNACE 545937711
 define TYPE_DIAL 554524804
 define TYPE_MEMORY -851746783
@@ -56,57 +56,13 @@ j ra
 s DisplayOre Color 1 # Gray
 j ra
 getValues:
-mul r10 Choose 3
-add r10 r10 1
-jr r10
-move Hash 0 # Copper Ingot
-move Qty 0
-j ra
-move Hash 0 # Iron Ingot
-move Qty 0
-j ra
-move Hash 0 # Nickel Ingot
-move Qty 0
-j ra
-move Hash 0 # Silver Ingot
-move Qty 0
-j ra
-move Hash 0 # Gold Ingot
-move Qty 0
-j ra
-move Hash 0 # Lead Ingot
-move Qty 0
-j ra
-move Hash 0 # Silicon Ingot
-move Qty 0
-j ra
-move Hash 0 # Constantan Ingot
-move Qty 0
-j ra
-move Hash 0 # Invar Ingot
-move Qty 0
-j ra
-move Hash 0 # Steel Ingot
-move Qty 0
-j ra
-move Hash 0 # Electrum Ingot
-move Qty 0
-j ra
-move Hash 0 # Solder Ingot
-move Qty 0
-j ra
-move Hash -983091249 # Colbalt Ore => Astroloy Ingot
+move Hash 0 # Default
+move Qty 0 # Default
+blt Choose 13 ra # Bypass
+move Hash -983091249 # Colbalt Ore
 move Qty 0.25
-j ra
-move Hash 1830218956 # Nickel Ore => Inconel Ingot
-move Qty 0.25
-j ra
-move Hash -190236170 # Lead Ore => Waspaloy Ingot
-move Qty 0.5
-j ra
-move Hash -983091249 # Colbalt Ore => Hastelloy Ingot
-move Qty 0.25
-j ra
-move Hash -983091249 # Colbalt Ore => Stellite Ingot
-move Qty 0.25
+brne Choose 14 2 # Inconel Ingot
+move Hash -654790771 # Steel Ingot
+brne Choose 15 2 # Waspaloy Ingot
+move Hash -916518678 # Silver Ore
 j ra

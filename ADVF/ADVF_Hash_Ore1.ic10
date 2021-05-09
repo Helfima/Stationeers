@@ -9,7 +9,7 @@ alias Qty r3 # Ore Quantity
 alias StackQty r4 # Stack Quantity
 alias CurrentQty r5 # Reagent Quantity
 alias TargetQty r6 # Target Quantity
-#Contant
+#Constant
 define TYPE_FURNACE 545937711
 define TYPE_DIAL 554524804
 define TYPE_MEMORY -851746783
@@ -56,57 +56,44 @@ j ra
 s DisplayOre Color 1 # Gray
 j ra
 getValues:
-mul r10 Choose 3
-add r10 r10 1
-jr r10
-move Hash -707307845 # Copper Ore => Copper Ingot
-move Qty 1
-j ra
-move Hash 1758427767 # Iron Ore => Iron Ingot
-move Qty 1
-j ra
-move Hash 1830218956 # Nickel Ore => Nickel Ingot
-move Qty 1
-j ra
-move Hash -916518678 # Silver Ore => Silver Ingot
-move Qty 1
-j ra
-move Hash -1348105509 # Gold Ore => Gold Ingot
-move Qty 1
-j ra
-move Hash -190236170 # Lead Ore => Lead Ingot
-move Qty 1
-j ra
-move Hash 1103972403 # Silicon Ore => Silicon Ingot
-move Qty 1
-j ra
-move Hash -707307845 # Copper Ore => Constantan Ingot
+move Qty 1 # Default
+brlt Choose 9 2
 move Qty 0.5
-j ra
-move Hash 1758427767 # Iron Ore => Invar Ingot
-move Qty 0.5
-j ra
-move Hash 1758427767 # Iron Ore => Steel Ingot
+brne Choose 0 2 # Lead Ingot
+move Hash -190236170 # Lead Ore
+brne Choose 1 2 # Charcoal
+move Hash -831480639 # Biomass
+brne Choose 2 2 # Copper Ingot
+move Hash -707307845 # Copper Ore
+brne Choose 3 2 # Silver Ingot
+move Hash -916518678 # Silver Ore
+brne Choose 4 2 # Gold Ingot
+move Hash -1348105509 # Gold Ore
+brne Choose 5 2 # Iron Ingot
+move Hash 1758427767 # Iron Ore
+brne Choose 6 2 # Nickel Ingot
+move Hash 1830218956 # Nickel Ore
+brne Choose 7 2 # Silicon Ingot
+move Hash 1103972403 # Silicon Ore
+brne Choose 8 3 # Steel Ingot
+move Hash 1758427767 # Iron Ore
 move Qty 0.75
-j ra
-move Hash -1348105509 # Gold Ore => Electrum Ingot
-move Qty 0.5
-j ra
-move Hash 1758427767 # Iron Ore => Solder Ingot
-move Qty 0.5
-j ra
-move Hash -707307845 # Copper Ore => Astroloy Ingot
-move Qty 0.25
-j ra
-move Hash -1348105509 # Gold Ore => Inconel Ingot
-move Qty 0.5
-j ra
-move Hash -916518678 # Silver Ore => Waspaloy Ingot
-move Qty 0.25
-j ra
-move Hash -916518678 # Silver Ore => Hastelloy Ingot
-move Qty 0.5
-j ra
-move Hash -916518678 # Silver Ore => Stellite Ingot
-move Qty 0.25
+brne Choose 9 2 # Electrum Ingot
+move Hash -916518678 # Silver Ore
+brne Choose 10 2 # Solder Ingot
+move Hash 1758427767 # Iron Ore
+brne Choose 11 2 # Constantan Ingot
+move Hash -707307845 # Copper Ore
+brne Choose 12 2 # Invar Ingot
+move Hash 1758427767 # Iron Ore
+brne Choose 13 2 # Astroloy Ingot
+move Hash -654790771 # Steel Ingot
+brne Choose 14 2 # Inconel Ingot
+move Hash -1348105509 # Gold Ore
+brne Choose 15 2 # Waspaloy Ingot
+move Hash -190236170 # Lead Ore
+brne Choose 16 2 # Hastelloy Ingot
+move Hash -916518678 # Silver Ore
+brne Choose 17 2 # Stellite Ingot
+move Hash 1103972403 # Silicon Ore
 j ra

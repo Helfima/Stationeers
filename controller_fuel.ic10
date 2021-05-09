@@ -1,7 +1,7 @@
 # Fuel Control
 alias Analyser d0
 alias Mixer d1
-#Contant
+#Constant
 define PMAX 3000
 define PMIN 2000
 move r1 1

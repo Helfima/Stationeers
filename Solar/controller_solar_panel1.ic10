@@ -9,7 +9,7 @@ alias V r1
 alias PowerCur r2
 alias PowerTotal r3
 alias Type r10
-#Contant
+#Constant
 define TYPE_SOLAR -2045627372
 define TYPE_DUAL_SOLAR -539224550
 define TYPE_ADV_SOLAR -934345724

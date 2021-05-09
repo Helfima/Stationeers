@@ -6,7 +6,7 @@ alias Active r0
 alias IsActive r1
 alias Stage r2
 alias CurrentQty r5 # Reagent Quantity
-#Contant
+#Constant
 define TYPE_FURNACE 545937711
 define TYPE_DIAL 554524804
 define TYPE_MEMORY -851746783

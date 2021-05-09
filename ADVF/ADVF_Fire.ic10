@@ -9,7 +9,7 @@ alias Stage r0 # Current Stage
 alias Choose r1 # Dial setting
 alias PFuel r2 # Pressure Fuel
 alias PPurge r3 # Pressure Purge
-#Contant
+#Constant
 define TYPE_FURNACE 545937711
 define TYPE_DIAL 554524804
 define TYPE_MEMORY -851746783
@@ -36,7 +36,8 @@ sleep 1
 sb TYPE_MEMORY Setting 5
 j start
 normalFire:
-breq Choose 14 6
+breq Choose 15 7 # Special Waspaloy
+breq Choose 16 6 # Special Hastelloy
 lb r6 TYPE_FURNACE Temperature 1
 bgt r6 1200 nextStage # Bypass Fire
 move r4 200
@@ -72,57 +73,21 @@ s DisplayFuel Color 11
 sb TYPE_FURNACE Activate 1 # Furnace Fire
 j ra
 getValues:
-mul r10 Choose 3
-add r10 r10 1
-jr r10
-move PFuel 100 # For 800 Copper Ingot (Validated)
-move PPurge 5
-j ra
-move PFuel 100 # Iron Ingot
-move PPurge 5
-j ra
-move PFuel 100 # Nickel Ingot
-move PPurge 5
-j ra
-move PFuel 100 # Silver Ingot
-move PPurge 5
-j ra
-move PFuel 100 # Gold Ingot
-move PPurge 5
-j ra
-move PFuel 100 # Lead Ingot
-move PPurge 5
-j ra
-move PFuel 100 # For 800 Silicon Ingot (Validated)
-move PPurge 5
-j ra
-move PFuel 1000 # Constantan Ingot
-move PPurge 5
-j ra
-move PFuel 900 # Invar Ingot
-move PPurge 5
-j ra
-move PFuel 100 # For 800 Steel Ingot
-move PPurge 5
-j ra
-move PFuel 400 # Electrum Ingot
-move PPurge 5
-j ra
-move PFuel 50 # Solder Ingot
-move PPurge 5
-j ra
-move PFuel 1200 # Astroloy Ingot
-move PPurge 5
-j ra
-move PFuel 900 # Inconel Ingot
-move PPurge 5
-j ra
-move PFuel 1600 # Waspaloy Ingot
-move PPurge 5
-j ra
-move PFuel 1200 # Hastelloy Ingot
-move PPurge 5
-j ra
-move PFuel 1400 # Stellite Ingot
-move PPurge 5
+move PFuel 100 # Default
+move PPurge 5 # Default
+blt Choose 11 ra # Bypass
+brne Choose 11 2 # Constantan Ingot
+move PFuel 1000
+brne Choose 12 2 # Invar Ingot
+move PFuel 1000
+brne Choose 13 2 # Astroloy Ingot
+move PFuel 1200
+brne Choose 14 2 # Inconel Ingot
+move PFuel 900
+brne Choose 15 2 # Waspaloy Ingot
+move PFuel 1600
+brne Choose 16 2 # Hastelloy Ingot
+move PFuel 900
+brne Choose 17 2 # Stellite Ingot
+move PFuel 500
 j ra

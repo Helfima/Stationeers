@@ -5,7 +5,7 @@ alias DisplayO2 d2
 alias DisplayH2 d3
 alias DisplayN2 d4
 alias DisplayN2O d5
-#Contant
+#Constant
 define TYPE_FURNACE 545937711
 #Settings
 s DisplayX On 1

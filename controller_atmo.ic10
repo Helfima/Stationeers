@@ -6,7 +6,7 @@ alias AtmoN2O d3
 #alias AtmoO2 d1
 #alias AtmoX d2
 #alias AtmoH2 d3
-#Contant
+#Constant
 define MOLES 1
 define PERCENT 0.01
 start:

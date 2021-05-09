@@ -11,7 +11,7 @@ alias CurrDB r3
 alias CheckL r4
 alias CheckH r5
 
-#Contant
+#Constant
 define TYPE_FURNACE 545937711
 define TYPE_DIAL 554524804
 start:

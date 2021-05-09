@@ -4,7 +4,7 @@ alias DisplayReagents d0
 alias Choose r0
 alias Hash r1
 alias Count r2
-#Contant
+#Constant
 define TYPE_FURNACE 545937711
 define TYPE_DIAL 554524804
 #Settings
@@ -19,40 +19,26 @@ s db Setting Hash
 j start
 
 getValues:
-mul r10 Choose 2
-add r10 r10 1
-jr r10
-move Hash -404336834 # Copper Ingot
-j ra
-move Hash -1301215609 # Iron Ingot
-j ra
-move Hash -1406385572 # Nickel Ingot
-j ra
-move Hash -929742000 # Silver Ingot
-j ra
-move Hash 226410516 # Gold Ingot
-j ra
-move Hash 2134647745 # Lead Ingot
-j ra
-move Hash -290196476 # Silicon Ingot
-j ra
-move Hash 1058547521 # Constantan Ingot
-j ra
-move Hash -297990285 # Invar Ingot
-j ra
-move Hash -654790771 # Steel Ingot
-j ra
-move Hash 502280180 # Electrum Ingot
-j ra
-move Hash -82508479 # Solder Ingot
-j ra
-move Hash 412924554 # Astroloy Ingot
-j ra
-move Hash -787796599 # Inconel Ingot
-j ra
-move Hash 156348098 # Waspaloy Ingot
-j ra
-move Hash 1579842814 # Hastelloy Ingot
-j ra
-move Hash -1897868623 # Stellite Ingot
+move sp 0
+push 2134647745 # Lead Ingot
+push 252561409 # Charcoal
+push -404336834 # Copper Ingot
+push -929742000 # Silver Ingot
+push 226410516 # Gold Ingot
+push -1301215609 # Iron Ingot
+push -1406385572 # Nickel Ingot
+push -290196476 # Silicon Ingot
+push -654790771 # Steel Ingot
+push 502280180 # Electrum Ingot
+push -82508479 # Solder Ingot
+push 1058547521 # Constantan Ingot
+push -297990285 # Invar Ingot
+push 412924554 # Astroloy Ingot
+push -787796599 # Inconel Ingot
+push 156348098 # Waspaloy Ingot
+push 1579842814 # Hastelloy Ingot
+push -1897868623 # Stellite Ingot
+move sp Choose
+add sp sp 1
+pop Hash
 j ra

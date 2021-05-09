@@ -17,7 +17,7 @@ alias Qty r7
 alias Timer r8
 alias Dial r9
 alias Stack r10
-#Contant
+#Constant
 define TYPE_DIAL 554524804
 define TYPE_LIGHT -1535893860
 define TYPE_TRIGGER 1269458680 # Medium:1269458680 large:-2008706143

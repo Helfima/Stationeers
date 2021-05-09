@@ -9,7 +9,7 @@ alias DisplayState d5
 alias CurrDB r0
 alias LastDB r1
 alias P r2
-#Contant
+#Constant
 define TYPE_FURNACE 545937711
 define TYPE_DIAL 554524804
 define Pmin 1
