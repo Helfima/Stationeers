@@ -1,0 +1,34 @@
+# Adv Furnace Cooling Controller
+alias AnalyserExt d0
+alias Analyser1 d1
+alias Analyser2 d2
+alias Valve1 d3
+alias Valve2 d4
+# Alias Register
+alias Analyser r0
+alias Valve r1
+alias TExt r2
+alias TDevice r3
+alias TDelta r4
+#Constant
+define Tmin -50
+define DeltaMin 0
+start:
+yield
+l TExt AnalyserExt Temperature
+move r0 1
+jal StopOrStartValve
+move r0 2
+jal StopOrStartValve
+j start
+
+StopOrStartValve:
+bdns dr0 ra
+add r1 r0 2
+l TDevice dr0 Temperature
+sub TDelta TDevice TExt
+brgt TDelta DeltaMin 3
+s dr1 On 0 # Stop Valve
+j ra
+s dr1 On 1 # Start Valve
+j ra

@@ -15,6 +15,7 @@ define TYPE_DIAL 554524804
 define Pmin 1
 define Pmid 600
 define Pmax 1000
+define Imax 50
 define ActionNone 0
 define ActionFuel 1
 define ActionN2 2
@@ -31,7 +32,7 @@ s DisplayState Setting CurrDB
 bne CurrDB LastDB purge
 # Control Pump
 breq CurrDB ActionNone 4
-sb TYPE_FURNACE SettingInput 50
+sb TYPE_FURNACE SettingInput Imax
 brgt P Pmax 4
 jal startPump
 j start
