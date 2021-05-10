@@ -1,0 +1,27 @@
+# Adv Furnace Temperature Controller
+alias DisplayVolume d0
+alias DisplayMoles d1
+# Constant
+define TYPE_FURNACE 545937711
+define R 8.314
+# Alias Register
+alias Pcur r0
+alias Tcur r1
+alias Moles r2
+alias V r3
+#settings
+s DisplayVolume On 1
+s DisplayVolume Color 6
+s DisplayMoles On 1
+s DisplayMoles Color 3
+start:
+yield
+lb Pcur TYPE_FURNACE Pressure 1
+lb Tcur TYPE_FURNACE Temperature 1
+lb Moles TYPE_FURNACE TotalMoles 1
+s DisplayMoles Setting Moles
+mul V Tcur R
+mul V V Moles
+div V V Pcur
+s DisplayVolume Setting V
+j start

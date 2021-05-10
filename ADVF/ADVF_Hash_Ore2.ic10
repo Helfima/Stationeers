@@ -1,6 +1,5 @@
 # Adv Furnace Hash Ore2 Controller
 alias DisplayOre d0
-alias GasInput d1
 # Alias Register
 alias Stage r0 # Current Stage
 alias Choose r1 # Dial setting

@@ -1,6 +1,5 @@
 # Adv Furnace Hash Ore1 Controller
 alias DisplayOre d0
-alias GasInput d1
 # Alias Register
 alias Stage r0 # Current Stage
 alias Choose r1 # Dial setting
@@ -55,45 +54,33 @@ s DisplayOre Color 10 # Pink
 j ra
 s DisplayOre Color 1 # Gray
 j ra
+
 getValues:
 move Qty 1 # Default
 brlt Choose 9 2
 move Qty 0.5
-brne Choose 0 2 # Lead Ingot
-move Hash -190236170 # Lead Ore
-brne Choose 1 2 # Charcoal
-move Hash -831480639 # Biomass
-brne Choose 2 2 # Copper Ingot
-move Hash -707307845 # Copper Ore
-brne Choose 3 2 # Silver Ingot
-move Hash -916518678 # Silver Ore
-brne Choose 4 2 # Gold Ingot
-move Hash -1348105509 # Gold Ore
-brne Choose 5 2 # Iron Ingot
-move Hash 1758427767 # Iron Ore
-brne Choose 6 2 # Nickel Ingot
-move Hash 1830218956 # Nickel Ore
-brne Choose 7 2 # Silicon Ingot
-move Hash 1103972403 # Silicon Ore
-brne Choose 8 3 # Steel Ingot
-move Hash 1758427767 # Iron Ore
+brne Choose 8 2 # Steel Ingot
 move Qty 0.75
-brne Choose 9 2 # Electrum Ingot
-move Hash -916518678 # Silver Ore
-brne Choose 10 2 # Solder Ingot
-move Hash 1758427767 # Iron Ore
-brne Choose 11 2 # Constantan Ingot
-move Hash -707307845 # Copper Ore
-brne Choose 12 2 # Invar Ingot
-move Hash 1758427767 # Iron Ore
-brne Choose 13 2 # Astroloy Ingot
-move Hash -654790771 # Steel Ingot
-brne Choose 14 2 # Inconel Ingot
-move Hash -1348105509 # Gold Ore
-brne Choose 15 2 # Waspaloy Ingot
-move Hash -190236170 # Lead Ore
-brne Choose 16 2 # Hastelloy Ingot
-move Hash -916518678 # Silver Ore
-brne Choose 17 2 # Stellite Ingot
-move Hash 1103972403 # Silicon Ore
+move sp 0
+push -190236170 # Lead Ore => Lead Ingot
+push -831480639 # Biomass => Charcoal
+push -707307845 # Copper Ore => Copper Ingot
+push -916518678 # Silver Ore => Silver Ingot
+push -1348105509 # Gold Ore => Gold Ingot
+push 1758427767 # Iron Ore => Iron Ingot
+push 1830218956 # Nickel Ore => Nickel Ingot
+push 1103972403 # Silicon Ore => Silicon Ingot
+push 1758427767 # Iron Ore => Steel Ingot
+push -916518678 # Silver Ore => Electrum Ingot
+push 1758427767 # Iron Ore => Solder Ingot
+push -707307845 # Copper Ore => Constantan Ingot
+push 1758427767 # Iron Ore => Invar Ingot
+push -654790771 # Steel Ingot => Astroloy Ingot
+push -1348105509 # Gold Ore => Inconel Ingot
+push -190236170 # Lead Ore => Waspaloy Ingot
+push -916518678 # Silver Ore => Hastelloy Ingot
+push 1103972403 # Silicon Ore => Stellite Ingot
+move sp Choose
+add sp sp 1
+pop Hash
 j ra

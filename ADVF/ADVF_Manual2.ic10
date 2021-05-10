@@ -27,11 +27,11 @@ s GasInput Setting 0 # Stop Gas
 move IsActive 0
 j start
 gasFuel:
-s GasInput Setting 1 # Fuel Gas
+s GasInput Setting 50 # Fuel Gas
 move IsActive 1
 j start
 gasN2:
-s GasInput Setting 2 # N2 Gas
+s GasInput Setting -50 # N2 Gas
 move IsActive 1
 j start
 

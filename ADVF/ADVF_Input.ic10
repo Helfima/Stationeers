@@ -5,10 +5,6 @@ alias PurgePump d2
 alias Analyser d3
 alias DisplayP d4
 alias DisplayState d5
-# Alias Register
-alias CurrDB r0
-alias LastDB r1
-alias P r2
 #Constant
 define TYPE_FURNACE 545937711
 define TYPE_DIAL 554524804
@@ -17,8 +13,12 @@ define Pmid 600
 define Pmax 1000
 define Imax 50
 define ActionNone 0
-define ActionFuel 1
-define ActionN2 2
+# Alias Register
+alias CurrDB r0
+alias LastDB r1
+alias P r2
+alias Temp r3
+alias Icurr r4
 #Settings
 s Analyser On 1
 s DisplayP On 1
@@ -29,10 +29,13 @@ jal loadPressure
 l CurrDB db Setting
 s DisplayState Setting CurrDB
 # Purge if state change
-bne CurrDB LastDB purge
+mul Temp CurrDB LastDB
+ble Temp 0 purge
+abs Icurr CurrDB
+min Icurr Icurr Imax
 # Control Pump
-breq CurrDB ActionNone 4
-sb TYPE_FURNACE SettingInput Imax
+breq CurrDB ActionNone 5
+sb TYPE_FURNACE SettingInput Icurr
 brgt P Pmax 4
 jal startPump
 j start
@@ -62,7 +65,7 @@ s N2Pump On 0
 j ra
 
 startPump:
-breq CurrDB ActionN2 3
+brlt CurrDB 0 3 # Negatif N2 Pump
 s FuelPump On 1
 j ra
 s N2Pump On 1

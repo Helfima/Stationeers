@@ -37,7 +37,7 @@ jal setColor
 lb Tcur TYPE_FURNACE Temperature 1
 blt Tcur Tmin failure
 blt Tcur Tmax nextStage
-s GasInput Setting 2 # N2 Gas
+s GasInput Setting -50 # N2 Gas
 s Manual2 Setting 2 # Manual2
 j request
 nextStage:

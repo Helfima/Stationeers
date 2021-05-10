@@ -64,7 +64,9 @@ fuel:
 s DisplayFuel Setting r4
 s DisplayFuel Color 4
 lb r8 TYPE_FURNACE Pressure 1 # Current Pressure
-s GasInput Setting 1 # Fuel Gas
+sub r9 r4 r8 #Delta PFuel
+max r9 r9 1 # Min 1
+s GasInput Setting r9 # Fuel Gas
 s Manual2 Setting 1 # Manual2
 blt r8 r4 fuel # Loop Fuel
 s GasInput Setting 0 # Stop Gas
