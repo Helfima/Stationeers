@@ -1,16 +1,8 @@
 # Alias Register
-alias H r0 # Horizontal
-alias DeltaH r1 # Horizontal
-alias V r2 # Vertical
-alias DeltaV r3 # Vertical
 alias Signal r4
-alias LastSignal r5
-alias Strength r6
 alias Temp r10
-alias IsAuto r11
-alias IsReset r12
 alias IsSkip r13
-alias Skip r14
+alias Skip r14 #Stack index
 
 move Skip -1
 move IsSkip 0
@@ -20,14 +12,16 @@ s db Setting -99999
 yield
 s db Setting Skip
 yield
+# Add 3 values in stack
 move Signal 100
 jal addSkip
 move Signal 101
 jal addSkip
 move Signal 102
 jal addSkip
-
+# Set test value
 move Signal 100
+# Execute the test
 jal checkSkip
 s db Setting IsSkip
 sleep 2
@@ -48,7 +42,7 @@ beq Skip -1 ra
 move IsSkip 0
 move sp Skip
 ble sp 0 ra # End stack
-pop Temp
+pop Temp # Read stack value
 brne Temp Signal -2
 move IsSkip 1
 j ra
