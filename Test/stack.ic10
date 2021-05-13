@@ -1,0 +1,54 @@
+# Alias Register
+alias H r0 # Horizontal
+alias DeltaH r1 # Horizontal
+alias V r2 # Vertical
+alias DeltaV r3 # Vertical
+alias Signal r4
+alias LastSignal r5
+alias Strength r6
+alias Temp r10
+alias IsAuto r11
+alias IsReset r12
+alias IsSkip r13
+alias Skip r14
+
+move Skip -1
+move IsSkip 0
+
+start:
+s db Setting -99999
+yield
+s db Setting Skip
+yield
+move Signal 100
+jal addSkip
+move Signal 101
+jal addSkip
+move Signal 102
+jal addSkip
+
+move Signal 100
+jal checkSkip
+s db Setting IsSkip
+sleep 2
+j start
+
+addSkip:
+s db Setting -11
+yield
+add Skip Skip 1
+move sp Skip
+push Signal
+j ra
+
+checkSkip:
+s db Setting -10
+yield
+beq Skip -1 ra
+move IsSkip 0
+move sp Skip
+ble sp 0 ra # End stack
+pop Temp
+brne Temp Signal -2
+move IsSkip 1
+j ra

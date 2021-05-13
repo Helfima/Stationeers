@@ -1,0 +1,20 @@
+# Dish Controller
+alias DisplayH d0
+alias DisplayV d1
+alias DisplaySignal d2
+alias DisplayStrength d3
+# Constant
+define TYPE_DISH 439026183
+# Alias Register
+# Settings
+start:
+yield
+lb r0 TYPE_DISH Horizontal 0 # 0:Average 1:Sum 2:Min 3:Max
+s DisplayH Setting r0
+lb r0 TYPE_DISH Vertical 0 # 0:Average 1:Sum 2:Min 3:Max
+s DisplayV Setting r0
+lb r0 TYPE_DISH SignalID 3 # 0:Average 1:Sum 2:Min 3:Max
+s DisplaySignal Setting r0
+lb r0 TYPE_DISH SignalStrength 3 # 0:Average 1:Sum 2:Min 3:Max
+s DisplayStrength Setting r0
+j start

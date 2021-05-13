@@ -37,6 +37,7 @@ sb TYPE_MIRROR Setting Hash
 lb r10 TYPE_MIRROR Setting 1 # Read is OK
 brne r10 0 -1
 add CurrentQty CurrentQty 50
+jal checkExit
 jal checkLight
 blt CurrentQty Qty loopOre # Call next Ore
 lb CurrentQty TYPE_FURNACE Reagents 1 # Load current reagent
@@ -54,6 +55,12 @@ s DisplayOre Color 10 # Pink
 j ra
 s DisplayOre Color 1 # Gray
 j ra
+
+checkExit:
+lb Stage TYPE_MEMORY Setting 1 # Read unique memory
+bne Stage 0 ra
+yield
+j start
 
 getValues:
 move Qty 1 # Default

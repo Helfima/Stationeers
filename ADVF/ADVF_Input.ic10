@@ -11,7 +11,7 @@ define TYPE_DIAL 554524804
 define Pmin 1
 define Pmid 600
 define Pmax 1000
-define Imax 50
+define Imax 20
 define ActionNone 0
 # Alias Register
 alias CurrDB r0
@@ -27,12 +27,12 @@ start:
 yield
 jal loadPressure
 l CurrDB db Setting
-s DisplayState Setting CurrDB
+abs Icurr CurrDB
+min Icurr Icurr Imax
+s DisplayState Setting Icurr
 # Purge if state change
 mul Temp CurrDB LastDB
 ble Temp 0 purge
-abs Icurr CurrDB
-min Icurr Icurr Imax
 # Control Pump
 breq CurrDB ActionNone 5
 sb TYPE_FURNACE SettingInput Icurr

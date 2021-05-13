@@ -9,11 +9,11 @@ alias Stage r0 # Current Stage
 alias Choose r1 # Dial setting
 alias PFuel r2 # Pressure Fuel
 alias PPurge r3 # Pressure Purge
-#Constant
+# Constant
 define TYPE_FURNACE 545937711
 define TYPE_DIAL 554524804
 define TYPE_MEMORY -851746783
-#Settings
+# Settings
 s DisplayFuel Color 11
 s DisplayPurge Color 11
 start:
@@ -30,12 +30,9 @@ j start
 otherFire:
 move r4 PFuel
 move r5 PPurge
-jal purge
-sleep 1
-#sub Stage Stage 10
-sb TYPE_MEMORY Setting 5
-j start
+j purge
 normalFire:
+breq Choose 14 8 # Special Inconel
 breq Choose 15 7 # Special Waspaloy
 breq Choose 16 6 # Special Hastelloy
 lb r6 TYPE_FURNACE Temperature 1
@@ -45,22 +42,28 @@ move r5 5
 jr 3
 move r4 PFuel
 move r5 PPurge
-jal purge
-nextStage:
-add Stage Stage 1
-sb TYPE_MEMORY Setting Stage
-j start
 purge:
+jal checkExit
 s DisplayPurge Setting r5
 s DisplayPurge Color 4
 lb r8 TYPE_FURNACE Pressure 1 # Current Pressure
 sb TYPE_FURNACE SettingOutput 100 # Purge On
 s Manual1 Setting 2 # Manual1
+lb r7 TYPE_FURNACE Temperature 1
+brgt r7 500 4 # Target Temperature
+s GasInput Setting 0 # N2 Gas
+s Manual2 Setting 0 # Manual2
+jr 3
+s GasInput Setting -50 # N2 Gas
+s Manual2 Setting 2 # Manual2
 bgt r8 r5 purge
 sb TYPE_FURNACE SettingOutput 0 # Purge Off
 s Manual1 Setting 0 # Manual1
+s GasInput Setting 0 # N2 Gas
+s Manual2 Setting 0 # Manual2
 s DisplayPurge Color 11
 fuel:
+jal checkExit
 s DisplayFuel Setting r4
 s DisplayFuel Color 4
 lb r8 TYPE_FURNACE Pressure 1 # Current Pressure
@@ -73,7 +76,25 @@ s GasInput Setting 0 # Stop Gas
 s Manual2 Setting 0 # Manual2
 s DisplayFuel Color 11
 sb TYPE_FURNACE Activate 1 # Furnace Fire
-j ra
+bgt Stage 10 returnStage
+nextStage:
+add Stage Stage 1
+sb TYPE_MEMORY Setting Stage
+j start
+returnStage:
+sleep 1
+sb TYPE_MEMORY Setting 5
+j start
+
+checkExit:
+lb Stage TYPE_MEMORY Setting 1 # Read unique memory
+bne Stage 0 ra
+s Manual2 Setting 0 # Manual2
+s Manual1 Setting 0 # Manual1
+s db Setting -1
+yield
+j start
+
 getValues:
 move PFuel 100 # Default
 move PPurge 5 # Default
@@ -83,9 +104,9 @@ move PFuel 1000
 brne Choose 12 2 # Invar Ingot
 move PFuel 1000
 brne Choose 13 2 # Astroloy Ingot
-move PFuel 1200
+move PFuel 1000
 brne Choose 14 2 # Inconel Ingot
-move PFuel 900
+move PFuel 950
 brne Choose 15 2 # Waspaloy Ingot
 move PFuel 1600
 brne Choose 16 2 # Hastelloy Ingot

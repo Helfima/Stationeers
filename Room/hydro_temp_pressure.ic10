@@ -1,0 +1,36 @@
+# Temparature Control
+alias Sensor d0
+# Constant
+define TMIN 25
+define TMID 30
+define TMAX 35
+define TYPE_HEATER 24258244
+define TYPE_COOLER -739292323
+move r1 0
+move r2 0
+start:
+yield
+l r0 Sensor Temperature
+add r10 TMIN 273
+add r11 TMID 273
+add r12 TMAX 273
+s db Setting r0
+jal ControlHeater
+jal ControlCooler
+j start
+
+ControlHeater:
+brgt r0 r10 2 #TMIN
+move r1 1
+brlt r0 r11 2 #TMID
+move r1 0
+sb TYPE_HEATER On r1 #Heater
+j ra
+
+ControlCooler:
+brlt r0 r12 2 #TMAX
+move r2 1
+brgt r0 r11 2 #TMID
+move r2 0
+sb TYPE_COOLER On r2 #Cooler
+j ra

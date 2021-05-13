@@ -1,0 +1,123 @@
+# Dish Controller
+alias ButtonAuto d0
+alias ButtonReset d1
+alias DisplayH d2
+alias DisplayV d3
+alias DisplaySignal d4
+alias DisplaySkip d5
+# Constant
+define TYPE_DISH 439026183
+define TYPE_FLASH -1535893860
+define Vmin 20
+define Vmax 90
+# Alias Register
+alias H r0 # Horizontal
+alias DeltaH r1 # Horizontal
+alias V r2 # Vertical
+alias DeltaV r3 # Vertical
+alias Signal r4
+alias Strength r5
+alias Temp r10
+alias IsAuto r11
+alias IsReset r12
+alias IsSkip r13
+alias Skip r14
+# Settings
+move H 0
+move V Vmin
+move DeltaH 5
+move Strength 0
+move Skip 0
+sub DeltaV Vmax Vmin
+div DeltaV DeltaV 20
+start:
+sb TYPE_FLASH On 0
+yield
+jal updateDisplay
+l IsAuto ButtonAuto Setting
+l IsReset ButtonReset Setting
+beq IsReset 1 reset
+beq IsAuto 1 auto
+j start
+reset:
+move Skip 0
+j start
+auto:
+sb TYPE_FLASH On 1
+move Strength 0
+lb Signal TYPE_DISH SignalID 3 # 0:Average 1:Sum 2:Min 3:Max
+lb Strength TYPE_DISH SignalStrength 3 # 0:Average 1:Sum 2:Min 3:Max
+loop:
+jal checkVertical
+jal moveDishV
+sb TYPE_DISH Horizontal H
+yield
+loopH:
+lb Strength TYPE_DISH SignalStrength 3 # 0:Average 1:Sum 2:Min 3:Max
+lb Signal TYPE_DISH SignalID 3 # 0:Average 1:Sum 2:Min 3:Max
+jal checkSkip
+breq IsSkip 1 2
+bge Strength 0.95 loopEnd
+lb Temp TYPE_DISH Horizontal 0 # 0:Average 1:Sum 2:Min 3:Max
+jal updateDisplay
+brgt Temp 1 2
+jr 2
+blt Temp 359 loopH
+add V V DeltaV
+breq H 0 3
+move H 0
+jr 2
+move H 360
+yield
+j loop
+loopEnd:
+jal addSkip
+lb Temp TYPE_DISH Horizontal 0 # 0:Average 1:Sum 2:Min 3:Max
+yield
+sb TYPE_DISH Horizontal Temp
+j start
+checkSkip:
+beq Skip 0 ra
+move IsSkip 0
+move sp Skip
+ble sp 0 ra # End stack
+pop Temp
+brne Temp Signal -2
+move IsSkip 1
+j ra
+addSkip:
+move sp Skip
+push Signal
+add Skip Skip 1
+j ra
+checkHorizontal:
+brge H 1 3
+move H 0
+jr 3
+ble H 359 ra
+move H 360
+mul DeltaH DeltaH -1
+j ra
+checkVertical:
+brle V Vmin 3
+brge V Vmax 2
+j ra
+mul DeltaV DeltaV -1
+j ra
+moveDishV:
+brgt V Vmin 2
+move V Vmin
+brlt V Vmax 2
+move V Vmax
+sb TYPE_DISH Vertical V
+lb Temp TYPE_DISH Vertical 0 # 0:Average 1:Sum 2:Min 3:Max
+sub Temp Temp V
+abs Temp Temp
+bgt Temp 1 moveDishV
+j ra
+updateDisplay:
+s DisplayH Setting H
+s DisplayV Setting V
+s DisplaySignal Setting Signal
+s DisplaySkip Setting Skip
+j ra

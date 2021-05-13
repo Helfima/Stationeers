@@ -1,0 +1,61 @@
+# Air Room Controller
+alias Sensor d0
+alias PumpO2 d1
+alias PumpCO2 d2
+alias PumpN2 d3
+alias PumpWaste d4
+# Alias Register
+alias Pcurr r0 # Current Pressure
+alias O2 r1
+alias CO2 r2
+alias N2 r3
+# Constant
+define PMAX 20
+define PERCENT_N2 0.80
+define PERCENT_O2 0.10
+define PERCENT_CO2 0.10
+# Settings
+s PumpO2 Setting 10
+s PumpCO2 Setting 10
+s PumpN2 Setting 10
+s PumpWaste Setting 100
+start:
+yield
+l Pcurr Sensor Pressure
+l O2 Sensor RatioOxygen
+l CO2 Sensor RatioCarbonDioxide
+l N2 Sensor RatioNitrogen
+s db Setting Pcurr
+jal checkWaste
+jal checkO2
+jal checkCO2
+jal checkN2
+j start
+
+checkO2:
+brgt O2 PERCENT_O2 3
+s PumpO2 On 1
+j ra
+s PumpO2 On 0
+j ra
+
+checkCO2:
+brgt CO2 PERCENT_CO2 3
+s PumpCO2 On 1
+j ra
+s PumpCO2 On 0
+j ra
+
+checkN2:
+brgt N2 PERCENT_N2 3
+s PumpN2 On 1
+j ra
+s PumpN2 On 0
+j ra
+
+checkWaste:
+brlt Pcurr PMAX 3
+s PumpWaste On 1
+j ra
+s PumpWaste On 0
+j ra

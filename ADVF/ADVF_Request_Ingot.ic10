@@ -2,9 +2,11 @@
 alias Button d0
 # Alias Register
 alias Choose r0 # Dial setting
+alias LastChoose r5 # Dial setting
 alias Hash r1 # Ingot Hash
 alias LastHash r2 # Ingot Hash
 alias Action r3 # Action Button
+alias Time r4
 # Constant
 define TYPE_DIAL 554524804
 define TYPE_MIRROR 2096189278
@@ -23,6 +25,12 @@ sb TYPE_DISPLAY Setting r10
 bne Hash LastHash request
 beq Action 0 start # Do Nothing
 request:
+breq Choose LastChoose 3
+move Time 2
+move LastChoose Choose
+breq Time 0 3
+sub Time Time 1
+j start
 sb TYPE_MIRROR Setting Hash
 wait:
 lb r10 TYPE_MIRROR Setting 1 # Read is OK
