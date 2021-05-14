@@ -1,0 +1,87 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<GameData xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+
+<TraderContactModLoadData>
+  <TraderContactData>
+    <ContactName>Cereal Trader</ContactName>
+    <CustomTraderInventory>
+        <PrefabName>ItemWheat</PrefabName>
+    </CustomTraderInventory>
+	<MinStartingLifetime>0</MinStartingLifetime>
+	<MaxStartingLifetime>200</MaxStartingLifetime>
+	<WeightValue>4</WeightValue>
+  </TraderContactData>
+  <TraderContactData>
+    <ContactName>Cereal Trader</ContactName>
+    <CustomTraderInventory>
+        <PrefabName>ItemCorn</PrefabName>
+    </CustomTraderInventory>
+	<MinStartingLifetime>0</MinStartingLifetime>
+	<MaxStartingLifetime>200</MaxStartingLifetime>
+	<WeightValue>4</WeightValue>
+  </TraderContactData>
+  <TraderContactData>
+    <ContactName>Cereal Trader</ContactName>
+    <CustomTraderInventory>
+        <PrefabName>ItemSoybean</PrefabName>
+    </CustomTraderInventory>
+	<MinStartingLifetime>0</MinStartingLifetime>
+	<MaxStartingLifetime>200</MaxStartingLifetime>
+	<WeightValue>4</WeightValue>
+  </TraderContactData>
+  <TraderContactData>
+    <ContactName>Cereal Trader</ContactName>
+    <CustomTraderInventory>
+        <PrefabName>ItemRice</PrefabName>
+    </CustomTraderInventory>
+	<MinStartingLifetime>0</MinStartingLifetime>
+	<MaxStartingLifetime>200</MaxStartingLifetime>
+	<WeightValue>4</WeightValue>
+  </TraderContactData>
+  <TraderContactData>
+    <ContactName>Mushroom Corp</ContactName>
+    <CustomTraderInventory>
+        <PrefabName>ItemMushroom</PrefabName>
+    </CustomTraderInventory>
+	<MinStartingLifetime>200</MinStartingLifetime>
+	<MaxStartingLifetime>400</MaxStartingLifetime>
+	<WeightValue>2</WeightValue>
+  </TraderContactData>
+  <TraderContactData>
+    <ContactName>Mushroom Corp</ContactName>
+    <CustomTraderInventory>
+        <PrefabName>ItemFern</PrefabName>
+    </CustomTraderInventory>
+	<MinStartingLifetime>200</MinStartingLifetime>
+	<MaxStartingLifetime>400</MaxStartingLifetime>
+	<WeightValue>2</WeightValue>
+  </TraderContactData>
+  <TraderContactData>
+    <ContactName>Vegetal Cooperative</ContactName>
+    <CustomTraderInventory>
+        <PrefabName>ItemPotato</PrefabName>
+    </CustomTraderInventory>
+	<MinStartingLifetime>400</MinStartingLifetime>
+	<MaxStartingLifetime>600</MaxStartingLifetime>
+	<WeightValue>3</WeightValue>
+  </TraderContactData>
+  <TraderContactData>
+    <ContactName>Vegetal Cooperative</ContactName>
+    <CustomTraderInventory>
+        <PrefabName>ItemTomato</PrefabName>
+    </CustomTraderInventory>
+	<MinStartingLifetime>400</MinStartingLifetime>
+	<MaxStartingLifetime>600</MaxStartingLifetime>
+	<WeightValue>3</WeightValue>
+  </TraderContactData>
+  <TraderContactData>
+    <ContactName>Vegetal Cooperative</ContactName>
+    <CustomTraderInventory>
+        <PrefabName>ItemPumpkin</PrefabName>
+    </CustomTraderInventory>
+	<MinStartingLifetime>400</MinStartingLifetime>
+	<MaxStartingLifetime>600</MaxStartingLifetime>
+	<WeightValue>3</WeightValue>
+  </TraderContactData>
+</TraderContactModLoadData>
+</GameData>

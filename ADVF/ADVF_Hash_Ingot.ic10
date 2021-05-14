@@ -38,7 +38,6 @@ push -787796599 # Inconel Ingot
 push 156348098 # Waspaloy Ingot
 push 1579842814 # Hastelloy Ingot
 push -1897868623 # Stellite Ingot
-move sp Choose
-add sp sp 1
+add sp Choose 1
 pop Hash
 j ra

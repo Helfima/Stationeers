@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ModMetadata xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <Name>OreX4</Name>
+  <Author>Helfima</Author>
+  <Version>0.1.0</Version>
+  <Description>This mod serves to demonstrate the correct format of a custom mod folder for Stationeers.</Description>
+</ModMetadata>

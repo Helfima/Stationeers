@@ -4,7 +4,7 @@ alias Temp r10
 alias IsSkip r13
 alias Skip r14 #Stack index
 
-move Skip -1
+move Skip 0
 move IsSkip 0
 
 start:

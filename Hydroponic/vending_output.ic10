@@ -1,0 +1,98 @@
+# Hydroponic Vending Controller
+alias Vending d0
+alias SorterExit d1
+alias SorterHarvie d2
+alias ReaderOccupied d3
+alias ReaderMature d4
+# Constant
+define TYPE_LEVER 1220484876
+define TYPE_HARVIE 958056199
+define Limit 8 # 8 plants
+# Alias Register
+alias Count r0
+alias Slot r1
+alias Bypass r2
+alias IsOccupied r3
+alias IsMature r4
+alias IsRequest r5
+alias Temp r10
+#settings
+move IsRequest 0
+move Slot 2
+s SorterExit Mode 2
+s SorterHarvie Mode 2
+s SorterHarvie ClearMemory 1
+sb TYPE_HARVIE ClearMemory 1
+start:
+s db Setting 0
+yield
+l Count SorterHarvie ExportCount
+l IsOccupied ReaderOccupied Setting
+l IsMature ReaderMature Setting
+lb Bypass TYPE_LEVER Setting 3
+jal outputExit
+jal outputharvie
+jal plantHarvie
+jal harvestHarvie
+jal checkVending
+j start
+
+outputExit:
+l Temp SorterExit Output
+bne Temp -1 ra
+ls Temp SorterExit 0 Occupied
+beq Temp 0 ra # Empty
+breq Bypass 1 3
+s SorterExit Output 0
+j ra
+s SorterExit Output 1
+j ra
+
+outputharvie:
+s db Setting -10
+yield
+l Temp SorterHarvie Output
+bne Temp -1 ra
+ls Temp SorterHarvie 0 Occupied
+beq Temp 0 ra # Empty
+breq IsOccupied 1 5
+brge Count Limit 3
+s SorterHarvie Output 0 # Way:Harvie
+yield
+j ra
+s SorterHarvie Output 1 # Way:Exit
+j ra
+
+plantHarvie:
+lb Temp TYPE_HARVIE ImportCount 1 # 0:Average 1:Sum 2:Min 3:Max
+beq Temp 0 ra # Empty
+min Count Count 8 # Count Cap
+blt Temp Count ra # Not Ready
+sb TYPE_HARVIE Plant 1
+sleep 1
+sb TYPE_HARVIE ClearMemory 1
+move IsRequest 0
+j ra
+
+harvestHarvie:
+beq IsMature 0 ra # Not Mature
+sleep 1
+sb TYPE_HARVIE Harvest 1
+s SorterHarvie ClearMemory 1
+j ra
+
+checkVending:
+beq IsOccupied 1 ra
+beq IsRequest 1 ra
+brlt Slot 102 2
+move Slot 2 # Reset Slot
+ls Temp Vending Slot Damage
+bgt Temp 0.9 exit
+add Slot Slot 1
+j ra
+exit:
+ls Temp Vending Slot PrefabHash
+s Vending RequestHash Temp
+move IsRequest 1
+move Slot 2 # Reset Slot
+j ra

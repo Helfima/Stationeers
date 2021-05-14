@@ -87,7 +87,6 @@ push -1348105509 # Gold Ore => Inconel Ingot
 push -190236170 # Lead Ore => Waspaloy Ingot
 push -916518678 # Silver Ore => Hastelloy Ingot
 push 1103972403 # Silicon Ore => Stellite Ingot
-move sp Choose
-add sp sp 1
+add sp Choose 1
 pop Hash
 j ra

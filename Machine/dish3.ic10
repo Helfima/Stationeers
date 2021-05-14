@@ -1,14 +1,14 @@
 # Dish Controller
 alias ButtonAuto d0
-alias ButtonReset d1
-alias DisplayH d2
-alias DisplayV d3
-alias DisplaySignal d4
+alias ButtonContinue d1
+alias Computer d2
+alias DisplayH d3
+alias DisplayV d4
 alias DisplaySkip d5
 # Constant
 define TYPE_DISH 439026183
 define TYPE_FLASH -1535893860
-define Vmin 20
+define Vmin 10
 define Vmax 90
 # Alias Register
 alias H r0 # Horizontal
@@ -20,8 +20,9 @@ alias Strength r5
 alias Temp r10
 alias IsAuto r11
 alias IsReset r12
-alias IsSkip r13
-alias Skip r14
+alias IsContinue r13
+alias IsSkip r14
+alias Skip r15
 # Settings
 move H 0
 move V Vmin
@@ -35,18 +36,20 @@ sb TYPE_FLASH On 0
 yield
 jal updateDisplay
 l IsAuto ButtonAuto Setting
-l IsReset ButtonReset Setting
-beq IsReset 1 reset
+l IsContinue ButtonContinue Setting
+ls IsReset Computer 1 Occupied
+beqal IsReset 0 reset
 beq IsAuto 1 auto
+beq IsContinue 1 continue
 j start
 reset:
 move Skip 0
-j start
+j ra
+continue:
+sub Skip Skip 1
 auto:
 sb TYPE_FLASH On 1
 move Strength 0
-lb Signal TYPE_DISH SignalID 3 # 0:Average 1:Sum 2:Min 3:Max
-lb Strength TYPE_DISH SignalStrength 3 # 0:Average 1:Sum 2:Min 3:Max
 loop:
 jal checkVertical
 jal moveDishV
@@ -90,14 +93,6 @@ move sp Skip
 push Signal
 add Skip Skip 1
 j ra
-checkHorizontal:
-brge H 1 3
-move H 0
-jr 3
-ble H 359 ra
-move H 360
-mul DeltaH DeltaH -1
-j ra
 checkVertical:
 brle V Vmin 3
 brge V Vmax 2
@@ -118,6 +113,5 @@ j ra
 updateDisplay:
 s DisplayH Setting H
 s DisplayV Setting V
-s DisplaySignal Setting Signal
 s DisplaySkip Setting Skip
 j ra
