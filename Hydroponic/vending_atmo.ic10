@@ -1,0 +1,45 @@
+# Frigo Air Controller
+alias Sensor d0
+alias PumpN2 d1
+alias PumpWaste d2
+# Constant
+define TYPE_COOLER -739292323
+define TMIN -130
+define PMIN 50
+define PMAX 60
+# Alias Register
+alias Tcurr r0
+alias Pcurr r1
+alias Temp r10
+#settings
+start:
+s db Setting 0
+yield
+l Tcurr Sensor Temperature
+l Pcurr Sensor Pressure
+jal checkTemp
+jal checkN2
+jal checkWaste
+j start
+
+checkTemp:
+add Temp TMIN 273
+brlt Tcurr Temp 3
+sb TYPE_COOLER On 1
+j ra
+sb TYPE_COOLER On 0
+j ra
+
+checkN2:
+brgt Pcurr PMIN 3
+s PumpN2 On 1
+j ra
+s PumpN2 On 0
+j ra
+
+checkWaste:
+brlt Pcurr PMAX 3
+s PumpWaste On 1
+j ra
+s PumpWaste On 0
+j ra

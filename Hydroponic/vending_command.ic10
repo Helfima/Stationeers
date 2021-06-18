@@ -1,0 +1,101 @@
+# Hydroponic Vending Controller
+alias Vending d0
+alias SorterKitchen d1
+alias ButtonCommand d2
+alias ButtonPlant d3
+alias DisplayQuantity d4
+alias DisplayDamage d5
+# Constant
+define TYPE_DIAL 554524804
+define DAMAGE_L 0.5
+define DAMAGE_H 0.8
+# Alias Register
+alias Choose r0 # Dial setting
+alias Hash r1 # Ore Hash
+alias Count r2
+alias Slot r3
+alias IsRequest r5
+alias LastDamage r6
+alias Temp r10
+alias IsCommand r10
+alias IsPlant r12
+#settings
+s SorterKitchen Mode 2
+move IsRequest 0
+move Slot 2
+start:
+yield
+lb Choose TYPE_DIAL Setting 1 # Read unique dial
+l IsCommand ButtonCommand Setting
+l IsPlant ButtonPlant Setting
+jal getValues
+s db Setting Hash
+jal functionKitchen
+jal functionVending
+jal dispayDamage
+j start
+
+functionCommand:
+beq IsCommand 0 ra
+move IsRequest 1
+j ra
+
+functionKitchen:
+yield
+l Temp SorterKitchen Output
+bne Temp -1 ra
+ls Temp SorterKitchen 0 Occupied
+beq Temp 0 ra # Empty
+beq IsRequest 0 normalWay
+kitchenWay:
+s SorterKitchen Output 1 # Way:Kitchen
+j ra
+normalWay:
+s SorterKitchen Output 0 # Way:Normal
+j ra
+
+functionVending:
+brlt Slot 102 2
+move Slot 2 # Reset Slot
+loop:
+ls LastDamage Vending Slot Damage
+ls Temp Vending Slot PrefabHash
+beq Temp Hash exit
+add Slot Slot 1
+brlt Slot 102 2
+beq LastDamage 0 loop
+j ra
+exit:
+beq IsRequest 1 ra
+ls Temp Vending Slot PrefabHash
+s Vending RequestHash Temp
+move IsRequest 1
+move Slot 2 # Reset Slot
+j ra
+
+dispayDamage:
+beq LastDamage 0 ra
+s DisplayDamage Setting LastDamage
+brgt LastDamage DAMAGE_H 6
+brgt LastDamage DAMAGE_L 3
+s DisplayDamage Color 2 #Green
+j ra
+s DisplayDamage Color 5 #Yellow
+j ra
+s DisplayDamage Color 4 #Red
+j ra
+
+getValues:
+move sp 0
+push 258339687 # Corn
+push 1929046963 # Patato
+push 658916791 # Riz
+push -998592080 # Tomato
+push -1057658015 # Wheat
+push 892110467 # Fern
+push 2044798572 # Mushroom
+push 1277828144 # Pumkin
+push 1924673028 # Soybean
+add sp Choose 1
+pop Hash
+j ra
