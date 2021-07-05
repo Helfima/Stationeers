@@ -36,7 +36,7 @@ wait:
 lb r10 TYPE_MIRROR Setting 1 # Read is OK
 jal changeColor
 yield
-beq r10 Hash wait
+beq r10 Hash wait # Wait response
 move LastHash Hash
 j start
 

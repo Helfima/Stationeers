@@ -1,0 +1,47 @@
+# Hydroponic Harvie Controller
+alias Tray1 d0
+alias Display1 d1
+alias Tray2 d3
+alias Display2 d4
+# Alias Register
+alias Temp r10
+alias Index r11
+#settings
+move Index 0
+start:
+sleep 2
+move r0 0
+move r1 1
+beqal Index 0 functionSeeding
+beqal Index 1 functionGrowth
+beqal Index 2 functionMature
+move r0 3
+move r1 4
+beqal Index 0 functionSeeding
+beqal Index 1 functionGrowth
+beqal Index 2 functionMature
+blt Index 2 next
+move Index 0
+j start
+next:
+add Index Index 1
+j start
+
+functionSeeding:
+ls Temp dr0 0 Seeding
+s dr1 Color 2 # Green
+s dr1 Setting Temp
+j ra
+
+functionGrowth:
+ls Temp dr0 0 Growth
+s dr1 Color 3 # Orange
+s dr1 Setting Temp
+j ra
+
+functionMature:
+ls Temp dr0 0 Mature
+s dr1 Color 4 # Red
+s dr1 Setting Temp
+j ra
+

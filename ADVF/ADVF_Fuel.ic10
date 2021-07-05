@@ -1,0 +1,36 @@
+# Fuel Control
+alias AnalyserFuel d0
+alias AnalyserO2 d1
+alias AnalyserH2 d2
+alias Mixer d3
+#Constant
+define PMAX 3000
+define PMIN 2000
+# Alias Register
+alias MixerOn r0
+alias Percent r1
+alias P r2
+alias R r3
+alias To r4
+alias Ro r5
+alias Th r6
+alias Rh r7
+move MixerOn 1
+start:
+yield
+l P AnalyserFuel Pressure
+l To AnalyserO2 Temperature
+l Th AnalyserH2 Temperature
+mul Ro To 1
+mul Rh Th 2
+add R Ro Rh
+div Percent Rh R
+mul Percent Percent 100
+s Mixer Setting Percent
+s db Setting P
+brgt P PMIN 2
+move MixerOn 1
+brlt P PMAX 2
+move MixerOn 0
+s Mixer On MixerOn
+j start

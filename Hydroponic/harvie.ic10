@@ -1,0 +1,87 @@
+# Hydroponic Harvie Controller
+alias Harvie1 d0
+alias Sorter1 d1
+alias Tray1 d2
+alias Harvie2 d3
+alias Sorter2 d4
+alias Tray2 d5
+# Alias Register
+#alias State1 r0
+alias IsMature r1
+alias IsSeeding r2
+#alias State2 r3
+alias IsOccupied r4
+alias Temp r10
+alias Index r11
+#alias Device r12
+#settings
+ls r0 Tray1 0 Occupied
+mul r0 r0 2
+ls r3 Tray2 0 Occupied
+mul r3 r3 2
+start:
+s db Setting rr11
+yield
+move Index 0
+next:
+jal functionSorter
+jal functionPlant
+jal functionSeeding
+jal functionHarvest
+jal functionFinish
+breq Index 0 2
+j start
+move Index 3
+j next
+
+functionSorter:
+yield
+add r12 r11 1 # Device Sorter
+s dr12 Mode 2
+l Temp dr12 Output # Output Sorter
+bne Temp -1 ra # Do Nothing
+ls IsOccupied dr12 0 Occupied # Import Sorter
+beq IsOccupied 0 ra # Empty
+bgt rr11 0 normalWay # State = Already Plant
+harvieWay:
+move rr11 1 # State
+s dr12 Output 1 # Sorter Way:Harvie
+j ra
+normalWay:
+s dr12 Output 0 # Sorter Way:Normal
+j ra
+
+functionPlant:
+add r12 r11 2 # Device Tray
+ls IsOccupied dr12 0 Occupied # Tray Occupied
+beq IsOccupied 1 ra # Already Plant
+ls IsOccupied dr11 0 Occupied # Harvie Import
+beq IsOccupied 0 ra # Empty
+s dr11 Plant 1 # Harvie Plant
+move rr11 2 # State
+j ra
+
+functionSeeding:
+add r12 r11 2 # Device Tray
+ls IsSeeding dr12 0 Seeding # Tray Seeding
+ble IsSeeding 0 ra # Not Seeding
+s dr11 Harvest 1 # Harvie Harvest
+sleep 1
+j ra
+
+functionHarvest:
+add r12 r11 2 # Device Tray
+ls IsMature dr12 0 Mature # Tray Mature
+ble IsMature 0 ra # Not Mature
+s dr11 Harvest 1 # Harvie Harvest
+j ra
+
+functionFinish:
+bne rr11 2 ra # Not Planted
+ls IsOccupied dr11 2 Occupied # Harvie Occupied
+beq IsOccupied 1 ra # Planting
+add r12 r11 2 # Device Tray
+ls IsOccupied dr12 0 Occupied # Tray Occupied
+beq IsOccupied 1 ra # Not Finish
+move rr11 0
+j ra
