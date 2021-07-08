@@ -1,4 +1,4 @@
-# Adv Furnace Input Controller
+# Adv Furnace Gaz Input Controller
 alias FuelPump d0
 alias N2Pump d1
 alias PurgePump d2
@@ -7,7 +7,6 @@ alias DisplayP d4
 alias DisplayState d5
 #Constant
 define TYPE_FURNACE 545937711
-define TYPE_DIAL 554524804
 define Pmin 1
 define Pmid 600
 define Pmax 1000

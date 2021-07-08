@@ -1,0 +1,15 @@
+# Tutorial: fonction
+# Alias Register
+alias Index r0
+start:
+move Index 0
+loop:
+yield
+jal maFunction
+bgt Index 10 start # Inialise
+j loop
+
+maFunction:
+add Index Index 1 # Incremente Index
+s db Setting Index # Affecte l'IC
+j ra

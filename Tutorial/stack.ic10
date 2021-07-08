@@ -1,0 +1,37 @@
+# Tutorial: stack
+# Alias Register
+alias Hash r0
+alias Choose r1 # Dial setting
+# Constant
+define TYPE_MEMORY -851746783
+define TYPE_DIAL 554524804
+start:
+yield
+move Choose 5
+jal getValues
+s db Setting Hash
+j start
+
+getValues:
+move sp 0
+push 2134647745 # Lead Ingot
+push 252561409 # Charcoal
+push -404336834 # Copper Ingot
+push -929742000 # Silver Ingot
+push 226410516 # Gold Ingot
+push -1301215609 # Iron Ingot
+push -1406385572 # Nickel Ingot
+push -290196476 # Silicon Ingot
+push -654790771 # Steel Ingot
+push 502280180 # Electrum Ingot
+push -82508479 # Solder Ingot
+push 1058547521 # Constantan Ingot
+push -297990285 # Invar Ingot
+push 412924554 # Astroloy Ingot
+push -787796599 # Inconel Ingot
+push 156348098 # Waspaloy Ingot
+push 1579842814 # Hastelloy Ingot
+push -1897868623 # Stellite Ingot
+add sp Choose 1
+pop Hash
+j ra

@@ -1,0 +1,12 @@
+# Tutorial: batch
+# Alias Register
+alias Stage r0 # Current Stage
+alias Choose r1 # Dial setting
+# Constant
+define TYPE_MEMORY -851746783
+define TYPE_DIAL 554524804
+start:
+yield
+lb Stage TYPE_MEMORY Setting 1 # Read unique memory
+lb Choose TYPE_DIAL Setting 1 # Read unique dial
+j start

@@ -21,10 +21,10 @@ yield
 l P AnalyserFuel Pressure
 l To AnalyserO2 Temperature
 l Th AnalyserH2 Temperature
-mul Ro To 1
-mul Rh Th 2
+mul Ro To 1 # 1/3 Oxygen
+mul Rh Th 2 # 2/3 Hydrogen
 add R Ro Rh
-div Percent Rh R
+div Percent Rh R # Rh si hydrogen en input1 sinon Ro
 mul Percent Percent 100
 s Mixer Setting Percent
 s db Setting P
