@@ -1,0 +1,48 @@
+# Adv Furnace Percent Controller
+alias Tank d0
+alias DisplayX d1
+alias DisplayCO2 d2
+alias DisplayO2 d3
+alias DisplayH2 d4
+alias DisplayN2 d5
+# Constant
+define TYPE_FURNACE 545937711
+# Alias Register
+alias MODE r0
+alias QtyMole r0
+alias Qty r0
+# Settings
+s DisplayX On 1
+s DisplayCO2 On 1
+s DisplayO2 On 1
+s DisplayH2 On 1
+s DisplayN2 On 1
+move MODE 1
+start:
+sleep 1
+s DisplayX Mode MODE
+s DisplayCO2 Mode MODE
+s DisplayO2 Mode MODE
+s DisplayH2 Mode MODE
+s DisplayN2 Mode MODE
+l QtyMole Tank TotalMoles
+l Qty Tank RatioPollutant
+s DisplayX Setting Qty
+l Qty Tank RatioCarbonDioxide
+s DisplayCO2 Setting Qty
+l Qty Tank RatioOxygen
+s DisplayO2 Setting Qty
+l Qty Tank RatioVolatiles
+s DisplayH2 Setting Qty
+l Qty Tank RatioNitrogen
+s DisplayN2 Setting Qty
+breq MODE 0 3
+move MODE 0
+j start
+move MODE 1
+j start
+
+count:
+beq MODE 1 ra # Do Nothing
+mul Qty Qty QtyMole
+j ra

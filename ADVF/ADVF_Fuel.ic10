@@ -21,6 +21,8 @@ yield
 l P AnalyserFuel Pressure
 l To AnalyserO2 Temperature
 l Th AnalyserH2 Temperature
+beq To 0 mixerOff
+beq Th 0 mixerOff
 mul Ro To 1 # 1/3 Oxygen
 mul Rh Th 2 # 2/3 Hydrogen
 add R Ro Rh
@@ -33,4 +35,8 @@ move MixerOn 1
 brlt P PMAX 2
 move MixerOn 0
 s Mixer On MixerOn
+j start
+
+mixerOff:
+s Mixer On 0
 j start

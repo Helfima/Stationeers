@@ -1,0 +1,99 @@
+# Rocket Controller
+alias DisplayState d0
+alias DisplayFuel d1
+alias DisplayCollectable d2
+alias DisplayQuantity d3
+alias ModuleSilo d4
+alias ModuleTank d5
+# Constant
+define TYPE_AUTOMATION 1556756312
+define TYPE_MINER_ORE -2027419821
+define TYPE_MINER_GAS -1969723301
+define TYPE_MINER_ICE 74521920
+define TYPE_BUTTON 491845673
+define TYPE_PUMP -321403609
+define TYPE_PUMP_TURBO 1310794736
+define FUEL_MAX 8000
+define FUEL_MIN 600
+# Alias Register
+alias State r0
+alias ValFuel r1
+alias Qty r2
+alias Collectable r3
+alias Fire r4
+alias IsLowFuel r5
+alias IsWorking r6
+alias HasSilo r7
+alias HasTank r8
+alias Temp r10
+sb TYPE_AUTOMATION Activate 0 # Init
+start:
+yield
+sdse HasSilo ModuleSilo
+sdse HasTank ModuleTank
+lb Fire TYPE_BUTTON Setting 1
+lb State TYPE_AUTOMATION Mode 1
+lb ValFuel TYPE_AUTOMATION Fuel 1
+s db Setting State
+jal checkCargo
+s DisplayState Setting State
+s DisplayFuel Setting ValFuel
+s DisplayCollectable Setting Collectable
+s DisplayQuantity Setting Qty
+slt IsLowFuel ValFuel FUEL_MIN # Check come back
+slt IsWorking State 5 # Check Working
+and Temp IsWorking IsLowFuel
+beq Temp 1 back # Must Come Back
+jal loadFuel
+jal unload
+jal mining
+jal nextArea
+beq Fire 0 start
+bne State 0 back
+sb TYPE_AUTOMATION Activate 1 # Launching
+j start
+back:
+sb TYPE_AUTOMATION Activate 0 # Init
+yield
+sb TYPE_AUTOMATION Activate 5 # ReturningToLaunch
+j start
+
+checkCargo:
+brne HasTank 1 2
+l Qty ModuleTank Pressure
+bne HasSilo 1 ra
+l Qty ModuleSilo Quantity
+j ra
+
+loadFuel:
+bne State 0 ra # Do Nothing
+slt Temp ValFuel FUEL_MAX
+sb TYPE_PUMP On Temp
+j ra
+
+unload:
+bne State 0 ra # Do Nothing
+sgt Temp Qty 0
+brne HasSilo 1 2
+s ModuleSilo Open Temp # Open Silo
+bne HasTank 1 ra
+s ModuleTank Open Temp # Open Tank
+sb TYPE_PUMP_TURBO On Temp # Active Pump
+j ra
+
+mining:
+bne State 4 ra # Do Nothing
+lb Collectable TYPE_AUTOMATION CollectableGoods 1
+sb TYPE_MINER_ORE Activate Collectable # Mining
+sb TYPE_MINER_GAS Activate Collectable # Mining
+sb TYPE_MINER_ICE Activate Collectable # Mining
+j ra
+
+nextArea:
+bne State 4 ra # Do Nothing
+beq Collectable 1 ra # Do Nothing
+s db Setting 40
+sb TYPE_AUTOMATION Activate 0 # Traveling
+yield
+sb TYPE_AUTOMATION Activate 2 # Traveling
+j ra
