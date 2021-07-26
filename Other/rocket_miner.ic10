@@ -3,10 +3,10 @@ alias DisplayState d0
 alias DisplayFuel d1
 alias DisplayCollectable d2
 alias DisplayQuantity d3
-alias ModuleSilo d4
-alias ModuleTank d5
 # Constant
 define TYPE_AUTOMATION 1556756312
+define TYPE_SILO 906210602
+define TYPE_TANK -505333199
 define TYPE_MINER_ORE -2027419821
 define TYPE_MINER_GAS -1969723301
 define TYPE_MINER_ICE 74521920
@@ -15,35 +15,30 @@ define TYPE_PUMP -321403609
 define TYPE_PUMP_TURBO 1310794736
 define FUEL_MAX 8000
 define FUEL_MIN 600
+define P_MAX 20000
 # Alias Register
 alias State r0
 alias ValFuel r1
 alias Qty r2
 alias Collectable r3
 alias Fire r4
-alias IsLowFuel r5
-alias IsWorking r6
-alias HasSilo r7
-alias HasTank r8
-alias Temp r10
-sb TYPE_AUTOMATION Activate 0 # Init
+alias CheckQty r6
+alias CheckState r9
+alias CheckFuel r10
+alias Temp r11
 start:
 yield
-sdse HasSilo ModuleSilo
-sdse HasTank ModuleTank
 lb Fire TYPE_BUTTON Setting 1
 lb State TYPE_AUTOMATION Mode 1
 lb ValFuel TYPE_AUTOMATION Fuel 1
 s db Setting State
-jal checkCargo
+jal checkSilo
 s DisplayState Setting State
 s DisplayFuel Setting ValFuel
 s DisplayCollectable Setting Collectable
 s DisplayQuantity Setting Qty
-slt IsLowFuel ValFuel FUEL_MIN # Check come back
-slt IsWorking State 5 # Check Working
-and Temp IsWorking IsLowFuel
-beq Temp 1 back # Must Come Back
+
+jal checkFuel
 jal loadFuel
 jal unload
 jal mining
@@ -53,32 +48,34 @@ bne State 0 back
 sb TYPE_AUTOMATION Activate 1 # Launching
 j start
 back:
-sb TYPE_AUTOMATION Activate 0 # Init
+sb TYPE_AUTOMATION Activate 1 # Idle
 yield
 sb TYPE_AUTOMATION Activate 5 # ReturningToLaunch
 j start
 
-checkCargo:
-brne HasTank 1 2
-l Qty ModuleTank Pressure
-bne HasSilo 1 ra
-l Qty ModuleSilo Quantity
+checkSilo:
+lb Qty TYPE_SILO Quantity 1 # 0:Average 1:Sum 2:Min 3:Max
 j ra
 
 loadFuel:
-bne State 0 ra # Do Nothing
-slt Temp ValFuel FUEL_MAX
+seq CheckState State 0
+slt CheckFuel ValFuel FUEL_MAX
+and Temp CheckState CheckFuel
 sb TYPE_PUMP On Temp
 j ra
 
 unload:
-bne State 0 ra # Do Nothing
-sgt Temp Qty 0
-brne HasSilo 1 2
-s ModuleSilo Open Temp # Open Silo
-bne HasTank 1 ra
-s ModuleTank Open Temp # Open Tank
-sb TYPE_PUMP_TURBO On Temp # Active Pump
+seq CheckState State 0
+sne CheckQty Qty 0
+and Temp CheckState CheckQty
+sb TYPE_SILO Open Temp
+j ra
+
+checkFuel:
+slt CheckFuel ValFuel FUEL_MIN # Check come back
+seq CheckState State 4 # Check Working
+and Temp CheckState CheckFuel
+beq Temp 1 back # Must Come Back
 j ra
 
 mining:
@@ -93,7 +90,7 @@ nextArea:
 bne State 4 ra # Do Nothing
 beq Collectable 1 ra # Do Nothing
 s db Setting 40
-sb TYPE_AUTOMATION Activate 0 # Traveling
+sb TYPE_AUTOMATION Activate 1 # Idle
 yield
 sb TYPE_AUTOMATION Activate 2 # Traveling
 j ra

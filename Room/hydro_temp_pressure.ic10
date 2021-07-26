@@ -5,7 +5,9 @@ define TMIN 25
 define TMID 30
 define TMAX 35
 define TYPE_HEATER 24258244
-define TYPE_COOLER -739292323
+define TYPE_COOLER_GAS -739292323
+define TYPE_COOLER_WATER -1369060582
+define TYPE_VALVE_WATER -517628750
 move r1 0
 move r2 0
 start:
@@ -32,5 +34,7 @@ brlt r0 r12 2 #TMAX
 move r2 1
 brgt r0 r11 2 #TMID
 move r2 0
-sb TYPE_COOLER On r2 #Cooler
+sb TYPE_COOLER_GAS On r2 #Cooler
+sb TYPE_COOLER_WATER On r2 #Cooler
+sb TYPE_VALVE_WATER On r2 #Cooler
 j ra

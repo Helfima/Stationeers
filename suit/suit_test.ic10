@@ -1,0 +1,28 @@
+# Suit Controller On Vulcan
+alias Hardsuit d0
+alias DisplayRo d1
+alias DisplayActive d2
+# Alias Register
+alias Text r0 # External Temperature
+alias Tmax r1 # Max Temperature
+alias Ro r2 # Ratio Oxygen
+alias IsRoLow r3
+alias IsActive r4
+# Constant
+define TMAX 200
+define ROMIN 0.5
+define KELVIN 273
+# Settings
+
+start:
+yield
+add Tmax TMAX KELVIN
+l Text Hardsuit TemperatureExternal
+l Ro Hardsuit RatioOxygen
+slt IsActive Text Tmax
+slt IsRoLow Ro ROMIN
+or IsActive IsActive IsRoLow
+s Hardsuit Filtration IsActive
+s DisplayRo Setting Ro
+s DisplayActive Setting IsActive
+j start

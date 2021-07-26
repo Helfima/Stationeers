@@ -23,6 +23,7 @@ move H 0
 move DeltaH 5
 move Strength 0
 move Skip 0
+sb TYPE_DISH On 1
 start:
 sb TYPE_FLASH On 0
 yield

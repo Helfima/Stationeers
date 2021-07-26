@@ -8,7 +8,7 @@ alias DisplaySkip d5
 # Constant
 define TYPE_DISH 439026183
 define TYPE_FLASH -1535893860
-define Vmin 10
+define Vmin 20
 define Vmax 90
 # Alias Register
 alias H r0 # Horizontal
@@ -58,6 +58,7 @@ yield
 loopH:
 lb Strength TYPE_DISH SignalStrength 3 # 0:Average 1:Sum 2:Min 3:Max
 lb Signal TYPE_DISH SignalID 3 # 0:Average 1:Sum 2:Min 3:Max
+s db Setting Strength
 jal checkSkip
 breq IsSkip 1 2
 bge Strength 0.95 loopEnd
@@ -74,6 +75,7 @@ move H 360
 yield
 j loop
 loopEnd:
+s db Setting -20
 jal addSkip
 lb Temp TYPE_DISH Horizontal 0 # 0:Average 1:Sum 2:Min 3:Max
 yield
