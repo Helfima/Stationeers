@@ -1,0 +1,61 @@
+# Air Room Controller
+alias Sensor d0
+alias PumpCO2 d1
+alias PumpWaste d2
+alias MemoryCO2 d3
+# Alias Register
+alias Pcurr r0 # Current Pressure
+alias Tcurr r1 # Current Temperature
+alias Tmin r2
+alias Tmax r3
+alias CO2 r4
+alias IsPressure r5
+alias IsRatio r6
+alias Temp r10
+alias PMAX r11
+# Constant
+define KELVIN 273
+define PMIN 20
+define PERCENT_CO2 0.95
+define TMIN 15
+define TMAX 40
+define TYPE_DIAL 554524804
+# Settings
+s PumpCO2 Setting 10
+s PumpWaste Setting 100
+s db Setting 101
+start:
+yield
+add Tmin TMIN KELVIN
+add Tmax TMAX KELVIN
+lb PMAX TYPE_DIAL Setting 1
+l Pcurr Sensor Pressure
+l Tcurr Sensor Temperature
+l CO2 Sensor RatioCarbonDioxide
+s db Setting Pcurr
+jal checkWaste
+jal checkCO2
+jal writeCO2
+j start
+
+checkCO2:
+brlt Tcurr Tmin 2
+brlt Tcurr Tmax 3
+s PumpCO2 On 0
+j ra
+slt IsPressure Pcurr PMIN
+slt IsRatio CO2 PERCENT_CO2
+or Temp IsRatio IsPressure
+s PumpCO2 On Temp
+j ra
+
+checkWaste:
+sgt IsPressure Pcurr PMAX
+s PumpWaste On IsPressure
+j ra
+
+writeCO2:
+bdns MemoryCO2 ra
+mul Temp CO2 100
+s MemoryCO2 Setting Temp
+j ra

@@ -1,0 +1,16 @@
+# Light Controller
+alias Button d0
+alias Light d1
+# Alias Register
+alias IsOn r0
+# Constant
+define KELVIN 273
+# Settings
+move IsOn 0 # Initialise r0
+s Light On 0 # Eteind la lampe
+# Loop
+start:
+yield
+l IsOn Button Setting
+s Light On IsOn
+j start

@@ -1,0 +1,27 @@
+# Vulcan Tank 1 (cold atmo)
+alias Tank d0
+alias Pump d1
+# Alias Register
+alias Tmax r0
+alias Tcur r1
+alias Pcur r2
+alias IsNotFull r3
+alias IsTemp r4
+alias Temp r15
+# Constant
+define TYPE_SENSOR -1252983604
+define KELVIN 273
+define TMAX 130
+define PMAX 10000
+# Settings
+add Tmax TMAX KELVIN
+s Pump Setting 100
+start:
+yield
+lb Tcur TYPE_SENSOR Temperature 1
+l Pcur Tank Pressure
+slt IsNotFull Pcur PMAX
+slt IsTemp Tcur Tmax
+and Temp IsTemp IsNotFull
+s Pump On Temp
+j start

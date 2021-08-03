@@ -45,6 +45,7 @@ sb TYPE_FLASH On 1
 move Strength 0
 loop:
 sb TYPE_DISH Horizontal H
+s Computer On 0
 yield
 loopH:
 lb Strength TYPE_DISH SignalStrength 3 # 0:Average 1:Sum 2:Min 3:Max
@@ -64,6 +65,7 @@ move H 360
 yield
 j loop
 loopEnd:
+s Computer On 1
 jal addSkip
 lb Temp TYPE_DISH Horizontal 0 # 0:Average 1:Sum 2:Min 3:Max
 yield

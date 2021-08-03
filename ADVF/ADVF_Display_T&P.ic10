@@ -1,0 +1,128 @@
+# Adv Furnace Temperature Controller
+alias DisplayTmin d0
+alias DisplayTcur d1
+alias DisplayTmax d2
+alias DisplayPmin d3
+alias DisplayPcur d4
+alias DisplayPmax d5
+# Alias Register
+alias Choose r1 # Dial setting
+alias Tmin r2
+alias Tcur r3
+alias Tmax r4
+alias Pmin r5
+alias Pcur r6
+alias Pmax r7
+#Constant
+define TYPE_FURNACE 545937711
+define TYPE_DIAL 554524804
+#settings
+s DisplayTmin On 1
+s DisplayTmin Color 0
+s DisplayTcur On 1
+s DisplayTmax On 1
+s DisplayTmax Color 4
+s DisplayPmin On 1
+s DisplayPmin Color 0
+s DisplayPcur On 1
+s DisplayPmax On 1
+s DisplayPmax Color 4
+start:
+yield
+lb Choose TYPE_DIAL Setting 1 # Read unique dial
+lb Tcur TYPE_FURNACE Temperature 1
+lb Pcur TYPE_FURNACE Pressure 1
+s db Setting Choose
+jal setTemperatureValues
+jal setTemperatureColor
+jal setPressureValues
+jal setPressureColor
+s DisplayTmin Setting Tmin
+s DisplayTmax Setting Tmax
+s DisplayPmin Setting Pmin
+s DisplayPmax Setting Pmax
+j start
+setTemperatureColor:
+s DisplayTcur Setting Tcur
+sgt r10 Tcur Tmin
+sgt r11 Tcur Tmax
+add r10 r10 r11
+mul r10 r10 2
+s DisplayTcur Color r10 #0:Blue 2:Green 4:Red
+j ra
+setPressureColor:
+s DisplayPcur Setting Pcur
+sgt r10 Pcur Pmin
+sgt r11 Pcur Pmax
+add r10 r10 r11
+mul r10 r10 2
+s DisplayPcur Color r10 #0:Blue 2:Green 4:Red
+j ra
+setTemperatureValues:
+move Tmin 600 # Default
+move Tmax 99999 # Default
+brne Choose 0 2 # Lead Ingot
+move Tmin 400
+brne Choose 1 2 # Charcoal Ingot
+move Tmin 580
+brne Choose 5 2 # Iron Ingot
+move Tmin 800
+brne Choose 6 2 # Nickel Ingot
+move Tmin 800
+brne Choose 7 2 # Silicon Ingot
+move Tmin 900
+brne Choose 8 2 # Steel Ingot
+move Tmin 900
+brne Choose 10 3 # Solder Ingot
+move Tmin 350
+move Tmax 550
+brne Choose 11 3 # Constantan Ingot
+move Tmin 1000
+move Tmax 10000
+brne Choose 12 3 # Invar Ingot
+move Tmin 1200
+move Tmax 1500
+brne Choose 13 2 # Astroloy Ingot
+move Tmin 1000
+brne Choose 14 2 # Inconel Ingot
+move Tmin 600
+brne Choose 15 3 # Waspaloy Ingot
+move Tmin 400
+move Tmax 800
+brne Choose 16 3 # Hastelloy Ingot
+move Tmin 950
+move Tmax 1000
+brne Choose 17 2 # Stellite Ingot
+move Tmin 1800
+j ra
+setPressureValues:
+move Pmin 100 # Default
+move Pmax 99999 # Default
+blt Choose 8 ra # Bypass
+brne Choose 8 2 # Steel Ingot
+move Pmin 1000
+brne Choose 9 3 # Electrum Ingot
+move Pmin 800
+move Pmax 2400
+brne Choose 10 2 # Solder Ingot
+move Pmin 1000
+brne Choose 11 2 # Constantan Ingot
+move Pmin 20000
+brne Choose 12 3 # Invar Ingot
+move Pmin 18000
+move Pmax 20000
+brne Choose 13 3 # Astroloy Ingot
+move Pmin 30000
+move Pmax 40000
+brne Choose 14 3 # Inconel Ingot
+move Pmin 23500
+move Pmax 24000
+brne Choose 15 2 # Waspaloy Ingot
+move Pmin 50000
+brne Choose 16 3 # Hastelloy Ingot
+move Pmin 25000
+move Pmax 30000
+brne Choose 17 3 # Stellite Ingot
+move Pmin 10000
+move Pmax 20000
+j ra

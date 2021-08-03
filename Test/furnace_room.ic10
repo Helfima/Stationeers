@@ -1,0 +1,26 @@
+alias VentOut d0
+alias VentIn d1
+alias LeverOut d2
+alias LeverIn d3
+alias DialInput d4
+alias DialOutput d5
+
+alias IsOut r0
+alias IsIn r1
+alias Out r2
+alias In r3
+
+s VentOut Mode 1
+s VentIn Mode 0
+define TYPE_FURNACE 545937711
+start:
+yield
+l IsOut LeverOut Setting
+l IsIn LeverIn Setting
+l In DialInput Setting
+l Out DialOutput Setting
+s VentOut On IsOut
+s VentIn On IsIn
+sb TYPE_FURNACE SettingInput In
+sb TYPE_FURNACE SettingOutput Out
+j start
