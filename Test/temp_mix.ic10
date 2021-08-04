@@ -1,0 +1,31 @@
+alias anal1 d0
+alias anal2 d1
+alias mixer d2
+ 
+alias T1 r0
+alias T2 r1
+alias ratio r2
+alias tmp1 r3
+alias tmp2 r4
+alias tmp3 r5
+ 
+define TARGET 2500
+ 
+start:
+l T1 anal1 Temperature
+l T2 anal2 Temperature
+and tmp1 T1 T2
+breqz tmp1 13
+sub tmp1 TARGET T2
+mul tmp1 tmp1 T1
+sub tmp2 T1 TARGET
+mul tmp2 tmp2 T2
+add tmp3 tmp1 tmp2
+div ratio tmp1 tmp3
+mul ratio 100 ratio
+s mixer Setting ratio
+s mixer On 1
+jr 2
+s mixer On 0
+yield
+j start

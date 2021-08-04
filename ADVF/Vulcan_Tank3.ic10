@@ -1,12 +1,10 @@
-# Vulcan Tank 1 (cold atmo)
+# Vulcan Tank 3 (hot atmo)
 alias Tank d0
-alias Vent d1
 alias Mixer d2
 alias AnalyserHot d3
 alias AnalyserOut d4
 # Alias Register
-alias Tmax r0
-alias Tcur r1
+alias Tmin r0
 alias Pcur r2
 alias IsNotFull r3
 alias IsTemp r4
@@ -24,23 +22,20 @@ alias Temp r15
 # Constant
 define TYPE_SENSOR -1252983604
 define KELVIN 273
-define TMAX 130 # T Extern °c
-define TTARGET 450 # T Target °K
+define TTARGET 2000 # T Target °K
 define PMAX1 20000
 define PMAX2 10000
 define PMIN 1000
 # Settings
-add Tmax TMAX KELVIN
+
 start:
 yield
-lb Tcur TYPE_SENSOR Temperature 1
 l Pcur Tank Pressure
 l T1 Tank Temperature
 l P1 Tank Pressure
 l T2 AnalyserHot Temperature
 l P2 AnalyserHot Pressure
 l Pout AnalyserOut Pressure
-jal checkTank
 jal checkMix
 j start
 
@@ -62,11 +57,4 @@ s Mixer Setting Percent
 s db Setting Percent
 j ra
 
-checkTank:
-slt IsNotFull Pcur PMAX1
-slt IsTemp Tcur Tmax
-and Temp IsTemp IsNotFull
-slt IsTemp Tcur TTARGET
-and Temp IsTemp Temp
-s Vent On Temp
-j ra
+
