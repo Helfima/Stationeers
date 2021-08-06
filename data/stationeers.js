@@ -181,7 +181,7 @@ node
   .style("stroke", function(d) { return d3.rgb(d.color).darker(2); })
 // Add hover text
 .append("title")
-  .text(function(d) { return d.name + "\n" + "There is " + d.value + " stuff in this node"; });
+  .text(function(d) { return d.name + "\n" + "Use " + d.value + " Time"; });
 
 // add in the title for the nodes
 node

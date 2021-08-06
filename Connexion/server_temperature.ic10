@@ -1,27 +1,27 @@
+alias Display d0
 # Alias Register
-alias Choose r0
 alias Tmin r1
 alias Tmax r2
 alias Request r3
 #Contant
-define TYPE_DIAL 554524804
-s db Setting 0
+s db Setting -1
 start:
 yield
-lb Choose TYPE_DIAL Setting 1
-jal getPressure
 l Request db Setting
-beq Request 0 start
-bne Request 1 2
+s Display Setting Request
+s Display Color 2
+beq Request -2 close
+beq Request -1 start
+s Display Color 4
+jal getPressure
 s db Setting Tmin
-yield
-bne Request 2 2
-s db Setting Tmax
-yield
+j start
+close:
+s db Setting -1
 j start
 
 getPressure:
-mul r10 Choose 3
+mul r10 Request 3
 add r10 r10 1
 jr r10
 move Tmin 600 # Copper Ingot

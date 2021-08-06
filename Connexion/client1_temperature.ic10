@@ -7,22 +7,25 @@ alias Request r3
 #Contant
 define TYPE_DIAL 554524804
 start:
-s db Setting -1
+s Display Color 2
 yield
-lb Choose TYPE_DIAL Setting 1
+move Choose 5
+s Display Setting Choose
+yield
 jal readValue
-s db Setting Value
-s Display Setting Value
 yield
+s Display Setting Value
 j start
 
 readValue:
 l Request Server Setting
-brne Request 0 -1 # Wait free server
-s Server Setting 1 # Send request
-sleep 1
+bne Request -1 ra # Wait free server
+s Server Setting Choose # Send request
+s Display Color 4
+s Display Setting Choose
 l Request Server Setting
-breq Request 1 -1
+s Display Setting Request
+breq Request Choose -2 # Wait response
 move Value Request
-s Server Setting 0 # Close request
+s Server Setting -2 # Close request
 j ra
