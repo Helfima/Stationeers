@@ -1,4 +1,4 @@
-# Atmo Controller
+# Atmo Coolant Controller
 alias AnalyserGas d0
 alias AtmoWaste d1
 alias AtmoExt d2
@@ -9,6 +9,7 @@ alias ValveCoolant d5
 define KELVIN 273
 define MOLES 1
 define TMAX -10 # Degre celcius
+define TEXT 10 # Degre celcius
 define PMAX 5000
 # Alias Register
 alias nWaste r0
@@ -17,12 +18,15 @@ alias Tgas r2
 alias Pgas r3
 alias Tcoolant r4
 alias Tmax r5
-alias IsCoolant r13
-alias NeedCoolant r14
-alias Temp r15
+alias Text r6
+alias IsCoolant r10
+alias NeedCoolant r11
+alias Temp r14
+alias Temp1 r15
 start:
 yield
 add Tmax TMAX KELVIN # Degre kelvin
+add Text TEXT KELVIN # Degre kelvin
 l nWaste AnalyserWaste TotalMoles
 l Tgas AnalyserGas Temperature
 l Pgas AnalyserGas Pressure
@@ -36,16 +40,17 @@ j start
 checkFiltration:
 bdns AtmoWaste ra
 mul Temp nWaste ratio
-s db Setting ratio
-yield
-s db Setting Temp
 sgt Temp Temp MOLES
+sgt Temp1 Text Tgas
+and Temp Temp Temp1
 s AtmoWaste On Temp
 j ra
 
 checkFiltrationExt:
 bdns AtmoExt ra
 sgt Temp PMAX Pgas
+sgt Temp1 Text Tgas
+and Temp Temp Temp1
 s AtmoExt On Temp
 j ra
 

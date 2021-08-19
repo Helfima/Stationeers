@@ -1,0 +1,15 @@
+# Display Furnace (Optional)
+alias DisplayFurnace d0
+alias Display1 d1
+alias Display2 d2
+# Constant
+define TYPE_FURNACE 545937711
+start:
+yield
+lb r0 TYPE_FURNACE TotalMoles 1
+s DisplayFurnace Setting r0
+lb r0 TYPE_FURNACE SettingInput 1
+s Display1 Setting r0
+lb r0 TYPE_FURNACE SettingOutput 1
+s Display2 Setting r0
+j start

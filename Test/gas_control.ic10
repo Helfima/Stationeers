@@ -1,0 +1,59 @@
+alias Pump1 d0
+alias Pump2 d1
+# Constant
+define TYPE_DIAL 554524804
+define TYPE_MEMORY -851746783
+define TYPE_ANALYSER 435685051
+define PMAX 1000
+# Alias register
+alias Cmd r0
+alias Pcur r1
+alias Gas r2
+alias Value r3
+alias LastGas r14
+alias Temp r9
+# Setting
+start:
+lb Cmd TYPE_MEMORY Setting 1
+jal decodeCmd
+s db Setting Gas
+# Purge if state change
+bneal Gas LastGas purge
+bneal Value 0 startPump
+j start
+
+decodeCmd:
+div Temp Cmd 10
+trunc Value Temp
+mul Temp Value 10
+sub Gas Cmd Temp
+j ra
+
+purge:
+jal stopPump
+yield
+sub Temp LastGas 1
+s dr9 On 1
+s dr9 Mode 1
+lb Pcur TYPE_ANALYSER Pressure 1
+brne Pcur 0 -1
+s dr9 On 0
+move LastGas Gas
+j ra
+
+stopPump:
+move Temp 0
+s dr9 On 0
+add Temp Temp 1
+brlt Temp 2 -2
+j ra
+
+startPump:
+sub Temp Gas 1
+lb Pcur TYPE_ANALYSER Pressure 1
+brlt Pcur Value 4
+s dr9 On 1
+s dr9 Mode 0
+j ra
+s dr9 On 0
+j ra

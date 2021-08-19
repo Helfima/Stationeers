@@ -1,0 +1,99 @@
+# Adv Furnace Controller
+alias PumpCold d0
+alias PumpWarm d1
+alias PumpHot d2
+alias MemoryProcess d3
+# Alias Register
+alias Process r0
+alias Tcur r1
+alias Pcur r2
+alias Mcur r3
+alias Tmin r8
+alias Tmax r9
+alias Pmin r10
+alias Pmax r11
+alias T0 r12
+alias P0 r13
+alias Temp1 r14
+alias Temp r15
+# Constant
+define TYPE_FURNACE 545937711
+define TYPE_DIAL 554524804
+define TYPE_ANALYSER 435685051
+define TYPE_PUMP -321403609
+define T2 1250
+# Settings
+sb TYPE_ANALYSER On 1
+closeAll:
+sb TYPE_FURNACE SettingOutput 0
+sb TYPE_FURNACE SettingInput 0
+sb TYPE_PUMP On 0
+sb TYPE_FURNACE Open 0
+start:
+yield
+lb sp TYPE_DIAL Setting 1 # Read unique dial
+jal loadValues
+l Process MemoryProcess Setting
+s db Setting Process
+beq Process 0 closeAll
+add T0 Tmin 50
+add P0 Pmin 100
+beqal Process 2 finally
+lb Pcur TYPE_FURNACE Pressure 1
+lb Tcur TYPE_FURNACE Temperature 1
+sub Temp T0 Tcur
+brlt Temp 100 2
+add Pcur Pcur Temp #For better T
+sub Temp Pcur P0
+mul Temp Temp 5 #Velocity
+min Temp Temp 100
+max Temp Temp 0
+trunc Temp Temp
+sb TYPE_FURNACE SettingOutput Temp
+sub Temp T0 Tcur
+brgtz Temp 2
+sub Temp P0 Pcur
+mul Temp Temp 5 #Velocity
+min Temp Temp 100 #Maximum
+max Temp Temp 0 #Minimum
+sb TYPE_FURNACE SettingInput Temp
+#Check Pipe
+lb Pcur TYPE_ANALYSER Pressure 1
+sub Temp T0 Tcur
+min Temp Temp 1000 #Maximum
+max Temp Temp 5 #Minimum
+slt Pcur Pcur Temp#Pipe Pressure Max
+move r0 0
+move r3 1
+brlt T0 T2 3 #Is Cold
+move r0 1
+move r3 2
+s dr0 On Pcur
+s dr3 On Pcur
+sub Temp Tcur T0
+mul Temp Temp 5 #Velocity
+min Temp Temp 20 #Maximum
+trunc Temp Temp
+s dr0 Setting Temp#Cold Pump
+sub Temp T0 Tcur
+mul Temp Temp 5 #Velocity
+min Temp Temp 20 #Maximum
+trunc Temp Temp  #Hot Pump
+s dr3 Setting Temp
+j start
+finally:
+lb Temp TYPE_FURNACE Mode 1
+beq Temp 0 ra
+lb Temp TYPE_FURNACE Mode 1
+sb TYPE_FURNACE Open Temp
+breq Temp 1 -2
+s MemoryProcess Setting 0
+j closeAll
+loadValues:
+mul sp sp 11
+move r15 11
+add sp sp r15
+pop rr15
+sub r15 r15 1
+brne r15 4 -2
+j ra

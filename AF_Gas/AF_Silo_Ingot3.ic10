@@ -1,0 +1,99 @@
+# Silo Output 3 Controller
+alias Silo0 d0
+alias Silo1 d1
+alias Silo2 d2
+alias Silo3 d3
+alias Silo4 d4
+alias Silo5 d5
+#Constant
+define TYPE_SILO 1155865682 # Silo Hash
+define TYPE_SORTER -1009150565 # Sorter Hash
+define TYPE_STACKER1 -2020231820 # Stacker Hash
+define TYPE_STACKER2 1585641623 # Stacker Hash
+define HASH0 412924554 # Astroloy Ingot
+define HASH1 1579842814 # Hastelloy Ingot
+define HASH2 -787796599 # Inconel Ingot
+define HASH3 -1897868623 # Stellite Ingot
+define HASH4 156348098 # Waspaloy Ingot
+define HASH5 252561409 # Charcoal
+define STACK 100
+define WAIT 0
+define NONE -3
+# Alias Register
+alias Silo r0
+alias LastSilo r1
+alias Request r2
+alias AbsRequest r3
+alias Qty r4
+#Settings
+sb TYPE_SILO On 1
+sb TYPE_SORTER On 1
+sb TYPE_STACKER1 On 1
+sb TYPE_STACKER1 Setting 100
+sb TYPE_STACKER2 On 1
+sb TYPE_STACKER2 Setting 100
+start:
+yield
+l Request db Setting
+beq Request WAIT start # Wait Request
+abs AbsRequest Request
+bgt AbsRequest 1000000 requestRead # Request Hash
+jal readSilo
+s db Setting Qty
+j start
+requestRead:
+jal CheckHash
+bne Silo NONE foundSilo # Found Silo
+move LastSilo Silo
+move Qty 0 # Reset Quantity
+s db Setting Qty # End Request
+j start
+foundSilo:
+beq Silo LastSilo requestOpen # Open Request
+# Quantity
+move LastSilo Silo
+jal readSilo
+j start
+requestOpen:
+jal actionSilo
+jal readSilo
+j start
+
+readSilo:
+move Qty 0
+beq LastSilo NONE ra
+bdns rr1 ra # if no device exit
+l Qty rr1 Quantity
+mul Qty Qty STACK
+s db Setting Qty # Quantity Request
+j ra
+
+actionSilo:
+beq Silo NONE ra
+bdns rr0 ra # if no device exit
+s rr0 Open 1
+sleep 1
+s rr0 Open 0
+j ra
+
+CheckHash:
+brne Request HASH0 3
+move Silo 0
+j ra
+brne Request HASH1 3
+move Silo 1
+j ra
+brne Request HASH2 3
+move Silo 2
+j ra
+brne Request HASH3 3
+move Silo 3
+j ra
+brne Request HASH4 3
+move Silo 4
+j ra
+brne Request HASH5 3
+move Silo 5
+j ra
+move Silo NONE
+j ra

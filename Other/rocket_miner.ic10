@@ -11,9 +11,9 @@ define TYPE_MINER_ORE -2027419821
 define TYPE_MINER_GAS -1969723301
 define TYPE_MINER_ICE 74521920
 define TYPE_BUTTON 491845673
+define TYPE_IBUTTON 1668452680
 define TYPE_PUMP -321403609
-define TYPE_PUMP_TURBO 1310794736
-define FUEL_MAX 8000
+define FUEL_MAX 3000
 define FUEL_MIN 600
 define P_MAX 20000
 # Alias Register
@@ -28,7 +28,7 @@ alias CheckFuel r10
 alias Temp r11
 start:
 yield
-lb Fire TYPE_BUTTON Setting 1
+lb Fire TYPE_IBUTTON Setting 1
 lb State TYPE_AUTOMATION Mode 1
 lb ValFuel TYPE_AUTOMATION Fuel 1
 s db Setting State

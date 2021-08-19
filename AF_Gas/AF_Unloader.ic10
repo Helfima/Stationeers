@@ -1,0 +1,19 @@
+#Unload Controller
+alias Unloader d0
+# Alias Register
+alias IsOccupied r0
+#Constant
+#Setting
+s Unloader On 1
+s Unloader Mode 1
+start:
+yield
+jal controlUnloader
+j start
+#Function Control Unloader
+controlUnloader:
+ls IsOccupied Unloader 0 Occupied
+beq IsOccupied 0 ra
+s Unloader Output 1
+sleep 1
+j ra

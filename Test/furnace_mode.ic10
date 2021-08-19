@@ -1,0 +1,7 @@
+alias Display d0
+define TYPE_FURNACE 545937711
+start:
+yield
+lb r0 TYPE_FURNACE Mode 1
+s Display Setting r0
+j start

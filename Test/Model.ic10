@@ -29,11 +29,11 @@ trunc sp sp #Supprime la virgule
 mul r12 sp r14 #Prepare le cute
 sub r15 r15 r12 #Reduit le code
 add sp sp 400 #SP des valeurs
-brgt r13 4 2
+brgt r13 4 1
 add sp sp 50 #SP des hash
 pop rr13 #Lis la valeur
 div r14 r14 10 #Decale le diviseur
-brlt r13 7 2
+brlt r13 7 1
 div r14 r14 10 #Decale le diviseur
 add r13 r13 1 #Decale le registre
 brle r13 11 -12

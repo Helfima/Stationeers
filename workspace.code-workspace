@@ -2,6 +2,10 @@
 	"folders": [
 		{
 			"path": "."
+		},
+		{
+			"path": "c:\\Users\\Helfima\\eclipse-workspace\\helmod\\helmod.dev"
 		}
-	]
+	],
+	"settings": {}
 }

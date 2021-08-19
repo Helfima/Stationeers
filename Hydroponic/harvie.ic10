@@ -6,19 +6,20 @@ alias Harvie2 d3
 alias Sorter2 d4
 alias Tray2 d5
 # Alias Register
-#alias State1 r0
 alias IsMature r1
 alias IsSeeding r2
-#alias State2 r3
 alias IsOccupied r4
 alias Temp r10
 alias Index r11
-#alias Device r12
 #settings
 ls r0 Tray1 0 Occupied
 mul r0 r0 2
 ls r3 Tray2 0 Occupied
 mul r3 r3 2
+s Harvie1 On 1
+s Sorter1 On 1
+s Harvie2 On 1
+s Sorter2 On 1
 start:
 s db Setting rr11
 yield

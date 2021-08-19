@@ -1,0 +1,25 @@
+# Adv Furnace Hash Ingot Controller
+alias DisplayReagents d0
+# Alias Register
+alias Choose r0
+alias Hash r1
+alias Count r2
+#Constant
+define TYPE_FURNACE 545937711
+define TYPE_DIAL 554524804
+#Settings
+s DisplayReagents Color 10
+start:
+yield
+lb Choose TYPE_DIAL Setting 1
+lb Count TYPE_FURNACE Reagents 1
+s DisplayReagents Setting Count
+jal readHashIngot
+s db Setting Hash
+j start
+
+readHashIngot:
+mul sp Choose 11
+add sp sp 1
+pop Hash
+j ra

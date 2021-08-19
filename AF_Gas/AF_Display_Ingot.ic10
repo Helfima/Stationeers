@@ -9,23 +9,22 @@ alias Display2 d5
 alias Qty r10
 #Constant
 define DEVICE 3 # Device number
-define STACK 50
-define STACK_L 500
-define STACK_H 2000
+define STACK 100
+define STACK_L 200
+define STACK_H 1000
 #Settings
+s Display0 On 1
+s Display1 On 1
+s Display2 On 1
 start:
 yield
 move r0 0
 loop:
-bdns dr0 next
 l Qty dr0 Quantity # Silo
 mul Qty Qty STACK
 add r1 r0 3
-bdns dr1 next
 s dr1 Setting Qty # Display
-s dr1 On 1
 jal setColor
-next:
 add r0 r0 1
 blt r0 DEVICE loop
 j start

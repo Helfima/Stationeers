@@ -1,3 +1,4 @@
+s db Setting 0
 # model
 move sp 350
 push 070040007290529
@@ -86,7 +87,7 @@ push 1579842814 # Hastelloy Ingot
 push -1897868623 # Stellite Ingot
 # Initialize
 move r0 0 #Start Stack
-move r1 0 #Index ingot 0 à 17
+move r1 0 #Index ingot 0  17
 start:
 add sp r1 351
 pop r15 #Lit le code
@@ -97,7 +98,7 @@ move sp r0
 push r2
 move r0 sp
 move r13 2 #Initialise Index registre
-move r14 1e13 #Initialise le diviseur
+move r14 10000000000000 #Initialise le diviseur
 loop:
 div sp r15 r14
 trunc sp sp #Supprime la virgule
@@ -117,3 +118,4 @@ add r13 r13 1 #Decale le registre
 ble r13 11 loop
 add r1 r1 1
 ble r1 17 start
+s db On 0

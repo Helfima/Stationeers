@@ -1,0 +1,36 @@
+# Routage Steel Ingot
+alias Sorter d0
+# Constant
+define TYPE_LEVER 1220484876
+define TYPE_LED 1944485013
+define HASH_STEEL -654790771
+# Setting
+s Sorter Mode 2
+sb TYPE_LED Color 4
+# Alias Register
+alias Active r0
+alias Hash r1
+alias Way r2
+alias IsOccupied r3
+alias Temp r15
+start:
+yield
+lb Active TYPE_LEVER Setting 1 # Read unique dial
+sb TYPE_LED On Active
+jal functionSorter
+j start
+
+
+functionSorter:
+yield
+l Temp Sorter Output # Output Sorter
+bne Temp -1 ra # Do Nothing
+s db Setting 99
+ls IsOccupied Sorter 0 Occupied # Import Sorter
+s db Setting IsOccupied
+beq IsOccupied 0 ra # Empty
+ls Hash Sorter 0 PrefabHash
+seq Way Hash HASH_STEEL
+and Way Way Active
+s Sorter Output Way # 0:Normal 1::Ore
+j ra

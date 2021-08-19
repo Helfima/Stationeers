@@ -21,7 +21,8 @@ alias Stack r10
 define TYPE_DIAL 554524804
 define TYPE_LIGHT -1535893860
 define TYPE_TRIGGER 1269458680 # Medium:1269458680 large:-2008706143
-define TYPE_TRANSFO 1054059374 # Transformer:-890946730 reverted:1054059374
+define TYPE_TRANSFO1 -890946730 # Transformer:-890946730 reverted:1054059374
+define TYPE_TRANSFO2 1054059374 # Transformer:-890946730 reverted:1054059374
 #Settings
 s DisplayMachine On 1
 s DisplayMachine Color 5
@@ -58,18 +59,21 @@ j start
 
 timerOff:
 beq IsActivate 1 ra
-sub Timer Timer 1
 s DisplayMachine Mode 0
 s DisplayMachine Setting Timer
-bne Timer 0 ra
+blt Timer 0 ra
+sub Timer Timer 1
+bge Timer 0 ra
 s Stacker Activate 1 # Clear stacker
-sb TYPE_TRANSFO On 0
+sb TYPE_TRANSFO1 On 0
+sb TYPE_TRANSFO2 On 0
 j ra
 
 checkTriggerPlate:
-lb IsTrigger TYPE_TRIGGER Setting 1
+lb IsTrigger TYPE_TRIGGER Setting 3 # 0:Average 1:Sum 2:Min 3:Max
 bne IsTrigger 1 ra
-sb TYPE_TRANSFO On 1
+sb TYPE_TRANSFO1 On 1
+sb TYPE_TRANSFO2 On 1
 move IsRunning 1
 move Timer 60
 j ra

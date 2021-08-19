@@ -1,0 +1,32 @@
+# Vulcan Tank 4 (smelt)
+alias Tank d0
+alias Vent d1
+# Alias Register
+alias Tmin r0
+alias Tcur r1
+alias Pcur r2
+alias IsNotFull r3
+alias IsTemp r4
+alias Temp r15
+# Constant
+define TYPE_SENSOR -1252983604
+define KELVIN 273
+define TMIN 550
+define PMAX 20000
+define PMIN 1000
+# Settings
+add Tmin TMIN KELVIN
+start:
+yield
+lb Tcur TYPE_SENSOR Temperature 1
+s db Setting Tcur
+l Pcur Tank Pressure
+jal checkTank
+j start
+
+checkTank:
+slt IsNotFull Pcur PMAX
+sgt IsTemp Tcur Tmin
+and Temp IsTemp IsNotFull
+s Vent On Temp
+j ra

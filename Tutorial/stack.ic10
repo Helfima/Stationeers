@@ -2,9 +2,6 @@
 # Alias Register
 alias Hash r0
 alias Choose r1 # Dial setting
-# Constant
-define TYPE_MEMORY -851746783
-define TYPE_DIAL 554524804
 start:
 yield
 move Choose 5
@@ -32,6 +29,6 @@ push -787796599 # Inconel Ingot
 push 156348098 # Waspaloy Ingot
 push 1579842814 # Hastelloy Ingot
 push -1897868623 # Stellite Ingot
-add sp Choose 1
+add sp Choose 1 # Add 1 to read value
 pop Hash
 j ra

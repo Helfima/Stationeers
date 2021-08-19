@@ -1,0 +1,20 @@
+# Display Room (Optional)
+alias Analyser d0
+alias DisplayMoles d1
+alias DisplayP d3
+alias DisplayT d4
+# Define
+define TYPE_SENSOR -1252983604
+# Setting
+s DisplayMoles On 1
+s DisplayP On 1
+s DisplayT On 1
+start:
+yield
+l r0 Analyser TotalMoles
+s DisplayMoles Setting r0
+lb r0 TYPE_SENSOR Pressure 1
+s DisplayP Setting r0
+lb r0 TYPE_SENSOR Temperature 1
+s DisplayT Setting r0
+j start

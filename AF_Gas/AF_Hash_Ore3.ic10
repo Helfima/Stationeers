@@ -1,0 +1,32 @@
+# Adv Furnace Hash Ore3 Controller
+alias DisplayOre d0
+# Alias Register
+alias Stage r0 # Current Stage
+alias Choose r1 # Dial setting
+alias Hash r2 # Ore Hash
+alias Qty r3 # Ore Quantity
+#Constant
+define TYPE_DIAL 554524804
+define STACK 50
+define FACTOR 800
+start:
+s DisplayOre Color 2 # Green
+yield
+lb Choose TYPE_DIAL Setting 1 # Read unique dial
+jal getValues
+mul Qty Qty FACTOR
+s db Setting Hash
+s DisplayOre Setting Qty
+j start
+
+getValues:
+move Hash 0 # Default
+move Qty 0 # Default
+blt Choose 13 ra # Bypass
+move Hash -983091249 # Colbalt Ore
+move Qty 0.25
+brne Choose 14 2 # Inconel Ingot
+move Hash -654790771 # Steel Ingot
+brne Choose 15 2 # Waspaloy Ingot
+move Hash -916518678 # Silver Ore
+j ra
