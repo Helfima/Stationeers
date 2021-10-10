@@ -1,0 +1,44 @@
+# Room Controller
+alias DisplayP d0
+alias DisplayT d1
+# Define
+define TYPE_SENSOR -1252983604
+define TYPE_PUMP 1310794736
+define PMIN 150
+define PMID 250
+define PMAX 350
+# Setting
+s DisplayP On 1
+s DisplayT On 1
+alias Tcur r0
+alias Pcur r1
+alias State r2
+move State 0
+start:
+yield
+s db Setting State
+lb Tcur TYPE_SENSOR Temperature 1
+s DisplayT Setting Tcur
+lb Pcur TYPE_SENSOR Pressure 1
+s DisplayP Setting Pcur
+sb TYPE_PUMP On State
+s db Setting Pcur
+brgt Pcur PMIN 2
+move State 1
+brlt Pcur PMAX 2
+move State 2
+beqal State 1 input
+beqal State 2 output
+j start
+
+input:
+sb TYPE_PUMP Mode 0
+blt Pcur PMID ra
+move State 0
+j ra
+
+output:
+sb TYPE_PUMP Mode 1
+bgt Pcur PMID ra
+move State 0
+j ra

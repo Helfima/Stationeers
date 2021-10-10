@@ -8,6 +8,7 @@ define TYPE_HEATER 24258244
 define TYPE_COOLER_GAS -739292323
 define TYPE_COOLER_WATER -1369060582
 define TYPE_VALVE_WATER -517628750
+define TYPE_VALVE -1280984102
 move r1 0
 move r2 0
 start:
@@ -37,4 +38,5 @@ move r2 0
 sb TYPE_COOLER_GAS On r2 #Cooler
 sb TYPE_COOLER_WATER On r2 #Cooler
 sb TYPE_VALVE_WATER On r2 #Cooler
+sb TYPE_VALVE On r2 #Cooler
 j ra
