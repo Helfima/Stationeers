@@ -1,9 +1,10 @@
-# Temparature Control
+# Temperature Control
 alias Sensor d0
+alias Analyser d1 #Optionnal
 # Constant
 define TMIN 25
-define TMID 30
-define TMAX 35
+define TMID 37
+define TMAX 50
 define TYPE_HEATER 24258244
 define TYPE_COOLER_GAS -739292323
 define TYPE_COOLER_WATER -1369060582
@@ -31,10 +32,17 @@ sb TYPE_HEATER On r1 #Heater
 j ra
 
 ControlCooler:
+bdns d1 normal
+l r3 Analyser Temperature
+blt r3 473 normal #coolant < 200°c
+move r2 0
+j cooling
+normal:
 brlt r0 r12 2 #TMAX
 move r2 1
 brgt r0 r11 2 #TMID
 move r2 0
+cooling:
 sb TYPE_COOLER_GAS On r2 #Cooler
 sb TYPE_COOLER_WATER On r2 #Cooler
 sb TYPE_VALVE_WATER On r2 #Cooler

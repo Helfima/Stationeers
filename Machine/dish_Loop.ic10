@@ -1,0 +1,114 @@
+# Dish Controller
+alias ButtonAuto d0
+alias ButtonContinue d1
+alias Computer d2
+alias DisplayH d3
+alias DisplayV d4
+alias DisplaySkip d5
+# Constant
+define TYPE_DISH 439026183
+define TYPE_FLASH -1535893860
+define Vmin 20
+define Vmax 90
+define DV 5
+define DH 89.7
+define Percent 0.95
+# Alias Register
+alias H r0 # Horizontal
+alias TH r1 # Horizontal
+alias EH r2 # Horizontal
+alias V r3 # Vertical
+alias TV r4 # Vertical
+alias EV r5 # Vertical
+alias Signal r6
+alias LastSignal r7
+alias Strength r8
+alias IsOn r10
+alias IsAuto r11
+alias IsContinue r12
+alias IsSkip r13
+alias Skip r14
+alias Temp r15
+
+# Settings
+move IsOn 0
+move TH 0
+move TV Vmin
+move Strength 0
+move Skip 0
+start:
+sb TYPE_FLASH On IsOn
+ls Temp Computer 1 Occupied
+beqal Temp 0 resetSkip
+l IsAuto ButtonAuto Setting
+l IsContinue ButtonContinue Setting
+beq IsAuto 1 auto
+beq IsContinue 1 continue
+beq IsOn 1 auto
+j start
+continue:
+sub Skip Skip 1
+auto:
+move IsOn 1
+sb TYPE_DISH Vertical TV
+sb TYPE_DISH Horizontal TH
+lb Signal TYPE_DISH SignalID 3 # 0:Average 1:Sum 2:Min 3:Max
+lb Strength TYPE_DISH SignalStrength 3 # 0:Average 1:Sum 2:Min 3:Max
+lb V TYPE_DISH Vertical 3 # 0:Average 1:Sum 2:Min 3:Max
+lb H TYPE_DISH Horizontal 3 # 0:Average 1:Sum 2:Min 3:Max
+jal updateUI
+jal checkSkip
+breq IsSkip 1 2
+bge Strength 0.95 loopEnd
+#check Horizontal
+sub EH TH H
+bgt EH 1 start
+add TH TH DH
+blt TH 359 start
+move TH 0
+#check Vertical
+add TV TV DV
+brlt TV Vmax 2
+move TV Vmin
+yield
+sb TYPE_DISH Horizontal 0
+sb TYPE_DISH Vertical TV
+sleep 2
+j start
+loopEnd:
+yield
+sb TYPE_DISH Horizontal H
+jal addSkip
+move IsOn 0
+j start
+
+resetSkip:
+move Skip 0
+j ra
+
+checkSkip:
+beq Skip 0 ra
+move IsSkip 0
+move sp Skip
+ble sp 0 ra # End stack
+pop Temp
+brne Temp Signal -2
+move IsSkip 1
+j ra
+
+addSkip:
+brgt Skip 0 2
+move Skip 0
+move sp Skip
+push Signal
+add Skip Skip 1
+j ra
+
+updateUI:
+brdns DisplayV 2
+s DisplayV Setting V
+brdns DisplayH 2
+s DisplayH Setting H
+brdns DisplaySkip 2
+s DisplaySkip Setting Skip
+j ra
