@@ -1,0 +1,63 @@
+# Temperature Control
+alias Sensor d0
+alias AnalyserHeater d1 #Optionnal
+alias ValveHeater d2 #Optionnal
+alias AnalyserCooler d3 #Optionnal
+alias ValveCooler d4 #Optionnal
+# Constant
+define KELVIN 273
+define TMIN 25
+define TMID 35
+define TMAX 45
+define TYPE_HEATER 24258244
+define TYPE_COOLER_GAS -739292323
+define TYPE_COOLER_WATER -1369060582
+move r1 0
+move r2 0
+start:
+yield
+l r0 Sensor Temperature
+add r10 TMIN KELVIN
+add r11 TMID KELVIN
+add r12 TMAX KELVIN
+s db Setting r0
+jal ControlHeater
+jal ControlCooler
+j start
+
+ControlHeater:
+bdns AnalyserHeater heatnormal
+l r3 AnalyserHeater Temperature
+bgt r3 323 heatnormal #coolant > 50°c
+move r2 0
+j heating
+heatnormal:
+brgt r0 r10 2 #TMIN
+move r1 1
+brlt r0 r11 2 #TMID
+move r1 0
+heating:
+brdns ValveHeater 3
+s ValveHeater On r1 #Heater
+j ra
+sb TYPE_HEATER On r1 #Heater
+j ra
+
+ControlCooler:
+bdns AnalyserCooler coolnormal
+l r3 AnalyserCooler Temperature
+blt r3 573 coolnormal #coolant < 300°c
+move r2 0
+j cooling
+coolnormal:
+brlt r0 r12 2 #TMAX
+move r2 1
+brgt r0 r11 2 #TMID
+move r2 0
+cooling:
+brdns ValveCooler 3
+s ValveCooler On r2 #Heater
+j ra
+sb TYPE_COOLER_GAS On r2 #Cooler
+sb TYPE_COOLER_WATER On r2 #Cooler
+j ra
