@@ -4,32 +4,45 @@ alias AnalyserO2 d1
 alias AnalyserH2 d2
 alias Mixer d3
 #Constant
-define PMAX 3000
-define PMIN 2000
+define KELVIN 273
+define PMAX 200
+define PMIN 100
+define TMAX 50
+define POmin 20
+define PHmin 20
 # Alias Register
 alias MixerOn r0
 alias Percent r1
 alias P r2
 alias R r3
 alias To r4
-alias Ro r5
-alias Th r6
-alias Rh r7
+alias Po r5
+alias Ro r6
+alias Th r7
+alias Ph r8
+alias Rh r9
+alias Tmax r10
+# Settings
+add Tmax TMAX KELVIN
 move MixerOn 1
 start:
 yield
 l P AnalyserFuel Pressure
 l To AnalyserO2 Temperature
+l Po AnalyserO2 Pressure
 l Th AnalyserH2 Temperature
-beq To 0 mixerOff
-beq Th 0 mixerOff
+l Ph AnalyserH2 Pressure
+s db Setting P
+bgt To Tmax mixerOff
+bgt Th Tmax mixerOff
+blt Po POmin mixerOff
+blt Ph PHmin mixerOff
 mul Ro To 1 # 1/3 Oxygen
 mul Rh Th 2 # 2/3 Hydrogen
 add R Ro Rh
 div Percent Rh R # Rh si hydrogen en input1 sinon Ro
 mul Percent Percent 100
 s Mixer Setting Percent
-s db Setting P
 brgt P PMIN 2
 move MixerOn 1
 brlt P PMAX 2

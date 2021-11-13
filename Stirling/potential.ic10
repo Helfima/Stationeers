@@ -1,0 +1,18 @@
+alias AnalyserC d0
+alias AnalyserG d1
+alias Potential d2
+alias DisplayP d3
+alias DisplayT d4
+alias Temp r15
+
+s Potential Mode 2
+start:
+yield
+l Temp AnalyserC PowerPotential
+s Potential Setting Temp
+
+l Temp AnalyserG Pressure
+s DisplayP Setting Temp
+l Temp AnalyserG Temperature
+s DisplayT Setting Temp
+j start

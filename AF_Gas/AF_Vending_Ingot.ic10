@@ -1,0 +1,88 @@
+# Vending Output Controller
+alias Vending1 d0
+alias Vending2 d1
+#Constant
+define TYPE_VENDING -443130773 # Vending Hash
+# Alias Register
+alias Request r0
+alias LastRequest r1
+alias AbsRequest r3
+alias Qty r4
+alias Slot r5
+alias Hash r6
+alias Temp r15
+#Settings
+sb TYPE_VENDING On 1
+start:
+yield
+l Request db Setting
+abs AbsRequest Request
+bgt AbsRequest 1000000 runRequest # Request Hash
+j start
+
+count:
+move Qty 0
+move r9 0
+loopDevice:
+move Slot 2
+loopSlot:
+ls Hash dr9 Slot PrefabHash
+ls Temp dr9 Slot Quantity
+brne Hash Request 2
+add Qty Qty Temp
+add Slot Slot 1
+blt Slot 101 loopSlot
+add r9 r9 1 # Next Device
+blt r9 2 loopDevice
+s db Setting Qty
+j start
+
+runRequest:
+beqal LastRequest Request requestVending
+move LastRequest Request
+jal count
+j start
+
+requestVending:
+sb TYPE_VENDING RequestHash Request
+sleep 1
+j ra
+
+setIndex:
+brne Request 2134647745 2 # Lead Ingot
+move sp 0
+brne Request 252561409 2 # Charcoal
+move sp 1
+brne Request -404336834 2 # Copper Ingot
+move sp 2
+brne Request -929742000 2 # Silver Ingot
+move sp 3
+brne Request 226410516 2 # Gold Ingot
+move sp 4
+brne Request -1301215609 2 # Iron Ingot
+move sp 5
+brne Request -1406385572 2 # Nickel Ingot
+move sp 6
+brne Request -290196476 2 # Silicon Ingot
+move sp 7
+brne Request -654790771 2 # Steel Ingot
+move sp 8
+brne Request 502280180 2 # Electrum Ingot
+move sp 9
+brne Request -82508479 2 # Solder Ingot
+move sp 10
+brne Request 1058547521 2 # Constantan Ingot
+move sp 11
+brne Request -297990285 2 # Invar Ingot
+move sp 12
+brne Request 412924554 2 # Astroloy Ingot
+move sp 13
+brne Request -787796599 2 # Inconel Ingot
+move sp 14
+brne Request 156348098 2 # Waspaloy Ingot
+move sp 15
+brne Request 1579842814 2 # Hastelloy Ingot
+move sp 16
+brne Request -1897868623 2 # Stellite Ingot
+move sp 17
+j ra

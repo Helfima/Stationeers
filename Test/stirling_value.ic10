@@ -1,0 +1,19 @@
+alias Stirling d0
+alias Analyser d1
+
+alias DisplayPercent d3
+alias DisplayPower d4
+
+alias Temp r15
+
+s DisplayPower On 1
+s DisplayPower Mode 2
+s DisplayPercent On 1
+s DisplayPercent Mode 3
+start:
+yield
+l Temp Stirling PowerGeneration
+s DisplayPercent Setting Temp
+l Temp Analyser PowerPotential
+s DisplayPower Setting Temp
+j start

@@ -1,0 +1,52 @@
+# Weather Windows Controller
+alias DisplayTime d0
+# Alias Register
+alias IsOpened r0 # Opened Gate
+alias IsActive r1
+alias WeatherMode r2
+alias LastWeatherMode r3
+alias Time r4
+#Constant
+define TYPE_BUTTON 491845673
+define TYPE_WEATHER 1997212478
+define TYPE_WINDOW 2056377335
+define TYPE_FLASH -1535893860
+#Settings
+sb TYPE_WINDOW Open 1
+start:
+yield
+lb IsActive TYPE_BUTTON Activate 1
+lb WeatherMode TYPE_WEATHER Mode 1
+s db Setting WeatherMode
+jal displayTime
+jal checkWeather
+# Button Action
+beq IsActive 0 start
+lb IsOpened TYPE_WINDOW Open 1
+jal OpenCloseGate
+j start
+
+displayTime:
+bdns DisplayTime ra
+lb Time TYPE_WEATHER NextWeatherEventTime 1
+trunc Time Time
+s DisplayTime Setting Time
+j ra
+
+checkWeather:
+beq WeatherMode LastWeatherMode ra # Do nothing
+move LastWeatherMode WeatherMode
+breq WeatherMode 0 4
+sb TYPE_FLASH On 1
+sb TYPE_WINDOW Open 0
+j ra
+sb TYPE_FLASH On 0
+sb TYPE_WINDOW Open 1
+j ra
+
+OpenCloseGate:
+breq IsOpened 0 3
+sb TYPE_WINDOW Open 0
+j ra
+sb TYPE_WINDOW Open 1
+j ra

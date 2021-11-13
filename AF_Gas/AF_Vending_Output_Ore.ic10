@@ -1,0 +1,19 @@
+# Silo Output Controller
+# Alias Register
+alias Hash r1
+#Constant
+define TYPE_VENDING -443130773 # Vending Hash
+#Settings
+sb TYPE_VENDING On 1
+start:
+yield
+l Hash db Setting
+beq Hash 0 start
+jal requestVending
+s db Setting 0 # Init finish
+j start
+
+requestVending:
+sb TYPE_VENDING RequestHash Hash
+sleep 1
+j ra

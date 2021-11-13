@@ -56,10 +56,13 @@ lb Signal TYPE_DISH SignalID 3 # 0:Average 1:Sum 2:Min 3:Max
 lb Strength TYPE_DISH SignalStrength 3 # 0:Average 1:Sum 2:Min 3:Max
 lb V TYPE_DISH Vertical 3 # 0:Average 1:Sum 2:Min 3:Max
 lb H TYPE_DISH Horizontal 3 # 0:Average 1:Sum 2:Min 3:Max
+yield
 jal updateUI
 jal checkSkip
-breq IsSkip 1 2
+beq IsSkip 1 bypass
+s db Setting Strength
 bge Strength 0.95 loopEnd
+bypass:
 #check Horizontal
 sub EH TH H
 bgt EH 1 start
@@ -76,6 +79,7 @@ sb TYPE_DISH Vertical TV
 sleep 2
 j start
 loopEnd:
+s db Setting Signal
 yield
 sb TYPE_DISH Horizontal H
 jal addSkip

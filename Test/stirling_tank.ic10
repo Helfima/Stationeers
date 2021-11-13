@@ -1,0 +1,24 @@
+alias Analyser1 d0
+alias Analyser2 d1
+
+alias DisplayT d3
+alias DisplayP1 d4
+alias DisplayP2 d5
+
+alias Temp r15
+
+s DisplayT On 1
+s DisplayT Mode 0
+s DisplayP1 On 1
+s DisplayP1 Mode 0
+s DisplayP2 On 1
+s DisplayP2 Mode 0
+start:
+yield
+l Temp Analyser1 Temperature
+s DisplayT Setting Temp
+l Temp Analyser1 Pressure
+s DisplayP1 Setting Temp
+l Temp Analyser2 Pressure
+s DisplayP2 Setting Temp
+j start
