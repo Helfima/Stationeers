@@ -33,7 +33,7 @@ define PMIN 1000
 add Tmax TMAX KELVIN
 start:
 yield
-lb Tcur TYPE_SENSOR Temperature 1
+lb Tcur TYPE_SENSOR Temperature 3 # 0:Average 1:Sum 2:Min 3:Max
 l Pcur Tank Pressure
 l T1 Tank Temperature
 l P1 Tank Pressure

@@ -1,0 +1,50 @@
+# Vulcan Tank Internal Gas
+
+# Alias Register
+alias Pcur r0
+alias Tcur r1
+alias Tmin r2
+alias Tmax r3
+alias Tcooling r4
+alias Moles r5
+# Constant
+define TYPE_FILTRATION -348054045
+define TYPE_TANK 272136332
+define TYPE_VALVE -1280984102
+define TYPE_ANALYSER 435685051
+define TYPE_MIRROR 2096189278
+define KELVIN 273
+define TMIN 20
+define TMAX 50
+define PMIN 1
+define PMAX 10
+define MMIN 1
+define MMAX 10
+# Settings
+add Tmin TMIN KELVIN
+add Tmax TMAX KELVIN
+start:
+yield
+lb Pcur TYPE_ANALYSER Pressure 3 # 0:Average 1:Sum 2:Min 3:Max
+lb Moles TYPE_ANALYSER TotalMoles 3 # 0:Average 1:Sum 2:Min 3:Max
+lb Tcur TYPE_TANK Temperature 3 # 0:Average 1:Sum 2:Min 3:Max
+lb Tcooling TYPE_MIRROR Temperature 3 # 0:Average 1:Sum 2:Min 3:Max
+s db Setting Moles
+jal filtration
+jal cooling
+j start
+
+filtration:
+brgt Moles MMIN 2
+sb TYPE_FILTRATION On 0
+brlt Moles MMAX 2
+sb TYPE_FILTRATION On 1
+j ra
+
+cooling:
+brlt Tcur Tcooling 4
+brlt Tcur Tmax 2
+sb TYPE_VALVE On 1
+brgt Tcur Tmin 2
+sb TYPE_VALVE On 0
+j ra

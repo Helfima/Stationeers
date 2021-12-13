@@ -1,0 +1,41 @@
+# Stirling Display
+alias Stirling d0
+alias Sensor d1
+alias Analyser d2
+alias DiplayRoom d3
+alias DiplayPipe d4
+alias DisplayPower d5
+# Alias Register
+alias Tcur r0
+alias Pcur r1
+alias Moles r2
+alias Power r3
+alias Volume r4
+alias Temp r15
+# Constant
+define R 8.314
+
+start:
+yield
+l Pcur Stirling Pressure
+l Tcur Stirling Temperature
+l Moles Stirling TotalMoles
+l Power Stirling PowerGeneration
+
+mul Volume Moles R
+mul Volume Volume Tcur
+div Volume Volume Pcur
+s db Setting Volume
+
+# Room Temperature
+l Temp Sensor Temperature
+brdns DiplayRoom 2
+s DiplayRoom Setting Temp
+# Hot Pressure
+l Temp Analyser Temperature
+brdns DiplayPipe 2
+s DiplayPipe Setting Temp
+# Display Power
+brdns DisplayPower 2
+s DisplayPower Setting Power
+j start

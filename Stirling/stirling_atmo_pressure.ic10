@@ -1,0 +1,49 @@
+# Stirling Atmo Hot
+alias AnalyserCold d0
+alias PumpCold d1
+alias AnalyserHot d3
+alias PumpHot d4
+# Alias Register
+alias Tcur r0
+alias Pcur r1
+alias Moles r2
+alias DeviceOn r10
+alias Temp r15
+# Constant
+define CMIN 2000
+define CMAX 2500
+define HMIN 250
+define HMAX 300
+# Settings
+start:
+yield
+jal pipe_cold
+jal pipe_hot
+j start
+
+pipe_cold:
+bdns AnalyserCold ra
+bdns PumpCold ra
+l Moles AnalyserCold TotalMoles
+s db Setting Moles
+# Check Stirling
+brge Moles CMIN 2
+move DeviceOn 0
+brle Moles CMAX 2
+move DeviceOn 1
+s PumpCold Setting 500
+s PumpCold On DeviceOn
+j ra
+
+pipe_hot:
+bdns AnalyserHot ra
+bdns PumpHot ra
+l Moles AnalyserHot TotalMoles
+# Check Stirling
+brge Moles HMIN 2
+move DeviceOn 0
+brle Moles HMAX 2
+move DeviceOn 1
+s PumpHot Setting 10
+s PumpHot On DeviceOn
+j ra

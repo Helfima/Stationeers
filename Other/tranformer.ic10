@@ -1,0 +1,18 @@
+# Transformer Controller
+# Alias Register
+alias Power r0
+alias Target r1
+alias Temp r15
+# Constant
+define TYPE_TRANSFORMER -1423212473
+define TYPE_ANALYSER 1036015121
+define PMAX 99000
+# Settings
+start:
+yield
+lb Power TYPE_ANALYSER PowerActual 3 # 0:Average 1:Sum 2:Min 3:Max
+s db Setting Power
+sub Target PMAX Power
+div Target Target 2
+sb TYPE_TRANSFORMER Setting Target
+j start

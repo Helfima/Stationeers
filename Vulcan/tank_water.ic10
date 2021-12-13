@@ -1,0 +1,78 @@
+# Vulcan Water Tank
+alias AnnalyserExternal d0
+alias ValveExternal d1
+alias ValveCoolant d2
+alias AnnalyserPlant d3
+alias ValvePlant d4
+alias ValveFuel d5
+# Alias Register
+alias Moles r0
+alias Tcur r1
+alias Tmin r2
+alias Tmax r3
+alias TExternal r4
+alias TMaxExt r5
+alias PMoles r6
+alias IsPlant r7
+alias IsTemp r8
+# Constant
+define TYPE_TANK 608607718
+define KELVIN 273
+define TMIN 20
+define TMAX 50
+define TMAXEXT 150
+define PMIN 500
+define PMAX 1000
+define MMIN 500
+define MMAX 2000
+define MEXT 1000
+# Settings
+add Tmin TMIN KELVIN
+add Tmax TMAX KELVIN
+add TMaxExt TMAXEXT KELVIN
+start:
+yield
+lb Moles TYPE_TANK TotalMoles 3 # 0:Average 1:Sum 2:Min 3:Max
+lb Tcur TYPE_TANK Temperature 3 # 0:Average 1:Sum 2:Min 3:Max
+l TExternal AnnalyserExternal Temperature
+jal waterPlant
+jal combustor
+jal cooling
+jal coolingExt
+j start
+
+waterPlant:
+l PMoles AnnalyserPlant TotalMoles
+slt IsPlant PMoles MEXT
+slt IsTemp Tcur Tmax
+and IsPlant IsPlant IsTemp
+s ValvePlant On IsPlant
+j ra
+
+combustor:
+brgt Moles MMIN 2
+s ValveFuel On 1
+brlt Moles MMAX 2
+s ValveFuel On 0
+j ra
+
+cooling:
+brle Tcur TMaxExt 3
+s ValveCoolant On 0
+j ra
+brlt Tcur Tmax 2
+s ValveCoolant On 1
+brgt Tcur Tmin 2
+s ValveCoolant On 0
+j ra
+
+coolingExt:
+brlt Tcur TExternal 2
+brgt Tcur TMaxExt 3
+s ValveExternal On 0
+j ra
+brgt Tcur Tmin 2
+s ValveExternal On 0
+brlt Tcur Tmax 2
+s ValveExternal On 1
+j ra

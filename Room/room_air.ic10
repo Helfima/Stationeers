@@ -1,61 +1,71 @@
 # Air Room Controller
 alias Sensor d0
 alias PumpO2 d1
-alias PumpCO2 d2
+alias AnalyserO2 d2
 alias PumpN2 d3
-alias PumpWaste d4
+alias AnalyserN2 d4
+alias PumpWaste d5
 # Alias Register
-alias Pcurr r0 # Current Pressure
-alias O2 r1
-alias CO2 r2
+alias Pcur r0 # Current Pressure
+alias Tcur r1 # Current Temperature
+alias O2 r2
 alias N2 r3
+alias IsWaste r4
+alias IsTemp r5
+alias IsPercent r7
+alias DeviceOn r8
+alias Tmax r14
+alias Temp r15
 # Constant
-define PMAX 20
+define KELVIN 273
+define TMAX 40
+define PMIN 50
+define PMAX 100
 define PERCENT_N2 0.80
-define PERCENT_O2 0.10
-define PERCENT_CO2 0.10
+define PERCENT_O2 0.20
+define DELTA 0.01
 # Settings
+add Tmax TMAX KELVIN
 s PumpO2 Setting 10
-s PumpCO2 Setting 10
 s PumpN2 Setting 10
 s PumpWaste Setting 100
 start:
 yield
-l Pcurr Sensor Pressure
+l Pcur Sensor Pressure
 l O2 Sensor RatioOxygen
-l CO2 Sensor RatioCarbonDioxide
 l N2 Sensor RatioNitrogen
-s db Setting Pcurr
 jal checkWaste
 jal checkO2
-jal checkCO2
 jal checkN2
 j start
 
 checkO2:
-brgt O2 PERCENT_O2 3
-s PumpO2 On 1
-j ra
-s PumpO2 On 0
-j ra
-
-checkCO2:
-brgt CO2 PERCENT_CO2 3
-s PumpCO2 On 1
-j ra
-s PumpCO2 On 0
+l Tcur AnalyserO2 Temperature
+slt IsTemp Tcur Tmax
+sub Temp O2 PERCENT_O2
+sltz IsPercent Temp
+nor DeviceOn IsWaste IsWaste
+and DeviceOn DeviceOn IsPercent
+and DeviceOn DeviceOn IsTemp
+s PumpO2 On DeviceOn
 j ra
 
 checkN2:
-brgt N2 PERCENT_N2 3
-s PumpN2 On 1
-j ra
-s PumpN2 On 0
+l Tcur AnalyserN2 Temperature
+slt IsTemp Tcur Tmax
+sub Temp N2 PERCENT_N2
+sltz IsPercent Temp
+nor DeviceOn IsWaste IsWaste
+and DeviceOn DeviceOn IsPercent
+and DeviceOn DeviceOn IsTemp
+s db Setting N2
+s PumpN2 On DeviceOn
 j ra
 
 checkWaste:
-brlt Pcurr PMAX 3
-s PumpWaste On 1
-j ra
-s PumpWaste On 0
+brge Pcur PMIN 2
+move IsWaste 0
+brle Pcur PMAX 2
+move IsWaste 1
+s PumpWaste On IsWaste
 j ra

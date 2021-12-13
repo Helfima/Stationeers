@@ -1,0 +1,53 @@
+# Vulcan Embiant Tank
+alias TankCold d0
+alias VentCold d1
+alias Sensor d2
+alias TankHot d3
+alias VentHot d4
+# Alias Register
+alias Tcur r0
+alias Pcur r1
+alias Tmax r2
+alias Tmin r3
+alias IsTemperature r10
+alias IsPressure r11
+alias VentOn r12
+alias Temp r15
+# Constant
+define TYPE_SENSOR -1252983604
+define KELVIN 273
+define TMAX 600
+define TMIN 130
+define PMAX 10000
+# Settings
+add Tmax TMAX KELVIN
+add Tmin TMIN KELVIN
+start:
+yield
+l Tcur Sensor Temperature
+s db Setting Tcur
+jal tank_cold
+jal tank_hot
+j start
+
+tank_cold:
+bdns VentCold ra
+bdns TankCold ra
+l Pcur TankCold Pressure
+sle IsTemperature Tcur Tmin
+slt IsPressure Pcur PMAX
+and VentOn IsTemperature IsPressure
+s VentCold Mode 1
+s VentCold On VentOn
+j ra
+
+tank_hot:
+bdns VentHot ra
+bdns TankHot ra
+l Pcur TankHot Pressure
+sge IsTemperature Tcur Tmax
+slt IsPressure Pcur PMAX
+and VentOn IsTemperature IsPressure
+s VentHot Mode 1
+s VentHot On VentOn
+j ra

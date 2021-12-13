@@ -1,0 +1,60 @@
+# Stirling Controller
+alias Sensor d0
+alias PumpIn d1
+alias PumpOut d2
+alias PumpHot d3
+alias AnalyserHot d4
+# Alias Register
+alias Tcur r0
+alias Pcur r1
+alias Tmax r2
+alias Tmin r3
+alias IsTemperature r10
+alias IsPressure r11
+alias StirlingOn r12
+alias DeviceOn r13
+alias Temp r15
+# Constant
+define TYPE_STIRLING -260316435
+define KELVIN 273
+define TMAX 670
+define TMIN 150
+define PROOM 500
+define PMIN 2000
+define PMAX 3000
+# Settings
+add Tmax TMAX KELVIN
+add Tmin TMIN KELVIN
+start:
+yield
+#s db Setting StirlingOn
+jal pipe_hot
+jal room
+j start
+
+room:
+l Tcur Sensor Temperature
+l Pcur Sensor Pressure
+s db Setting Pcur
+sge IsTemperature Tcur Tmin
+slt IsPressure Pcur PROOM
+and DeviceOn IsTemperature IsPressure
+s PumpIn Setting 50
+s PumpIn On DeviceOn
+sgt DeviceOn Pcur PROOM
+s PumpOut Setting 100
+s PumpOut On DeviceOn
+j ra
+
+pipe_hot:
+l Tcur AnalyserHot Temperature
+l Pcur AnalyserHot Pressure
+slt DeviceOn Pcur PMAX
+s PumpHot On DeviceOn
+# Check Stirling
+brge Pcur PMIN 2 #Desactive en dessous de PMIN
+move StirlingOn 0
+brle Pcur PMAX 2 #Active au dessus de PMAX
+move StirlingOn 1
+sb TYPE_STIRLING On StirlingOn
+j ra

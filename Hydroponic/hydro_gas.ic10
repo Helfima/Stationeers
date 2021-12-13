@@ -1,0 +1,36 @@
+# Gas Control
+alias Sensor d0
+alias AnalyserGas d1
+alias ValveGas d2
+# Constant
+define KELVIN 273
+define PMIN 50
+define PMAX 60
+define TMAX 30
+# Alias Registers
+alias Pcur r0
+alias GPcur r1
+alias GTcur r2
+alias Tmax r3
+alias IsPressure r4
+alias IsTemperature r5
+alias OnValve r10
+# Settings
+add Tmax TMAX KELVIN
+start:
+yield
+l Pcur Sensor Pressure
+l GPcur AnalyserGas Pressure
+l GTcur AnalyserGas Temperature
+s db Setting Pcur
+# Check Pressure
+brgt Pcur PMIN 2
+move IsPressure 1
+brlt Pcur PMAX 2
+move IsPressure 0
+# Check Temperature
+slt IsTemperature GTcur Tmax
+# Valve
+and OnValve IsTemperature IsPressure
+s ValveGas On OnValve
+j start

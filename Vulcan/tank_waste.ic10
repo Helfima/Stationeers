@@ -1,0 +1,37 @@
+# Vulcan Waste Tank
+alias Tank d0
+alias ValveCoolant d1
+alias ValveTreatment d2
+# Alias Register
+alias Moles r0
+alias Tcur r1
+alias Tmax r2
+alias OnFiltration r3
+alias OnTreatment r4
+alias OnCooling r5
+alias IsCoolant r5
+alias TCoolant r6
+# Constant
+define TYPE_FILTRATION -348054045
+define TYPE_SENSOR -1252983604
+define KELVIN 273
+define TMAX 150
+# Settings
+add Tmax TMAX KELVIN
+start:
+yield
+l Moles Tank TotalMoles
+l Tcur Tank Temperature
+lb TCoolant TYPE_SENSOR Temperature 3 # 0:Average 1:Sum 2:Min 3:Max
+# Filtration
+sgt OnFiltration Moles 1
+sb TYPE_FILTRATION On OnFiltration
+# Treatment
+slt OnTreatment Tcur Tmax
+s ValveTreatment On OnTreatment
+# Cooling
+sgt IsCoolant TCoolant Tmax
+sgt OnCooling Tcur Tmax
+and OnCooling OnCooling IsCoolant
+s ValveCoolant On OnCooling
+j start

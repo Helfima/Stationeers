@@ -11,7 +11,7 @@ lb r1 TYPE_SENSOR Vertical 3 # 0:Average 1:Sum 2:Min 3:Max
 s db Setting r1
 sub r1 75 r1
 div r1 r1 1.5
-sub r0 r0 90
+sub r0 r0 90 # Reglage horizontal si besoin
 sb TYPE_SOLAR_HEAVY Horizontal r0
 sb TYPE_SOLAR_HEAVY Vertical r1
 j start

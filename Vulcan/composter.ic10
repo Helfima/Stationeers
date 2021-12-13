@@ -1,0 +1,66 @@
+# Composter Controller
+alias AnalyserOut d0
+alias AnalyserIn d1
+alias DisplayQty d3
+alias DisplayMoles d4
+# Alias Register
+alias Pcur r0
+alias Qty r1
+alias MolesOut r2
+alias MolesIn r3
+alias OnProcessing r4
+alias IsActive r5
+alias OnValve r6
+alias IsMole r7
+# Constant
+define TYPE_COMPOSTER 446212963
+define TYPE_SENSOR -1252983604
+define TYPE_VENT -1129453144
+define TYPE_VALVE -454028979
+define PMIN 1
+define PMAX 10
+define MOUT 100
+define MIN_MIN 21
+define MIN_MAX 30
+# Settings
+sb TYPE_COMPOSTER On 1
+sb TYPE_VENT On 1
+sb TYPE_VENT Mode 1
+s AnalyserOut On 1
+s AnalyserIn On 1
+start:
+yield
+lb Qty TYPE_COMPOSTER Quantity 3 # 0:Average 1:Sum 2:Min 3:Max
+lb IsActive TYPE_COMPOSTER Activate 3 # 0:Average 1:Sum 2:Min 3:Max
+lb Pcur TYPE_SENSOR Pressure 3 # 0:Average 1:Sum 2:Min 3:Max
+l MolesOut AnalyserOut TotalMoles
+l MolesIn AnalyserIn TotalMoles
+s db Setting Pcur
+s DisplayQty Setting Qty
+s DisplayMoles Setting MolesIn
+jal valve_water
+jal vent
+jal processing
+j start
+
+valve_water:
+brgt MolesIn MIN_MIN 2
+move IsMole 1
+brlt MolesIn MIN_MAX 2
+move IsMole 0
+sge OnValve MolesOut MOUT
+and OnValve OnValve IsMole
+sb TYPE_VALVE On OnValve
+j ra
+
+vent:
+brgt Pcur PMIN 2
+sb TYPE_VENT On 0
+brlt Pcur PMAX 2
+sb TYPE_VENT On 1
+j ra
+
+processing:
+sge OnProcessing Qty 3
+sb TYPE_COMPOSTER Activate OnProcessing
+j ra

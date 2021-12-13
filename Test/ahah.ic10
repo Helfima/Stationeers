@@ -1,0 +1,74 @@
+#Declaration des objets connects
+alias Sensor d0
+alias FiltreO2 d1
+alias FiltreCO2 d2
+alias FiltreH2 d3
+alias FiltreN2 d4
+alias VentPurge d5
+
+#Declaration des variables
+alias Pression r0
+alias RatioGas r1
+alias FiltreState r2
+
+main:
+#Verif de la presence de Gas (pression)
+l Pression Sensor Pressure
+#Si pression &gt; 0 alors on filtre
+bgtz Pression filtration
+#Sinon fermeture de la vanne de purge
+s VentPurge On 0
+yield
+j main
+
+#Boucle de filtration
+filtration:
+#Verification du token
+s db Setting r2
+#Boucle de verification du taux d'oxygene
+l RatioGas Sensor RatioOxygen
+#Si ratio O2 = 0 alors saut relatif vers la condition suivante
+breqz RatioGas 3
+#Sinon activation filtre
+s FiltreO2 On 1
+#Reset du token de filtration
+move r2 0
+#Si ratio O2 &gt; 0 alors saut relatif vers la suite
+brgtz RatioGas 3
+#Sinon desactivation du filtre
+s FiltreO2 On 0
+#Ajout d'un token de filtration
+add FiltreState FiltreState 1
+#Boucle avec le taux de dioxyde de carbonne
+l RatioGas Sensor RatioCarbonDioxide
+breqz RatioGas 3
+s FiltreCO2 On 1
+move r2 0
+brgtz RatioGas 3
+s FiltreCO2 On 0
+add FiltreState FiltreState 1
+#Boucle avec le taux d'hydrogene
+l RatioGas Sensor RatioVolatiles
+breqz RatioGas 3
+s FiltreH2 On 1
+move r2 0
+brgtz RatioGas 3
+s FiltreH2 On 0
+add FiltreState FiltreState 1
+#Boucle avec le taux d'azote
+l RatioGas Sensor RatioNitrogen
+breqz RatioGas 3
+s FiltreN2 On 1
+move r2 0
+brgtz RatioGas 3
+s FiltreN2 On 0
+add FiltreState FiltreState 1
+#Verification du token avec sortie de boucle
+brgtz FiltreState 2
+#Sinon retour dans la boucle
+j filtration
+#Ouverture de la vent pour purge
+s VentPurge On 1
+#Fin de la boucle de filtration
+yield
+j main

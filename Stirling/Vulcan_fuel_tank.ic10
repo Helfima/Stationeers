@@ -1,0 +1,56 @@
+# Vulcan Fuel Tank
+alias Mixer d0
+alias DeviceCold d1
+alias DeviceHot d2
+alias DeviceOut d3
+# Alias Register
+alias Tmin r0
+alias Pcur r2
+alias IsNotFull r3
+alias IsTemp r4
+alias T1 r5
+alias P1 r6
+alias T2 r7
+alias P2 r8
+alias Pout r9
+alias R r10
+alias Percent r11
+alias IsMixer r12
+alias Temp1 r13
+alias Temp2 r14
+alias Temp r15
+# Constant
+define TTARGET 2500 # T Target °K
+define PMAX 1000
+define PMIN 100
+# Settings
+
+start:
+yield
+l T1 DeviceCold Temperature
+l P1 DeviceCold Pressure
+l T2 DeviceHot Temperature
+l P2 DeviceHot Pressure
+l Pout DeviceOut Pressure
+jal checkMix
+j start
+
+checkMix:
+slt IsMixer Pout PMAX
+sgt Temp1 P1 PMIN
+sgt Temp2 P2 PMIN
+and Temp Temp1 Temp2
+and IsMixer IsMixer Temp # check pipe non vide
+s Mixer On IsMixer
+sub Temp1 TTARGET T2
+mul Temp1 Temp1 T1
+sub Temp2 T1 TTARGET
+mul Temp2 Temp2 T2
+add Temp Temp1 Temp2
+div Percent Temp1 Temp
+mul Percent Percent 100
+s Mixer Setting Percent
+s db Setting Percent
+j ra
+
+
