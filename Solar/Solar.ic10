@@ -1,17 +1,21 @@
 # Solar Panel Control
 # Sensor: port see south
-# Solar Panel: port see west
+# Solar Panel: port see south
 define TYPE_SOLAR_HEAVY -934345724
 define TYPE_SENSOR 1076425094
+# alias
+alias SH r0
+alias SV r1
+alias LH r2
+# settings
 sb TYPE_SENSOR Mode 0
 start:
 yield
-lb r0 TYPE_SENSOR Horizontal 3 # 0:Average 1:Sum 2:Min 3:Max
-lb r1 TYPE_SENSOR Vertical 3 # 0:Average 1:Sum 2:Min 3:Max
-s db Setting r1
-sub r1 75 r1
-div r1 r1 1.5
-sub r0 r0 90 # Reglage horizontal si besoin
-sb TYPE_SOLAR_HEAVY Horizontal r0
-sb TYPE_SOLAR_HEAVY Vertical r1
+lb SH TYPE_SENSOR Horizontal 3 # 0:Average 1:Sum 2:Min 3:Max
+lb SV TYPE_SENSOR Vertical 3 # 0:Average 1:Sum 2:Min 3:Max
+s db Setting SV
+sub SV 90 SV
+sub SH SH 90 # Reglage horizontal si besoin
+sb TYPE_SOLAR_HEAVY Horizontal SH
+sb TYPE_SOLAR_HEAVY Vertical SV
 j start

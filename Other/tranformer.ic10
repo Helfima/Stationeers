@@ -2,17 +2,28 @@
 # Alias Register
 alias Power r0
 alias Target r1
+alias WeatherMode r2
+alias LastWeatherMode r3
+alias Time r4
+alias IsNoStorm r5
+alias IsTime r6
+alias DeviceOn r13
 alias Temp r15
 # Constant
 define TYPE_TRANSFORMER -1423212473
 define TYPE_ANALYSER 1036015121
-define PMAX 99000
+define TYPE_WEATHER 1997212478
+define PMAX 50000
 # Settings
 start:
 yield
-lb Power TYPE_ANALYSER PowerActual 3 # 0:Average 1:Sum 2:Min 3:Max
+lb Power TYPE_ANALYSER PowerActual 1 # 0:Average 1:Sum 2:Min 3:Max
+lb WeatherMode TYPE_WEATHER Mode 3 # 0:Average 1:Sum 2:Min 3:Max
+lb Time TYPE_WEATHER NextWeatherEventTime 3 # 0:Average 1:Sum 2:Min 3:Max
 s db Setting Power
-sub Target PMAX Power
-div Target Target 2
-sb TYPE_TRANSFORMER Setting Target
+seq IsNoStorm WeatherMode 0
+sgt IsTime Time 10 # Only In StormInComming
+or DeviceOn IsNoStorm IsTime
+sb TYPE_TRANSFORMER On DeviceOn
+sb TYPE_TRANSFORMER Setting PMAX
 j start

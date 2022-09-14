@@ -1,0 +1,49 @@
+# Machine Controller
+alias Machine d0
+alias Stacker d1
+alias DisplayMachine d2
+alias DisplayStacker d3
+alias MemoryMachine d4
+alias MemoryStacker d5
+# Alias Register
+alias IsTrigger r0
+alias IsRunning r1
+alias Timer r2
+alias Temp r15
+#Constant
+define TYPE_TRIGGER1 -1536471028 # Small
+define TYPE_TRIGGER2 -1269458680 # Medium
+define TYPE_TRIGGER3 -2008706143 # large
+define TICKS 20
+#Settings
+move IsRunning 0
+start:
+yield
+s db Setting IsRunning
+jal checkTriggerPlate
+beq IsRunning 0 start
+jal checkOff
+j start
+
+checkOff:
+blt Timer 0 ra
+sub Timer Timer 1
+bge Timer 0 ra
+move IsRunning 0
+j ra
+
+checkTriggerPlate:
+move IsTrigger 0
+lb Temp TYPE_TRIGGER1 Setting 3 # 0:Average 1:Sum 2:Min 3:Max
+brlt Temp 0 2
+or IsTrigger IsTrigger Temp
+lb Temp TYPE_TRIGGER2 Setting 3 # 0:Average 1:Sum 2:Min 3:Max
+brlt Temp 0 2
+or IsTrigger IsTrigger Temp
+lb Temp TYPE_TRIGGER3 Setting 3 # 0:Average 1:Sum 2:Min 3:Max
+brlt Temp 0 2
+or IsTrigger IsTrigger Temp
+bne IsTrigger 1 ra
+move IsRunning 1
+move Timer TICKS
+j ra

@@ -1,0 +1,31 @@
+# Large Extendable Radiator Control
+# Sensor: port see south
+# Large extendable radiator: port see south
+define TYPE_SENSOR 1076425094
+define TYPE_HEATER -566775170
+define TYPE_LEVER 1220484876
+define TYPE_ANALYSER -2113838091
+define KELVIN 273
+# alias
+alias DisplayT d0
+alias DisplayR d1
+alias LH r0
+alias LOpen r1
+alias T r2
+alias R r3
+# settings
+sb TYPE_SENSOR Mode 0
+start:
+yield
+lb LH TYPE_SENSOR Horizontal 3 # 0:Average 1:Sum 2:Min 3:Max
+lb LOpen TYPE_LEVER Open 3 # 0:Average 1:Sum 2:Min 3:Max
+lb T TYPE_ANALYSER Temperature 3 # 0:Average 1:Sum 2:Min 3:Max
+lb R TYPE_HEATER Ratio 3 # 0:Average 1:Sum 2:Min 3:Max
+s db Setting LH
+sub LH LH 0
+sb TYPE_HEATER Horizontal LH
+sb TYPE_HEATER Open LOpen
+sub T T KELVIN
+s DisplayT Setting T
+s DisplayR Setting R
+j start

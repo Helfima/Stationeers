@@ -13,6 +13,9 @@ define STACK 50
 define STACK_L 500
 define STACK_H 2000
 #Settings
+s Display0 On 1
+s Display1 On 1
+s Display2 On 1
 start:
 yield
 move r0 0
@@ -23,7 +26,6 @@ mul Qty Qty STACK
 add r1 r0 3
 bdns dr1 next
 s dr1 Setting Qty # Display
-s dr1 On 1
 jal setColor
 next:
 add r0 r0 1

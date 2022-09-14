@@ -2,17 +2,15 @@
 # Room: 400°K 500kPa
 # Hot Pipe: 2000°K 3MPa
 # Canister H2: 79 Moles 
-alias Stirling d0
 alias PumpIn d1
 alias PumpOut d2
-alias AnalyserHot d3
-alias Sensor d4
-alias LED d5
 # Alias Register
 alias Tcur r0
 alias Pcur r1
 alias Tmax r2
 alias Tmin r3
+alias RTmin r4
+alias RTmax r5
 alias IsTemperature r10
 alias IsPressure r11
 alias StirlingOn r12
@@ -20,26 +18,33 @@ alias DeviceOn r13
 alias Temp r15
 # Constant
 define TYPE_STIRLING -260316435
+define TYPE_ANALYSER 435685051
+define TYPE_SENSOR -1252983604
+define TYPE_VALVE -1280984102
+define TYPE_DIAL 554524804
+define TYPE_LED 1944485013
 define KELVIN 273
-define TMAX 670
-define TMIN 150
+define TMIN 30
+define TMAX 60
 define PMIN 500
 define PMAX 750
-define THMIN 2000
-define THMAX 2050
-# Settings
-add Tmax TMAX KELVIN
-add Tmin TMIN KELVIN
+# Settings 
+add RTmin TMIN KELVIN
+add RTmax TMAX KELVIN
 start:
 yield
 #s db Setting StirlingOn
-jal pipe_hot
+lb Tmin TYPE_DIAL Setting 2 # 0:Average 1:Sum 2:Min 3:Max
+lb Tmax TYPE_DIAL Setting 3 # 0:Average 1:Sum 2:Min 3:Max
+mul Tmin Tmin 10
+mul Tmax Tmax 10
 jal room
+jal stirling
 j start
 
 room:
-l Tcur Sensor Temperature
-l Pcur Sensor Pressure
+lb Tcur TYPE_SENSOR Temperature 3 # 0:Average 1:Sum 2:Min 3:Max
+lb Pcur TYPE_SENSOR Pressure 3 # 0:Average 1:Sum 2:Min 3:Max
 s db Setting Pcur
 # Input
 slt DeviceOn Pcur PMIN
@@ -49,20 +54,30 @@ s PumpIn On DeviceOn
 sgt DeviceOn Pcur PMAX
 s PumpOut Setting 100
 s PumpOut On DeviceOn
+# Temperature
+sgt DeviceOn Tcur RTmin
+sb TYPE_VALVE On DeviceOn
 j ra
 
-pipe_hot:
-l Tcur AnalyserHot Temperature
-l Pcur AnalyserHot Pressure
+stirling:
+# Check Room
+brge Tcur RTmin 2
+move IsTemperature 1
+brle Tcur RTmax 2
+move IsTemperature 0
+#s db Setting RTmin
+lb Tcur TYPE_ANALYSER Temperature 3 # 0:Average 1:Sum 2:Min 3:Max
+lb Pcur TYPE_ANALYSER Pressure 3 # 0:Average 1:Sum 2:Min 3:Max
 #s db Setting Tcur
 # Check Stirling
-brge Tcur THMIN 2
+brge Tcur Tmin 2
 move StirlingOn 0
-brle Tcur THMAX 2
+brle Tcur Tmax 2
 move StirlingOn 1
-s Stirling On StirlingOn
+and StirlingOn StirlingOn IsTemperature
+sb TYPE_STIRLING On StirlingOn
 brne StirlingOn 1 2
-s LED Color 2
+sb TYPE_LED Color 2
 brne StirlingOn 0 2
-s LED Color 4
+sb TYPE_LED Color 4
 j ra

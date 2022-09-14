@@ -9,7 +9,7 @@ alias Display2 d5
 alias Qty r10
 #Constant
 define DEVICE 3 # Device number
-define STACK 100
+define STACK 200
 define STACK_L 200
 define STACK_H 1000
 #Settings

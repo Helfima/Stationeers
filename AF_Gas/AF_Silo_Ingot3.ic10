@@ -16,7 +16,7 @@ define HASH2 -787796599 # Inconel Ingot
 define HASH3 -1897868623 # Stellite Ingot
 define HASH4 156348098 # Waspaloy Ingot
 define HASH5 252561409 # Charcoal
-define STACK 100
+define STACK 200
 define WAIT 0
 define NONE -3
 # Alias Register
@@ -29,9 +29,9 @@ alias Qty r4
 sb TYPE_SILO On 1
 sb TYPE_SORTER On 1
 sb TYPE_STACKER1 On 1
-sb TYPE_STACKER1 Setting 100
+sb TYPE_STACKER1 Setting STACK
 sb TYPE_STACKER2 On 1
-sb TYPE_STACKER2 Setting 100
+sb TYPE_STACKER2 Setting STACK
 start:
 yield
 l Request db Setting

@@ -1,5 +1,4 @@
 # Adv Furnace Request Ingot Controller
-alias Button d0
 # Alias Register
 alias Choose r0 # Dial setting
 alias LastChoose r5 # Dial setting
@@ -8,6 +7,7 @@ alias LastHash r2 # Ingot Hash
 alias Action r3 # Action Button
 alias Time r4
 # Constant
+define TYPE_BUTTON 491845673
 define TYPE_DIAL 554524804
 define TYPE_MIRROR 2096189278
 define TYPE_DISPLAY -815193061
@@ -16,7 +16,7 @@ sb TYPE_DISPLAY On 1
 start:
 yield
 sb TYPE_DISPLAY Color 2 # Green
-l Action Button Setting
+lb Action TYPE_BUTTON Setting 1 # Read unique button
 lb Choose TYPE_DIAL Setting 1 # Read unique dial
 jal getValues
 s db Setting Hash
