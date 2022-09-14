@@ -4,7 +4,7 @@
 
 [ores 50](https://steamcommunity.com/sharedfiles/filedetails/?id=2447546402)
 
-![ores 50](/ores_50/About/Preview.png)
+![ores 50](/mods/ores_50/About/Preview.png)
 
 ## Mise en place local
 
