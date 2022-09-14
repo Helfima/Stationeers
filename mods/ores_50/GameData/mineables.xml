@@ -192,10 +192,25 @@
       <MiningTime>2</MiningTime>
 	  <VoxelType>GeyserHydrogen</VoxelType>
 	  <VeinSize>1</VeinSize>
-	  <MaxDropQuantity>50</MaxDropQuantity>
-	  <MinDropQuantity>50</MinDropQuantity>
+	  <MaxDropQuantity>0</MaxDropQuantity>
+	  <MinDropQuantity>0</MinDropQuantity>
 	  <MaxVeinAttempts>0</MaxVeinAttempts>
 	  <MinVeinAttempts>0</MinVeinAttempts>
     </MineableData>
+  
+    <MineableData>
+        <DisplayName>Nitrice</DisplayName>
+        <OrePrefabName>ItemNitrice</OrePrefabName>
+        <VisualizerPrefabName>AsteroidOreNitrice</VisualizerPrefabName>
+        <GoggleVisualizerPrefabName>VisualizerGoggleOreNitrice</GoggleVisualizerPrefabName>
+        <Rarity>40</Rarity>
+        <MiningTime>2</MiningTime>
+        <VoxelType>Nitrice</VoxelType>
+        <VeinSize>1</VeinSize>
+        <MaxDropQuantity>50</MaxDropQuantity>
+        <MinDropQuantity>50</MinDropQuantity>
+        <MaxVeinAttempts>80</MaxVeinAttempts>
+        <MinVeinAttempts>50</MinVeinAttempts>
+        </MineableData>
   </Mineables>
 </GameData>
