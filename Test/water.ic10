@@ -1,0 +1,16 @@
+alias DisplayGas d0
+alias DisplayLiq d1
+alias DisplayTot d2
+# Constant
+define TYPE_ANA_GAS 435685051
+define TYPE_ANA_LIQUIDE -2113838091
+
+start:
+yield
+lb r0 TYPE_ANA_GAS TotalMoles 1
+lb r1 TYPE_ANA_LIQUIDE TotalMoles 1
+add r2 r0 r1
+s DisplayGas Setting r0
+s DisplayLiq Setting r1
+s DisplayTot Setting r2
+j start

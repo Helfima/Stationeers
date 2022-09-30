@@ -1,0 +1,95 @@
+alias centrifuge d0
+alias mixer d1 #Mixes Vol & Oxidizer (can be a mix)
+alias sensor d2 #Pipe analyzer sitting after the mixer
+alias sign1 d3 #LED to see Max RPM target
+
+alias combustionFactor r1
+alias pctN2O r2
+alias pctO2 r3
+alias mixerState r4
+alias intPressure r5
+alias maxRPM r6
+alias pctVol r7
+alias combustion r8
+alias oldrpm r9
+alias stress r10
+alias rpm r11
+alias throttle r12
+alias delta r13
+alias setpoint r14
+alias maxRPMFactor r15
+
+define MAXPRESSURE 100 #gas line target
+
+#Wait if off, spining, under stres or Open
+loop:
+s centrifuge Throttle 0
+s centrifuge CombustionLimiter 0
+s db Setting 0
+l r0 centrifuge On
+beqz r0 loop
+l r0 centrifuge Open
+bgtz r0 loop
+l r0 centrifuge Rpm
+floor r0 r0
+bgt r0 loop 5
+l r0 centrifuge Stress
+bgtz r0 loop
+
+start:
+yield
+l pctN2O sensor RatioNitrousOxide
+mul pctN2O pctN2O 100
+l pctO2 sensor RatioOxygen
+mul pctO2 pctO2 100
+#0.2*pctN20^2+2*pctN20+491
+mul maxRPM pctN2O pctN2O #pctN20^2
+mul maxRPM maxRPM  0.2 #0.2*
+mul r0 pctN2O 2 #2*pctN20
+add maxRPM maxRPM r0 #add first 2
+add maxRPM maxRPM 491 #add constant
+s sign1 Setting maxRPM
+div combustionFactor maxRPM 100
+mul maxRPM maxRPM 0.9 #More efficient to aim low
+#maxRPM Factor = maxRPM^2/8 -> Geometric 2-power growth
+mul maxRPMFactor maxRPM maxRPM
+div maxRPMFactor maxRPMFactor 8
+#Volatile pct is between 50+67, dep on O2/N2O
+#pctVol=50+16.66*pctO2/33.33
+mul pctVol pctO2 16.666
+div pctVol pctVol 33.333
+add pctVol pctVol 50
+
+s mixer Setting pctVol #Be sure Vol are on Input1
+l intPressure sensor Pressure
+slt mixerState intPressure MAXPRESSURE
+s mixer On mixerState
+
+l stress centrifuge Stress
+l rpm centrifuge Rpm
+sub delta rpm oldrpm # acceleration
+div combustion rpm combustionFactor # linear response to maxRPM
+s centrifuge CombustionLimiter combustion
+mul setpoint rpm rpm # geometric response
+div setpoint setpoint maxRPMFactor
+add setpoint setpoint 2
+sub throttle setpoint delta
+max throttle throttle 0
+min throttle throttle 10
+mul stress stress stress # geometric drop off
+div stress stress 10000
+sub stress 1 stress
+
+mul throttle throttle 10 #apply scalar
+mul throttle throttle stress #apply drop off
+s centrifuge Throttle throttle
+
+move oldrpm rpm
+#If it's turned off or opened, go back to idling
+l r0 centrifuge On
+beqz r0 loop
+l r0 centrifuge Open
+bgtz r0 loop
+l r0 centrifuge Stress
+bge r0 100 loop
+j start

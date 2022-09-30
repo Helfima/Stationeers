@@ -61,7 +61,7 @@ beq Process 0 closeAll
 #Check Pipe
 lb Tcur TYPE_FURNACE Temperature 1
 lb Pcur TYPE_ANALYSER Pressure 1
-slt Pcur Pcur 2000#Pipe Pressure Max
+slt Pcur Pcur 2000 #Pipe Pressure Max
 s PumpCold On Pcur
 s PumpHot On Pcur
 sub Temp Tcur T0

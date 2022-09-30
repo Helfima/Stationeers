@@ -1,0 +1,73 @@
+# Filtration Controller
+alias Atmo db
+# Constant
+define MOLES_MIN 1
+define PERCENT 0.01
+define T_INPUT_MAX 130 # Degre celcius
+define T_OUTPUT_MAX 50 # Degre celcius
+define P_OUTPUT_MAX 1000 # kpa
+define KELVIN 273
+# Alias Register
+alias IsOn r0
+alias Temp r1
+alias Moles r2
+alias Input r3
+alias Output r4
+alias IsRatio r5
+alias TInputMax r11
+alias TOutputMax r12
+# Settings
+start:
+yield
+move IsOn 0
+add TInputMax T_INPUT_MAX KELVIN # Degre kelvin
+add TOutputMax T_OUTPUT_MAX KELVIN # Degre kelvin
+l Moles Atmo TotalMolesInput
+blt Moles MOLES_MIN bypass #Turn Off
+l Moles Atmo TotalMolesOutput
+brgt Moles 0 3 #check if empty
+move IsOn 1
+j bypass
+l Temp Atmo TemperatureInput
+bgt Temp TInputMax bypass #Turn Off
+l Temp Atmo TemperatureOutput
+bgt Temp TOutputMax bypass #Turn Off
+l Temp Atmo PressureOutput
+bgt Temp P_OUTPUT_MAX bypass #Turn Off
+#check ratio
+move IsOn 0
+# check Oxygen
+l Output Atmo RatioOxygenOutput
+l Input Atmo RatioOxygenInput
+jal check_ratio
+# check Pollutant
+l Output Atmo RatioPollutantOutput
+l Input Atmo RatioPollutantInput
+jal check_ratio
+# check Volatiles
+l Output Atmo RatioVolatilesOutput
+l Input Atmo RatioVolatilesInput
+jal check_ratio
+# check CarbonDioxide
+l Output Atmo RatioCarbonDioxideOutput
+l Input Atmo RatioCarbonDioxideInput
+jal check_ratio
+# check Nitrogen
+l Output Atmo RatioNitrogenOutput
+l Input Atmo RatioNitrogenInput
+jal check_ratio
+# check NitrousOxide
+l Output Atmo RatioNitrousOxideOutput
+l Input Atmo RatioNitrousOxideInput
+jal check_ratio
+bypass:
+#s db Setting 999
+s Atmo Mode IsOn #Turn On/Off 0:idle 1:active
+j start
+
+check_ratio:
+# si la sortie ne contient pas le gaz on bypass
+beq Output 0 ra
+sgt IsRatio Input PERCENT
+or IsOn IsOn IsRatio
+j ra

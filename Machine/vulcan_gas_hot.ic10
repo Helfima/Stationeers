@@ -1,0 +1,39 @@
+# Air Hot/Cold Controller
+alias TankHot d0
+alias VentHot d1
+alias TankCold d3
+alias VentCold d4
+# Constant
+define KELVIN 273
+define TEXT_HOT 630
+define TEXT_COLD 130
+define P_HOT_MAX 1000
+define TYPE_SENSOR -1252983604
+# Alias Register
+alias TExt r0
+alias TExtHot r1
+alias TExtCold r2
+alias IsVentHot r3
+alias IsTankHot r4
+alias IsVentCold r5
+alias IsTankCold r6
+alias Temp r10
+# Settings
+start:
+yield
+add TExtCold TEXT_COLD KELVIN
+add TExtHot TEXT_HOT KELVIN
+lb TExt TYPE_SENSOR Temperature 3 # 0:Average 1:Sum 2:Min 3:Max
+# Hot
+sge IsVentHot TExt TExtHot
+l Temp TankHot Pressure
+slt IsTankHot Temp P_HOT_MAX
+and IsVentHot IsVentHot IsTankHot
+s VentHot On IsVentHot
+# Cold
+sle IsVentCold TExt TExtCold
+l Temp TankCold Pressure
+slt IsTankCold Temp P_HOT_MAX
+and IsVentCold IsVentCold IsTankCold
+s VentCold On IsVentCold
+j start

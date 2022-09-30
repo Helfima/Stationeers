@@ -47,7 +47,7 @@ lb Dial TYPE_DIAL Setting 1 # Read unique dial
 # Light
 sb TYPE_LIGHT On IsActivate
 # Display Machine
-s DisplayMachine Mode 1
+s DisplayMachine Mode IsActivate
 s DisplayMachine Setting Completion
 s MemoryMachine Setting HashMachine
 # Display Stacker
@@ -59,7 +59,6 @@ j start
 
 timerOff:
 beq IsActivate 1 ra
-s DisplayMachine Mode 0
 s DisplayMachine Setting Timer
 blt Timer 0 ra
 sub Timer Timer 1

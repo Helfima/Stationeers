@@ -1,0 +1,93 @@
+# Hydroponic Harvie Controller
+alias Harvie1 d0
+alias Sorter1 d1
+alias Tray1 d2
+alias Harvie2 d3
+alias Sorter2 d4
+alias Tray2 d5
+# Alias Register
+alias State0 r0 # 0:free 1:import 2:plant 3:seed 4:harvest
+alias Device0 r1
+alias Device1 r2
+alias State3 r3 # 0:free 1:import 2:plant 3:seed 4:harvest
+alias IsMature r4
+alias IsSeeding r5
+alias IsOccupied r6
+alias Temp r10
+#settings
+ls State0 Tray1 0 Occupied
+mul State0 State0 2
+ls State3 Tray2 0 Occupied
+mul State3 State3 2
+s Harvie1 On 1
+s Sorter1 On 1
+s Harvie2 On 1
+s Sorter2 On 1
+start:
+yield
+move r1 0
+next:
+s db Setting rr1
+jal functionSorter
+jal functionPlant
+jal functionSeeding
+jal functionHarvest
+jal functionFinish
+breq r1 0 2 #go next harvie
+j start
+move r1 3
+j next
+
+functionSorter:
+yield
+add r2 r1 1 # Device Sorter
+s dr2 Mode 2
+l Temp dr2 Output # Output Sorter
+bne Temp -1 ra # Do Nothing
+ls IsOccupied dr2 0 Occupied # Import Sorter
+beq IsOccupied 0 ra # Empty
+bgt rr1 0 normalWay # State > 0 => Already Plant
+harvieWay:
+move rr1 1 # Update state import
+s dr2 Output 1 # Sorter Way:Harvie
+j ra
+normalWay:
+s dr2 Output 0 # Sorter Way:Normal
+j ra
+
+functionPlant:
+add r2 r1 2 # Device Tray
+ls IsOccupied dr2 0 Occupied # Tray Occupied
+beq IsOccupied 1 ra # Already Plant
+ls IsOccupied dr1 0 Occupied # Harvie Import
+beq IsOccupied 0 ra # Empty
+s dr1 Plant 1 # Harvie Plant
+move rr1 2 # Update state plant
+j ra
+
+functionSeeding:
+add r2 r1 2 # Device Tray
+ls IsSeeding dr2 0 Seeding # Tray Seeding
+ble IsSeeding 0 ra # Not Seeding
+s dr1 Harvest 1 # Harvie Harvest
+move rr1 3 # Update state seed
+sleep 1
+j ra
+
+functionHarvest:
+add r2 r1 2 # Device Tray
+ls IsMature dr2 0 Mature # Tray Mature
+ble IsMature 0 ra # Not Mature
+s dr1 Harvest 1 # Harvie Harvest
+move rr1 4 # Update state harvest
+j ra
+
+functionFinish:
+blt rr1 4 ra # Not Planted
+ls IsOccupied dr1 2 Occupied # Harvie Occupied
+beq IsOccupied 1 ra # Planting
+add r2 r1 2 # Device Tray
+ls IsOccupied dr2 0 Occupied # Tray Occupied
+beq IsOccupied 1 ra # Not Finish
+move rr1 0
+j ra
