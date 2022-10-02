@@ -1,0 +1,27 @@
+# Nitrolyzer Controller
+alias Self db
+# Constant
+define KELVIN 273
+define MOLES 2
+define P_MAX 100
+define TYPE_MIXER 2104106366
+# Alias Register
+alias IsActive r0
+alias IsMixer r1
+alias IsMoles r2
+alias Temp r10
+# Settings
+sb TYPE_MIXER On 0
+s Self Mode 0
+start:
+yield
+l Temp Self PressureOutput
+slt IsActive Temp P_MAX
+l Temp Self TotalMolesInput
+sgt IsMoles Temp MOLES
+and IsActive IsActive IsMoles
+s Self Mode IsActive
+l Temp Self PressureInput
+slt IsMixer Temp P_MAX
+sb TYPE_MIXER On IsMixer
+j start

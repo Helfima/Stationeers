@@ -1,0 +1,21 @@
+# Nitrolyzer Filtration Controller
+alias Self db
+# Constant
+define KELVIN 273
+define P_MAX 200
+define MOLES 1
+# Alias Register
+alias IsActive r0
+alias IsMoles r1
+alias Temp r10
+# Settings
+s Self Mode 0
+start:
+yield
+l Temp Self PressureOutput2
+slt IsActive Temp P_MAX
+l Temp Self TotalMolesInput
+sgt IsMoles Temp MOLES
+and IsActive IsActive IsMoles
+s Self Mode IsActive
+j start
