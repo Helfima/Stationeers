@@ -3,13 +3,15 @@ alias Self db
 alias Display d1
 # Constant
 define TYPE_LEVER 1220484876
-define RPM_MIN 700
+define RPM_MAX 1200
+define RPM_MID 500 # debut combustion
+define RPM_MIN 150
 define STRESS_MAX 50
-define STRESS_MIN 10
-define QTY_MAX 500
-define KUpThr 2.5   # coef Throttle
-define KDownThr 4   # coef Throttle
-define Kcom 1   # coef Combustion
+define QTY_MAX 2000
+define Kr 110
+define Kc 100
+define Ks 180
+define Kd 20
 # Alias Register
 alias MThr r0 # mesure Throttle
 alias MRpm r1 # mesure Rpm
@@ -18,13 +20,14 @@ alias DRpm r3 # valeur Difference
 alias MStr r4 # mesure Stress
 alias LStr r5 # valeur Last Stress
 alias DStr r6 # valeur Difference
-alias Sign r7
+alias Err r7
 alias CThr r8 # commande throttle
 alias CCom r9 # commande combustion
 alias Count r10
 alias QTY r11
 alias IsOn r12
 alias IsOpen r13
+alias Temp r15
 # Settings
 s Self Open 0
 stop:
@@ -62,41 +65,29 @@ l IsOpen Self Open
 beq IsOpen 1 stop
 j ra
 throttle:
-brgt MStr STRESS_MAX 5 # bypass
-brgt DStr 0 3 # si Diff negatif impulsion
-add CThr CThr KUpThr
-j throttle_next
-brlt MStr STRESS_MIN 3 # si stress > min on diminue
-sub CThr CThr KDownThr
-j throttle_next
-brge DRpm 0 3 # si Diff negatif impulsion
-add CThr CThr 10
-j throttle_next
-brgt MStr 0 2 # si stress = 0  on augmente
-add CThr CThr KUpThr
-throttle_next:
-min CThr CThr 100
-max CThr CThr 0
+move CThr 0
+add Err MRpm RPM_MIN
+div Err Err RPM_MAX # fonction du rpm
+mul Err Err Kr
+brgt MStr STRESS_MAX 2 # bypass trop de stress
+add CThr CThr Err
+div Err MStr 100 # compensation du stress
+mul Err Err Ks
+sub CThr CThr Err
+mul Err DRpm Kd # compensation ralentissement
+s Display Setting Err
+brlt MRpm RPM_MIN 2 # bypass si rpm bas
+sub CThr CThr Err
 s Self Throttle CThr
-beq MStr 0 ra
-sleep 0.5
-s Self Throttle 0
-sleep 0.5
 j ra
 combustion:
-brgt MRpm RPM_MIN 3 # si rpm < min on diminue
-sub CCom CCom 10
-j combustion_next
-brle DStr 0 3 # si stress augmente on diminue
-sub CCom CCom Kcom
-j combustion_next
-brgt MStr 0 2 # si stress = 0  on augmente
-add CCom CCom Kcom
-combustion_next:
-min CCom CCom 100
-max CCom CCom 0
+sub Err MRpm RPM_MID
+sub Temp RPM_MAX RPM_MID
+div Err Err Temp # fonction du rpm
+mul CCom Err Kc
 s Self CombustionLimiter CCom
 j ra
+
 reagents:
 move QTY 0
 lr Count Self Contents Carbon
