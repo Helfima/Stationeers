@@ -1,13 +1,13 @@
 # Centrifuge Controller
 alias Self db
-alias Display d1
+alias Display d0 # Optionnal Display Reagents QTY
 # Constant
 define TYPE_LEVER 1220484876
 define RPM_MAX 1200
-define RPM_MID 500 # debut combustion
+define RPM_MID 500 # begin combustion
 define RPM_MIN 150
 define STRESS_MAX 50
-define QTY_MAX 2000
+define QTY_MAX 2000 # Quantity for Open
 define Kr 110
 define Kc 100
 define Ks 180
@@ -40,8 +40,6 @@ s Self Throttle 0
 s Self CombustionLimiter 0
 start:
 yield
-brdns Display 2
-s Display Setting QTY
 lb IsOn TYPE_LEVER Setting 3 # 0:Average 1:Sum 2:Min 3:Max
 l MRpm Self Rpm
 l MThr Self Throttle
@@ -75,7 +73,6 @@ div Err MStr 100 # compensation du stress
 mul Err Err Ks
 sub CThr CThr Err
 mul Err DRpm Kd # compensation ralentissement
-s Display Setting Err
 brlt MRpm RPM_MIN 2 # bypass si rpm bas
 sub CThr CThr Err
 s Self Throttle CThr
@@ -110,4 +107,6 @@ lr Count Self Contents Silver
 add QTY QTY Count
 lr Count Self Contents Uranium
 add QTY QTY Count
+bdns d0 ra
+s d0 Setting QTY
 j ra

@@ -1,6 +1,6 @@
 # Centrifuge Controller
 alias Self db
-alias Display d1
+alias Display d0
 # Constant
 define TYPE_LEVER 1220484876
 define RPM_MIN 300
@@ -36,8 +36,6 @@ s Self Throttle 0
 s Self CombustionLimiter 0
 start:
 yield
-brdns Display 2
-s Display Setting QTY
 lb IsOn TYPE_LEVER Setting 3 # 0:Average 1:Sum 2:Min 3:Max
 l MRpm Self Rpm
 l MThr Self Throttle
@@ -118,4 +116,6 @@ lr Count Self Contents Silver
 add QTY QTY Count
 lr Count Self Contents Uranium
 add QTY QTY Count
+bdns d0 ra
+s d0 Setting QTY
 j ra
