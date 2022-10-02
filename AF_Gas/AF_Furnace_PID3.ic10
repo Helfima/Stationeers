@@ -1,5 +1,5 @@
 # Adv Furnace Controller
-alias Mixer d0
+
 # Alias Register
 alias Process r0
 alias Temp r1
@@ -21,6 +21,7 @@ define TYPE_FURNACE 545937711
 define TYPE_DIAL 554524804
 define TYPE_ANALYSER 435685051
 define TYPE_PUMP -321403609
+define TYPE_MIXER 2104106366
 define TYPE_LEVER 1220484876
 define FACTOR 800
 define Kp 1
@@ -35,6 +36,7 @@ move EOutSum 0
 sb TYPE_FURNACE SettingOutput 0
 sb TYPE_FURNACE SettingInput 0
 sb TYPE_PUMP On 0
+sb TYPE_MIXER On 0
 sb TYPE_FURNACE Open 0
 start:
 yield
@@ -60,14 +62,14 @@ beq Process 0 closeAll
 #Check Pipe
 lb Tcur TYPE_FURNACE Temperature 1
 lb Pcur TYPE_ANALYSER Pressure 1
-slt Pcur Pcur 2000 #Pipe Pressure Max
-s Mixer On Pcur
-sub Temp T0 Tcur
+slt Pcur Pcur 1000 #Pipe Pressure Max
+sb TYPE_MIXER On Pcur
+sub Temp Tcur T0 #cold input 1
 mul Temp Temp 5 #Velocity
 min Temp Temp 50 #Maximum
 max Temp Temp -50 #Minimum
 add Temp Temp 50
-s Mixer Setting Temp #Mixer
+sb TYPE_MIXER Setting Temp #Mixer
 #Check Furnace
 lb Pcur TYPE_FURNACE Pressure 1
 lb Tcur TYPE_FURNACE Temperature 1

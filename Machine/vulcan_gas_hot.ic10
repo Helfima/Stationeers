@@ -1,8 +1,10 @@
 # Air Hot/Cold Controller
 alias TankHot d0
 alias VentHot d1
+alias LeverHot d2
 alias TankCold d3
 alias VentCold d4
+alias LeverCold d5
 # Constant
 define KELVIN 273
 define TEXT_HOT 630
@@ -15,8 +17,10 @@ alias TExtHot r1
 alias TExtCold r2
 alias IsVentHot r3
 alias IsTankHot r4
-alias IsVentCold r5
-alias IsTankCold r6
+alias IsLeverHot r5
+alias IsVentCold r6
+alias IsTankCold r7
+alias IsLeverCold r8
 alias Temp r10
 # Settings
 start:
@@ -29,8 +33,11 @@ jal tank_hot
 j start
 
 tank_cold:
+bdns LeverCold ra
 bdns TankCold ra
 bdns VentCold ra
+l IsLeverCold LeverCold Open
+bne IsLeverCold 1 ra
 sle IsVentCold TExt TExtCold
 l Temp TankCold Pressure
 slt IsTankCold Temp P_HOT_MAX
@@ -39,8 +46,11 @@ s VentCold On IsVentCold
 j ra
 
 tank_hot:
+bdns LeverHot ra
 bdns TankHot ra
 bdns VentHot ra
+l IsLeverHot LeverHot Open
+bne IsLeverHot 1 ra
 sge IsVentHot TExt TExtHot
 l Temp TankHot Pressure
 slt IsTankHot Temp P_HOT_MAX
