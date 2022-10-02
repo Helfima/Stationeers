@@ -1,0 +1,103 @@
+# Centrifuge Controller
+alias Self d0
+alias DiffRPM d1
+alias DiffStress d2
+alias Reagents d3
+alias FlowReagents d4
+# Constant
+define TYPE_LEVER 1220484876
+define RPM_MIN 300
+define STRESS_MAX 40
+define STRESS_MIN 5
+define QTY_MAX 500
+define KUpThr 5   # coef Throttle
+define KDownThr 5   # coef Throttle
+define Kcom 1   # coef Combustion
+# Alias Register
+alias MThr r0 # mesure Throttle
+alias MRpm r1 # mesure Rpm
+alias LRpm r2 # valeur Last Rpm
+alias DRpm r3 # valeur Difference
+alias MStr r4 # mesure Stress
+alias LStr r5 # valeur Last Stress
+alias DStr r6 # valeur Difference
+alias LQTY r7
+alias FQTY r8 # commande throttle
+alias TQTY r9 # commande combustion
+alias Count r10
+alias QTY r11
+alias IsOn r12
+alias IsFull r13
+# Settings
+stop:
+move IsFull 0
+move LQTY 0
+move FQTY 0
+move TQTY 0
+move LRpm 0
+move LStr 0
+start:
+yield
+s db Setting 0
+lb IsOn TYPE_LEVER Setting 3 # 0:Average 1:Sum 2:Min 3:Max
+l MRpm Self Rpm
+l MThr Self Throttle
+l MStr Self Stress
+sub DRpm MRpm LRpm
+move LRpm MRpm
+sub DStr MStr LStr
+move LStr MStr
+jal reagents
+jal flowQuantity
+jal display
+beq IsOn 0 stop
+j start
+
+flowQuantity:
+bne LQTY QTY flowCount
+add TQTY TQTY 1
+move LQTY QTY
+j ra
+flowCount:
+add TQTY TQTY 1
+div FQTY 2 TQTY
+move TQTY 0
+move LQTY QTY
+j ra
+
+display:
+brdns DiffRPM 2
+s DiffRPM Setting DRpm
+brdns DiffStress 2
+s DiffStress Setting DStr
+brdns Reagents 3
+s Reagents Color 10
+s Reagents Setting QTY
+brdns FlowReagents 3
+s FlowReagents Color 10
+s FlowReagents Setting FQTY
+j ra
+
+reagents:
+move QTY 0
+lr Count Self Contents Carbon
+add QTY QTY Count
+lr Count Self Contents Cobalt
+add QTY QTY Count
+lr Count Self Contents Copper
+add QTY QTY Count
+lr Count Self Contents Gold
+add QTY QTY Count
+lr Count Self Contents Iron
+add QTY QTY Count
+lr Count Self Contents Lead
+add QTY QTY Count
+lr Count Self Contents Nickel
+add QTY QTY Count
+lr Count Self Contents Silicon
+add QTY QTY Count
+lr Count Self Contents Silver
+add QTY QTY Count
+lr Count Self Contents Uranium
+add QTY QTY Count
+j ra

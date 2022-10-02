@@ -1,0 +1,121 @@
+# Centrifuge Controller
+alias Self db
+alias Display d1
+# Constant
+define TYPE_LEVER 1220484876
+define RPM_MIN 300
+define STRESS_MAX 40
+define STRESS_MIN 5
+define QTY_MAX 500
+define KUpThr 5   # coef Throttle
+define KDownThr 5   # coef Throttle
+define Kcom 1   # coef Combustion
+# Alias Register
+alias MThr r0 # mesure Throttle
+alias MRpm r1 # mesure Rpm
+alias LRpm r2 # valeur Last Rpm
+alias DRpm r3 # valeur Difference
+alias MStr r4 # mesure Stress
+alias LStr r5 # valeur Last Stress
+alias DStr r6 # valeur Difference
+alias Sign r7
+alias CThr r8 # commande throttle
+alias CCom r9 # commande combustion
+alias Count r10
+alias QTY r11
+alias IsOn r12
+alias IsOpen r13
+# Settings
+stop:
+move IsOpen 0
+move CThr 0
+move CCom 0
+move LRpm 0
+move LStr 0
+s Self Throttle 0
+s Self CombustionLimiter 0
+start:
+yield
+brdns Display 2
+s Display Setting QTY
+lb IsOn TYPE_LEVER Setting 3 # 0:Average 1:Sum 2:Min 3:Max
+l MRpm Self Rpm
+l MThr Self Throttle
+l MStr Self Stress
+sub DRpm MRpm LRpm
+move LRpm MRpm
+sub DStr MStr LStr
+move LStr MStr
+jal reagents
+jal emptying
+beq IsOn 0 stop
+jal throttle
+jal combustion
+j start
+emptying:
+brlt QTY QTY_MAX 2
+s Self Open 1
+brgt QTY 10 2
+s Self Open 0
+l IsOpen Self Open
+beq IsOpen 1 stop
+j ra
+throttle:
+brgt MStr STRESS_MAX 5 # bypass
+brgt DStr 0 3 # si Diff negatif impulsion
+add CThr CThr KUpThr
+j throttle_next
+brlt MStr STRESS_MIN 3 # si stress > min on diminue
+sub CThr CThr KDownThr
+j throttle_next
+brge DRpm 0 3 # si Diff negatif impulsion
+add CThr CThr 10
+j throttle_next
+brgt MStr 0 2 # si stress = 0  on augmente
+add CThr CThr KUpThr
+throttle_next:
+min CThr CThr 100
+max CThr CThr 0
+s Self Throttle CThr
+beq MStr 0 ra
+sleep 1
+s Self Throttle 0
+sleep 1
+j ra
+combustion:
+brgt MRpm RPM_MIN 3 # si rpm < min on diminue
+sub CCom CCom 10
+j combustion_next
+brle DStr 0 3 # si stress augmente on diminue
+sub CCom CCom Kcom
+j combustion_next
+brgt MStr 0 2 # si stress = 0  on augmente
+add CCom CCom Kcom
+combustion_next:
+min CCom CCom 100
+max CCom CCom 0
+s Self CombustionLimiter CCom
+j ra
+reagents:
+move QTY 0
+lr Count Self Contents Carbon
+add QTY QTY Count
+lr Count Self Contents Cobalt
+add QTY QTY Count
+lr Count Self Contents Copper
+add QTY QTY Count
+lr Count Self Contents Gold
+add QTY QTY Count
+lr Count Self Contents Iron
+add QTY QTY Count
+lr Count Self Contents Lead
+add QTY QTY Count
+lr Count Self Contents Nickel
+add QTY QTY Count
+lr Count Self Contents Silicon
+add QTY QTY Count
+lr Count Self Contents Silver
+add QTY QTY Count
+lr Count Self Contents Uranium
+add QTY QTY Count
+j ra

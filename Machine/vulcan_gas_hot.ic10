@@ -24,16 +24,26 @@ yield
 add TExtCold TEXT_COLD KELVIN
 add TExtHot TEXT_HOT KELVIN
 lb TExt TYPE_SENSOR Temperature 3 # 0:Average 1:Sum 2:Min 3:Max
-# Hot
-sge IsVentHot TExt TExtHot
-l Temp TankHot Pressure
-slt IsTankHot Temp P_HOT_MAX
-and IsVentHot IsVentHot IsTankHot
-s VentHot On IsVentHot
-# Cold
+jal tank_cold
+jal tank_hot
+j start
+
+tank_cold:
+bdns TankCold ra
+bdns VentCold ra
 sle IsVentCold TExt TExtCold
 l Temp TankCold Pressure
 slt IsTankCold Temp P_HOT_MAX
 and IsVentCold IsVentCold IsTankCold
 s VentCold On IsVentCold
-j start
+j ra
+
+tank_hot:
+bdns TankHot ra
+bdns VentHot ra
+sge IsVentHot TExt TExtHot
+l Temp TankHot Pressure
+slt IsTankHot Temp P_HOT_MAX
+and IsVentHot IsVentHot IsTankHot
+s VentHot On IsVentHot
+j ra
