@@ -43,7 +43,7 @@ Ecrous du Housing
 * D1: Memory DiffRPM
 * D2: Memory DiffStress
 * D3: Reagents = Quantité des minerais dans la centrifugeuse, ne prend en compte que ceux minables et non glace.
-* D4: FlowReagents = Quantité de minerais traités par seconde (tant vers 1)
+* D4: FlowReagents = Quantité de minerais traités par seconde (tend vers 1)
 * D5: Clock = Temps en second depuis la dernière vidange
 
 ![Tableau de bord](/Centrifuge/centrifuge.png)
