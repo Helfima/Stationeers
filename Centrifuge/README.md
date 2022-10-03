@@ -7,6 +7,7 @@ Scripts de pilotage de la centrifugeuse à gaz.
 Ne pas modifier les paramètres dans les scripts en dehors du paramètre QTY_MAX définissant le seuil de vidange.
 
 **N'oubliez pas de placer un Levier dans le réseau permettant d'activer ou non la machine, voir l'image ci-dessous sur la gauche.**
+Ce levier est le seul élément indispensable, doit être unique dans le réseau, pas de réglage nécessaire il est lu via une instruction batch.
 
 Composition des carburant:
 * Fuel Oxygen = H2:O2 (2:1) ratio de 2 Hydrogen (Volatile) pour 1 Oxygen
