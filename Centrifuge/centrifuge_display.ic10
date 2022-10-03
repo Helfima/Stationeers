@@ -47,6 +47,7 @@ l MThr Self Throttle
 l MStr Self Stress
 l IsOpen Self Open
 select Tick IsOpen 0 Tick
+select Time IsOpen 0 Time
 add Tick Tick 1
 add Time Time 1
 s db Setting Tick
