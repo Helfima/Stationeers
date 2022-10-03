@@ -1,5 +1,7 @@
 # Centrifuge
 
+## Descriptions
+
 Scripts de pilotage de la centrifugeuse à gaz. Ne pas modifier les paramètres dans les scripts en dehors du paramètre QTY_MAX définissant le seuil de vidange.
 
 Composition des carburant:
@@ -24,10 +26,19 @@ Le temps pour atteindre le régime établi est relativement long.
 
 La machine se vidangera dans un fracas après avoir atteind 2000 minerais.
 
+## Affichage complémentaire
+
 Pour les Affichages complets utilisez le script centrifuge_display.ic10 dans un Housing. les élements barrés étaient des informations lors de la mise au point, ne pas en tenir compte.
 
 Il y a 2 "Memory" pour l'affichage D1 et D2
 
+Les 5 afficheurs du haut sont des consoles avec une carte "Graph Display", il faudra lié les consoles à un Logique Reader ou une mémoire (D1 et D2).
+Pour les 3 premiers placer 3 Logic Reader dans le réseau
+* Logic Reader RPM = input:Centrifuge var:Rpm
+* Logic Reader Throttle = input:Centrifuge var:Throttle
+* Logic Reader Stress = input:Centrifuge var:Stress
+
+Ecrous du Housing
 * D0: Centrifugeuse
 * D1: Memory DiffRPM
 * D2: Memory DiffStress
