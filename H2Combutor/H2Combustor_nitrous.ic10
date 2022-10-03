@@ -1,0 +1,22 @@
+# H2Combustor Controller
+alias Self db
+# Constant
+define KELVIN 273
+define MOLES 100
+define T_MAX 4000
+# Alias Register
+alias IsActive r0
+alias IsMixer r1
+alias IsMoles r2
+alias Temp r10
+# Settings
+s Self Mode 0
+start:
+yield
+l Temp Self TemperatureOutput2
+slt IsActive Temp T_MAX
+l Temp Self TotalMolesInput
+sgt IsMoles Temp MOLES
+and IsActive IsActive IsMoles
+s Self Mode IsActive
+j start

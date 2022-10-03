@@ -7,6 +7,7 @@ define MOLES 1
 # Alias Register
 alias IsActive r0
 alias IsMoles r1
+alias IsFilter r2
 alias Temp r10
 # Settings
 s Self Mode 0
@@ -17,5 +18,11 @@ slt IsActive Temp P_MAX
 l Temp Self TotalMolesInput
 sgt IsMoles Temp MOLES
 and IsActive IsActive IsMoles
+ls IsFilter Self 1 Quantity
+sgt IsFilter IsFilter 0
+and IsActive IsActive IsFilter
+ls IsFilter Self 2 Quantity
+sgt IsFilter IsFilter 0
+and IsActive IsActive IsFilter
 s Self Mode IsActive
 j start
