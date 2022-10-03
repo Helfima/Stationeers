@@ -2,7 +2,11 @@
 
 ## Descriptions
 
-Scripts de pilotage de la centrifugeuse à gaz. Ne pas modifier les paramètres dans les scripts en dehors du paramètre QTY_MAX définissant le seuil de vidange.
+Scripts de pilotage de la centrifugeuse à gaz.
+
+Ne pas modifier les paramètres dans les scripts en dehors du paramètre QTY_MAX définissant le seuil de vidange.
+
+**N'oubliez pas de placer un Levier permettant d'activer ou non la machine**
 
 Composition des carburant:
 * Fuel Oxygen = H2:O2 (2:1) ratio de 2 Hydrogen (Volatile) pour 1 Oxygen
