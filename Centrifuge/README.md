@@ -1,10 +1,24 @@
 # Centrifuge
 
-Scripts de pilotage de la centrifugeuse à gaz.
+Scripts de pilotage de la centrifugeuse à gaz. Ne pas modifier les paramètres dans les scripts en dehors du paramètre QTY_MAX définissant le seuil de vidange.
+
+Composition des carburant:
+* Fuel Oxygen = H2:O2 (2:1) ratio de 2 Hydrogen (Volatile) pour 1 Oxygen
+* Fuel Nitrous = H2:N2O (1:1) ratio de 1 Hydrogen (Volatile) pour 1 Nitrous Oxide
 
 Mettre un circuit intégré dans la machine, appliquer le programme selon le carburant utilisé:
-* Fuel Oxygen H2:O2 (2:1) = centrifuge_oxygen.ic10
-* Fuel Nitrous H2:N2O (1:1) = centrifuge_nitrous.ic10
+* Fuel Oxygen = centrifuge_oxygen.ic10
+* Fuel Nitrous = centrifuge_nitrous.ic10
+
+Vitesse Rpm en régime établi
+* Fuel Oxygen = 528
+* Fuel Nitrous = 1188
+
+Traitement de minerais en régime établi
+* Fuel Oxygen = 0.5/s
+* Fuel Nitrous = 1/s
+
+Attention le régime maximal ne sera pas atteind car il y a les phases de monté en rpm et de vidange.
 
 Le temps pour atteindre le régime établi est relativement long.
 
@@ -17,8 +31,8 @@ Il y a 2 "Memory" pour l'affichage D1 et D2
 * D0: Centrifugeuse
 * D1: Memory DiffRPM
 * D2: Memory DiffStress
-* D3: Reagents
-* D4: FlowReagents
-* D5: Clock
+* D3: Reagents = Quantité des minerais dans la centrifugeuse, ne prend en compte que ceux minables et non glace.
+* D4: FlowReagents = Quantité de minerais traités par seconde (tant vers 1)
+* D5: Clock = Temps en second depuis la dernière vidange
 
 ![Tableau de bord](/Centrifuge/centrifuge.png)
