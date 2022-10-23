@@ -12,7 +12,7 @@ define TYPE_STACKER2 1585641623 # Stacker Hash
 define STACK 100
 define WAIT 0
 define NONE -3
-define START_SP 1 # 1, 7 ou 13 selon la ligne de silos
+define START_SP 1 # 1,7:Ores 13,19,25:Ingots
 # Alias Register
 alias Silo r0
 alias LastSilo r1
@@ -85,36 +85,39 @@ j ra
 push_hash_ingot:
 move sp 0
 # Ores
-push 1724793494 # Coal Ore
-push -983091249 # Colbalt Ore
-push -707307845 # Copper Ore
-push -1348105509 # Gold Ore
-push 1758427767 # Iron Ore
-push -190236170 # Lead Ore
-push 1830218956 # Nickel Ore
-push 1103972403 # Silicon Ore
-push -916518678 # Silver Ore
-push -1516581844 # Uranium Ore
-push -831480639 # Biomass
-push -654790771 # Steel Ingot
+push 1724793494  # 1:Coal Ore
+push -983091249  # 2:Colbalt Ore
+push -707307845  # 3:Copper Ore
+push -1348105509 # 4:Gold Ore
+push 1758427767  # 5:Iron Ore
+push -190236170  # 6:Lead Ore
+
+push 1830218956  # 7:Nickel Ore
+push 1103972403  # 8:Silicon Ore
+push -916518678  # 9:Silver Ore
+push -1516581844 # 10:Uranium Ore
+push -831480639  # 11:Biomass
+push -654790771  # 12:Steel Ingot
 
 #Ingots
-push 2134647745 # Lead Ingot
-push 252561409 # Charcoal
-push -404336834 # Copper Ingot
-push -929742000 # Silver Ingot
-push 226410516 # Gold Ingot
-push -1301215609 # Iron Ingot
-push -1406385572 # Nickel Ingot
-push -290196476 # Silicon Ingot
-push -654790771 # Steel Ingot
-push 502280180 # Electrum Ingot
-push -82508479 # Solder Ingot
-push 1058547521 # Constantan Ingot
-push -297990285 # Invar Ingot
-push 412924554 # Astroloy Ingot
-push -787796599 # Inconel Ingot
-push 156348098 # Waspaloy Ingot
-push 1579842814 # Hastelloy Ingot
-push -1897868623 # Stellite Ingot
+push 2134647745  # 13:Lead Ingot
+push 252561409   # 14:Charcoal
+push -404336834  # 15:Copper Ingot
+push -929742000  # 16:Silver Ingot
+push 226410516   # 17:Gold Ingot
+push -1301215609 # 18:Iron Ingot
+
+push -1406385572 # 19:Nickel Ingot
+push -290196476  # 20:Silicon Ingot
+push -654790771  # 21:Steel Ingot
+push 502280180   # 22:Electrum Ingot
+push -82508479   # 23:Solder Ingot
+push 1058547521  # 24:Constantan Ingot
+
+push -297990285  # 25:Invar Ingot
+push 412924554   # 26:Astroloy Ingot
+push -787796599  # 27:Inconel Ingot
+push 156348098   # 28:Waspaloy Ingot
+push 1579842814  # 29:Hastelloy Ingot
+push -1897868623 # 30:Stellite Ingot
 j ra
