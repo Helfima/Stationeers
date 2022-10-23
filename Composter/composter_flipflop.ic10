@@ -1,0 +1,51 @@
+# Composter Controller
+alias Composter0 d0
+alias Flipflop0 d1
+alias Composter1 d3
+alias Flipflop1 d4
+# Constant
+define DEVICE 2
+define ORGANIC_MIN 3
+define ORGANIC_MAX 10
+# Alias Register
+alias Device0 r1
+alias Device1 r2
+alias Qty r3
+alias IsOccupied r4
+alias IsActived r5
+alias IsFull r6
+alias Way r6
+# Settings
+start:
+yield
+move r1 0
+next:
+add r2 r1 1
+s dr1 On 1
+s dr2 On 1
+s dr2 Setting 0
+s dr2 SettingOutput 0
+jal rooter
+jal processing
+breq r1 0 2 #go next composter
+j start
+move r1 3
+j next
+
+rooter:
+bdns dr1 ra
+bdns dr2 ra
+l Qty dr1 Quantity
+ls IsOccupied dr1 0 Occupied
+sge IsFull Qty ORGANIC_MAX
+or IsFull IsFull IsOccupied
+sne Way IsFull 1
+s dr2 Mode Way # 0:next 1:current
+j ra
+
+processing:
+bdns dr1 ra
+l Qty dr1 Quantity
+sge IsActived Qty ORGANIC_MIN
+s dr1 Activate IsActived
+j ra

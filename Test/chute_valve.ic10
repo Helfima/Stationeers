@@ -1,0 +1,20 @@
+alias chute0 d0
+alias chute1 d1
+alias chute2 d2
+alias mem0 d3
+alias mem1 d4
+alias mem2 d5
+
+alias device r0
+alias memory r1
+alias hash r2
+init:
+move device 0
+start:
+yield
+add r1 r0 3
+ls hash dr0 0 PrefabHash
+s dr1 Setting hash
+beq device 2 init
+add device device 1
+j start

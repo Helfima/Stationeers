@@ -1,0 +1,26 @@
+# tank_display.ic10
+alias Sensor d0 # by mirror
+# Constant
+define TYPE_TANK 272136332
+define TYPE_LED_SMALL -815193061
+define TYPE_MONITOR 801677497
+# Alias Register
+alias Qty r0
+alias IsOn r1
+# Settings
+start:
+yield
+jal check_moles
+jal check_on
+j start
+
+check_moles:
+lb Qty TYPE_TANK TotalMoles 3 # 0:Average 1:Sum 2:Min 3:Max
+sb TYPE_LED_SMALL Setting Qty
+j ra
+
+check_on:
+l IsOn Sensor Activate
+sb TYPE_LED_SMALL On IsOn
+sb TYPE_MONITOR On IsOn
+j ra

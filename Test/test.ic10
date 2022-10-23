@@ -1,98 +1,18 @@
-alias Mem d0
-alias Aff1 d3
-alias Aff2 d4
-alias Aff3 d5
-alias MemData r15
-alias dat1 r14
-alias dat2 r13
-alias dat3 r12
-alias Reste r11
-
-define dt1 -4321
-define dt2 1111
-define dt3 -999
-main:
-  push 0
-  push dt1
-  push 0
-  jal Empile
-  pop MemData
-  push 1000000   # encoding dat1,dat2,dat3
-  push dt2
-  push MemData
-  jal Empile
-  pop MemData
-  push 10000
-  push dt3
-  push MemData
-  jal Empile
-  pop MemData
-
-  s Mem Setting MemData
-  # DECODE PART ----------------------------
-  #l MemData Mem Setting
-
-  #push 1000
-  #push MemData
-  #jal Merge
-  #pop dat3
-
-  #push 1000000
-  #push r0
-  #jal Merge
-  #pop dat2
-
-  #push 0
-  #push r0
-  #jal Merge
-  #pop dat1
-
-  # ------------------------------------------
-  s Aff1 Setting dt1
-  s Aff2 Setting dt2
-  s Aff3 Setting dt3
-  yield
-j main
-
-Empile:
-# 1st input: push multiplier  (pop r6)
-# 2sd input: push data to add ( pop r5)
-# 3rd input: initialdata in (pop r4)
-  pop r4
-  pop r5
-  pop r6
-   mul r5 r5 10
-   bgtz r5 EmpileS1
-   abs r5 r5
-   add r5 r5 1
-EmpileS1:
-  mul r3 r6 10
-  mul r0 r4 r3
-  add r1 r0 r5
-EmpilePM:
-  push r1
-j ra
-
-Merge:
-# input: push multiplier  (pop r2)
-# input: push InitialData (pop r1)
-# output: r0 truncated rest
-# output: pop result
-pop r1
-pop r2
- blez r2 MergeS1   # si c'est le dernier
- mul r4 r2 10
- div r3 r1 r4
- trunc r3 r3  # rest
- mul r0 r3 r4 # part to delete from r1
- sub r1 r1 r0 # data needed + sign
-MergeS1:
-     div r1 r1 10
-     trunc r5 r1
-     beq r5 r1 MergeS2
-     mul r1 r5 -1
-MergeS2:
-move r0 r3
-push r1 # valeur neg
-DecPos:
-j ra 
+alias PipeAnaliser d0
+alias PumpIn d1
+alias PumpTempUp d2
+# constant
+define Tmin 290
+define Tmax 295
+# register
+alias TempGaz r0
+alias IsPumpIn r1
+alias IsPumpUp r2
+start:
+yield
+l TempGaz PipeAnaliser Temperature
+sgt IsPumpIn TempGaz Tmax # IsPumpIn=1 si TempGaz > TempGaz
+s PumpIn On IsPumpIn
+slt IsPumpUp TempGaz Tmin# IsPumpUp=1 si TempGaz < TempGaz
+s PumpIn On IsPumpUp
+j start

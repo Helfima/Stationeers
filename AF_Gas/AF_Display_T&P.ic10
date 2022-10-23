@@ -57,6 +57,8 @@ sgt r14 Tcur Tmin
 sgt r15 Tcur Tmax
 add r15 r15 r14
 mul r15 r15 2
+brne r15 0 2
+move r15 -1 # fix color blue
 s DisplayTcur Color r15 #0:Blue 2:Green 4:Red
 j ra
 setPressureColor:
@@ -65,6 +67,8 @@ sgt r14 Pcur Pmin
 sgt r15 Pcur Pmax
 add r15 r15 r14
 mul r15 r15 2
+brne r15 0 2
+move r15 -1 # fix color blue
 s DisplayPcur Color r15 #0:Blue 2:Green 4:Red
 j ra
 loadValues:

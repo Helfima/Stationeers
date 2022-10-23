@@ -1,0 +1,103 @@
+# silo_flipflop.ic10
+alias FlipFlop0 d0
+alias FlipFlop1 d1
+alias FlipFlop2 d2
+alias FlipFlop3 d3
+alias FlipFlop4 d4
+alias FlipFlop5 d5
+#Constant
+define TYPE_FLIPFLOP 1155865682 # FlipFlop Hash
+define START_SP 1 # 1,7:Ores 13,19,25:Ingots
+# Alias Register
+alias FlipFlop r0
+alias Request r1
+alias Hash r2
+alias Index r3
+#Settings
+jal push_hash_ingot
+sb TYPE_FLIPFLOP On 1
+start:
+yield
+move r0 0
+loop_device:
+s dr0 On 0
+s dr0 Setting 0
+s dr0 SettingOutput 0
+beqal r0 0 check_input_row
+bneal r0 0 check_input_silo
+add r0 r0 1
+ble r0 5 loop_device
+j start
+
+check_input_silo:
+ls Request dr0 0 PrefabHash
+beq Request 0 ra
+sub sp r0 1
+add sp sp START_SP
+peek Hash
+beq Request Hash silo_way
+s dr0 Mode 0 # FlipFlop Way:Exit
+s dr0 On 1
+j ra
+silo_way:
+s dr0 Mode 1 # FlipFlop Way:Silo
+s dr0 On 1
+j ra
+
+check_input_row:
+ls Request dr0 0 PrefabHash
+beq Request 0 ra
+move Index 0
+loop_hash:
+add sp Index START_SP
+peek Hash
+beq Request Hash row_way
+add Index Index 1
+ble Index 5 loop_hash
+s dr0 Mode 0 # FlipFlop Way:Exit
+s dr0 On 1
+j ra
+row_way:
+s dr0 Mode 1 # FlipFlop Way:Silo Row
+s dr0 On 1
+j ra
+
+push_hash_ingot:
+move sp 0
+# Ores
+push 1724793494  # 1:Coal Ore
+push -983091249  # 2:Colbalt Ore
+push -707307845  # 3:Copper Ore
+push -1348105509 # 4:Gold Ore
+push 1758427767  # 5:Iron Ore
+push -190236170  # 6:Lead Ore
+
+push 1830218956  # 7:Nickel Ore
+push 1103972403  # 8:Silicon Ore
+push -916518678  # 9:Silver Ore
+push -1516581844 # 10:Uranium Ore
+push -831480639  # 11:Biomass
+push -654790771  # 12:Steel Ingot
+
+#Ingots
+push 2134647745  # 13:Lead Ingot
+push 252561409   # 14:Charcoal
+push -404336834  # 15:Copper Ingot
+push -929742000  # 16:Silver Ingot
+push 226410516   # 17:Gold Ingot
+push -1301215609 # 18:Iron Ingot
+
+push -1406385572 # 19:Nickel Ingot
+push -290196476  # 20:Silicon Ingot
+push -654790771  # 21:Steel Ingot
+push 502280180   # 22:Electrum Ingot
+push -82508479   # 23:Solder Ingot
+push 1058547521  # 24:Constantan Ingot
+
+push -297990285  # 25:Invar Ingot
+push 412924554   # 26:Astroloy Ingot
+push -787796599  # 27:Inconel Ingot
+push 156348098   # 28:Waspaloy Ingot
+push 1579842814  # 29:Hastelloy Ingot
+push -1897868623 # 30:Stellite Ingot
+j ra

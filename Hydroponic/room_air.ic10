@@ -1,0 +1,66 @@
+# room_air.ic10
+alias pump_O2 d0
+alias pump_N2 d1
+alias pump_CO2 d2
+alias pump_waste d3
+# Constant
+define TYPE_SENSOR -1252983604
+define KELVIN 273
+define P_MAX 100
+define O2 0.20
+define N2 0.75
+define CO2 0.05
+define Kp 10
+# register
+alias IsOn r0
+alias Ratio r1
+alias P r2
+alias Cmd r3
+alias Err r4
+alias Target r5
+# settings
+s pump_O2 Setting 10
+s pump_N2 Setting 10
+s pump_CO2 Setting 10
+s pump_waste Setting 30
+start:
+yield
+s db Setting 1
+lb Ratio TYPE_SENSOR RatioOxygen 3 # 0:Average 1:Sum 2:Min 3:Max
+move Target O2
+slt IsOn Ratio Target
+s pump_O2 On IsOn
+jal cmd_input
+s pump_O2 Setting Cmd
+
+lb Ratio TYPE_SENSOR RatioNitrogen 3 # 0:Average 1:Sum 2:Min 3:Max
+move Target N2
+slt IsOn Ratio Target
+s pump_N2 On IsOn
+jal cmd_input
+s pump_N2 Setting Cmd
+
+lb Ratio TYPE_SENSOR RatioCarbonDioxide 3 # 0:Average 1:Sum 2:Min 3:Max
+move Target CO2
+slt IsOn Ratio Target
+s pump_CO2 On IsOn
+jal cmd_input
+s pump_CO2 Setting Cmd
+
+lb P TYPE_SENSOR Pressure 3 # 0:Average 1:Sum 2:Min 3:Max
+sgt IsOn P P_MAX
+s pump_waste On IsOn
+sub Err P P_MAX
+mul Cmd Err Kp
+max Cmd Cmd 5
+min Cmd Cmd 100
+s pump_waste Setting Cmd
+j start
+
+cmd_input:
+sub Err Target Ratio
+mul Cmd Err 100
+mul Cmd Cmd Kp
+max Cmd Cmd 5
+min Cmd Cmd 100
+j ra

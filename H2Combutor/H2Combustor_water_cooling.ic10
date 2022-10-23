@@ -1,0 +1,27 @@
+# H2Combustor_water_cooling.ic10
+alias Atmo db
+# Constant
+define T_INPUT_MAX 150 # Degre celcius
+define T_OUTPUT_MAX 200 # Degre celcius
+define KELVIN 273
+define TYPE_VALVE -1280984102
+# Alias Register
+alias IsActive r0
+alias IsCoolant r1
+alias IsHot r2
+alias Tin r3
+alias Tout r4
+alias TInputMax r11
+alias TOutputMax r12
+# Settings
+add TInputMax T_INPUT_MAX KELVIN
+add TOutputMax T_OUTPUT_MAX KELVIN
+start:
+yield
+l Tin Atmo TemperatureInput
+l Tout Atmo TemperatureOutput2
+sle IsActive Tin TInputMax
+s Atmo Mode IsActive #Turn On/Off 0:idle 1:active
+sgt IsCoolant Tin Tout
+sb TYPE_VALVE On IsCoolant
+j start

@@ -1,12 +1,14 @@
-# Filtration Controller
+# filtration_atmosphere.ic10
 alias Atmo db
 # Constant
 define MOLES_MIN 1
 define PERCENT 0.01
 define T_INPUT_MAX 130 # Degre celcius
+define P_INPUT_MAX 1000 # kpa
 define T_OUTPUT_MAX 50 # Degre celcius
 define P_OUTPUT_MAX 1000 # kpa
 define KELVIN 273
+define TYPE_ACTIVE_VENT -1129453144
 # Alias Register
 alias IsOn r0
 alias Temp r1
@@ -14,9 +16,12 @@ alias Moles r2
 alias Input r3
 alias Output r4
 alias IsRatio r5
+alias IsVent r6
 alias TInputMax r11
 alias TOutputMax r12
 # Settings
+sb TYPE_ACTIVE_VENT Mode 1
+sb TYPE_ACTIVE_VENT On 0
 start:
 yield
 move IsOn 0
@@ -28,7 +33,7 @@ l Moles Atmo TotalMolesOutput
 brgt Moles 0 3 #check if empty
 move IsOn 1
 j bypass
-l Temp Atmo TemperatureInput
+l Temp Atmo TemperatureOutput2 # external temperature
 bgt Temp TInputMax bypass #Turn Off
 l Temp Atmo TemperatureOutput
 bgt Temp TOutputMax bypass #Turn Off
@@ -63,6 +68,10 @@ jal check_ratio
 bypass:
 #s db Setting 999
 s Atmo Mode IsOn #Turn On/Off 0:idle 1:active
+l Temp Atmo PressureInput
+slt IsVent Temp P_INPUT_MAX
+and IsVent IsVent IsOn
+sb TYPE_ACTIVE_VENT On IsVent
 j start
 
 check_ratio:

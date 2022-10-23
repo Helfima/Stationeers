@@ -1,0 +1,24 @@
+alias chute0 d0
+alias chute1 d1
+alias chute2 d2
+alias flip0 d3
+alias flip1 d4
+alias flip2 d5
+
+alias chute r0
+alias flip r1
+alias hash r2
+alias way r3
+init:
+move chute 0
+start:
+yield
+add r1 r0 3
+ls hash dr0 0 PrefabHash
+s dr1 Setting 0
+s dr1 SettingOutput 0
+seq way hash 0
+s dr1 Mode way
+beq chute 2 init
+add chute chute 1
+j start

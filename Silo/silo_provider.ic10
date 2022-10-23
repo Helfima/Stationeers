@@ -1,0 +1,120 @@
+# silo_provider.ic10
+alias Silo0 d0
+alias Silo1 d1
+alias Silo2 d2
+alias Silo3 d3
+alias Silo4 d4
+alias Silo5 d5
+#Constant
+define TYPE_SILO 1155865682 # Silo Hash
+define TYPE_STACKER1 -2020231820 # Stacker Hash
+define TYPE_STACKER2 1585641623 # Stacker Hash
+define STACK 100
+define WAIT 0
+define NONE -3
+define START_SP 1 # 1, 7 ou 13 selon la ligne de silos
+# Alias Register
+alias Silo r0
+alias LastSilo r1
+alias Request r2
+alias AbsRequest r3
+alias Qty r4
+alias Hash r5
+#Settings
+jal push_hash_ingot
+sb TYPE_SILO On 1
+sb TYPE_STACKER1 On 1
+sb TYPE_STACKER1 Setting STACK
+sb TYPE_STACKER2 On 1
+sb TYPE_STACKER2 Setting STACK
+start:
+yield
+l Request db Setting
+beq Request WAIT start # Wait Request
+abs AbsRequest Request
+bgt AbsRequest 1000000 request_read # Request Hash
+jal read_silo
+s db Setting Qty
+j start
+request_read:
+jal check_hash
+bne Silo NONE found_silo # Found Silo
+move LastSilo Silo
+move Qty 0 # Reset Quantity
+s db Setting Qty # End Request
+j start
+found_silo:
+beq Silo LastSilo request_open # Open Request
+# Quantity
+move LastSilo Silo
+jal read_silo
+j start
+request_open:
+jal action_silo
+jal read_silo
+j start
+
+read_silo:
+move Qty 0
+beq LastSilo NONE ra
+bdns rr1 ra # if no device exit
+l Qty rr1 Quantity
+mul Qty Qty STACK
+s db Setting Qty # Quantity Request
+j ra
+
+action_silo:
+beq Silo NONE ra
+bdns rr0 ra # if no device exit
+s rr0 Open 1
+sleep 1
+s rr0 Open 0
+j ra
+
+check_hash:
+move Silo 0
+loop_hash:
+add sp Silo START_SP
+peek Hash
+beqal Request Hash ra
+add Silo Silo 1
+ble Silo 5 loop_hash
+move Silo NONE
+j ra
+
+push_hash_ingot:
+move sp 0
+# Ores
+push 1724793494 # Coal Ore
+push -983091249 # Colbalt Ore
+push -707307845 # Copper Ore
+push -1348105509 # Gold Ore
+push 1758427767 # Iron Ore
+push -190236170 # Lead Ore
+push 1830218956 # Nickel Ore
+push 1103972403 # Silicon Ore
+push -916518678 # Silver Ore
+push -1516581844 # Uranium Ore
+push -831480639 # Biomass
+push -654790771 # Steel Ingot
+
+#Ingots
+push 2134647745 # Lead Ingot
+push 252561409 # Charcoal
+push -404336834 # Copper Ingot
+push -929742000 # Silver Ingot
+push 226410516 # Gold Ingot
+push -1301215609 # Iron Ingot
+push -1406385572 # Nickel Ingot
+push -290196476 # Silicon Ingot
+push -654790771 # Steel Ingot
+push 502280180 # Electrum Ingot
+push -82508479 # Solder Ingot
+push 1058547521 # Constantan Ingot
+push -297990285 # Invar Ingot
+push 412924554 # Astroloy Ingot
+push -787796599 # Inconel Ingot
+push 156348098 # Waspaloy Ingot
+push 1579842814 # Hastelloy Ingot
+push -1897868623 # Stellite Ingot
+j ra

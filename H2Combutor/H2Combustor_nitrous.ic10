@@ -1,4 +1,4 @@
-# H2Combustor Controller
+# H2Combustor_nitrous.ic10
 alias Self db
 # Constant
 define KELVIN 273

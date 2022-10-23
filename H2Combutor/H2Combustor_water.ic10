@@ -1,0 +1,44 @@
+# H2Combustor_water.ic10
+alias Self db
+alias ValveCoolant d0
+alias ValveFuel d1
+# Constant
+define TYPE_LIQUID_TANK 608607718 #smal liquid tank
+define TYPE_LIQUID_VALVE -517628750
+define KELVIN 273
+define T_MAX 50
+define T_MIN 20
+define M_MIN 200
+define M_MAX 1000
+# Alias Register
+alias IsActive r0
+alias IsWater r1
+alias IsMoles r2
+alias IsCoolant r3
+alias IsFuel r4
+alias Temp r10
+alias Tmin r11
+alias Tmax r12
+# Settings
+add Tmin T_MIN KELVIN
+add Tmax T_MAX KELVIN
+s Self Mode 0
+move IsActive 0
+start:
+yield
+l Temp Self TemperatureOutput
+# active water network
+sle IsWater Temp Tmax
+sb TYPE_LIQUID_VALVE On IsWater 
+# active cooling
+sgt IsCoolant Temp Tmin
+s ValveCoolant On IsCoolant
+# active self/fuel
+lb Temp TYPE_LIQUID_TANK TotalMoles 3 # 0:Average 1:Sum 2:Min 3:Max
+brgt Temp M_MIN 2
+move IsActive 1
+brlt Temp M_MAX 2
+move IsActive 0
+s Self Mode IsActive
+s ValveFuel On IsActive
+j start

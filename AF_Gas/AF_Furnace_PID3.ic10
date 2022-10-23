@@ -1,5 +1,4 @@
 # Adv Furnace Controller
-
 # Alias Register
 alias Process r0
 alias Temp r1
@@ -23,8 +22,9 @@ define TYPE_ANALYSER 435685051
 define TYPE_PUMP -321403609
 define TYPE_MIXER 2104106366
 define TYPE_LEVER 1220484876
+define TYPE_BUTTON 491845673
 define FACTOR 800
-define Kp 1
+define Kp 5
 define Ki 0.001
 define Kd 0.5
 sb TYPE_FURNACE On 1
@@ -40,6 +40,10 @@ sb TYPE_MIXER On 0
 sb TYPE_FURNACE Open 0
 start:
 yield
+lb Temp TYPE_BUTTON Setting 1 # 0:Average 1:Sum 2:Min 3:Max
+brne Temp 1 3
+sb TYPE_FURNACE Open 1
+yield
 lb sp TYPE_DIAL Setting 1 # Read unique dial
 mul sp sp 11
 move r15 11
@@ -47,21 +51,24 @@ add sp sp r15
 pop rr15
 sub r15 r15 1
 brge r15 8 -2
-lb Process TYPE_LEVER Setting 1
+lb Process TYPE_LEVER Setting 1 # 0:Average 1:Sum 2:Min 3:Max
 jal finally
 min Tmax Tmax 3000 #Tmax Maximum
 brgt Pmin 1000 2
-min Pmax Pmax 20000 #Limit Pressure
+min Pmax Pmax 2000 #Limit Pressure
 add T0 Tmax Tmin
 div T0 T0 2
+brlt Tmax 1100 2 #Limit Temperature
+add T0 Tmin 100
 add P0 Pmax Pmin
 div P0 P0 2
 max P0 P0 1000 #P0 Minimum
 min P0 P0 55000 #P0 Maximum
+s db Setting T0
 beq Process 0 closeAll
 #Check Pipe
-lb Tcur TYPE_FURNACE Temperature 1
-lb Pcur TYPE_ANALYSER Pressure 1
+lb Tcur TYPE_FURNACE Temperature 1 # 0:Average 1:Sum 2:Min 3:Max
+lb Pcur TYPE_ANALYSER Pressure 1 # 0:Average 1:Sum 2:Min 3:Max
 slt Pcur Pcur 1000 #Pipe Pressure Max
 sb TYPE_MIXER On Pcur
 sub Temp Tcur T0 #cold input 1
@@ -71,12 +78,11 @@ max Temp Temp -50 #Minimum
 add Temp Temp 50
 sb TYPE_MIXER Setting Temp #Mixer
 #Check Furnace
-lb Pcur TYPE_FURNACE Pressure 1
-lb Tcur TYPE_FURNACE Temperature 1
+lb Pcur TYPE_FURNACE Pressure 1 # 0:Average 1:Sum 2:Min 3:Max
+lb Tcur TYPE_FURNACE Temperature 1 # 0:Average 1:Sum 2:Min 3:Max
 move r8 6
 move r10 -1
 jal regulation
-s db Setting EOutlast
 sb TYPE_FURNACE SettingOutput Temp
 move r8 4
 move r10 1
@@ -101,7 +107,7 @@ mul Temp1 Temp1 r10 #Invert sign
 sub Temp2 T0 Tcur
 div Temp2 Temp2 10
 mul Temp2 Temp2 r10 #Invert sign
-brgtz Temp1 2 #Priority Pressure
+brgtz Temp2 2 #Priority Temperature
 move Temp1 Temp2
 add rr9 rr9 Temp1 #Calcul Somme
 sub Temp Temp1 rr8 #Calcul Differenciel
