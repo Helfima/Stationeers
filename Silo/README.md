@@ -13,7 +13,7 @@ Les stockages seront de:
 * 2 lignes pour les minerais (ingrédients des lingots, la requête se fait via un script de contrôle du four à gaz)
 * 3 lignes pour les lingots (la requête se fait via un script de contrôle, section "Demande" ci-dessous)
 
-Attention la première Chute FlipFlop contrôle l'entrée des items dans la ligne et la dernière route sur 2 silos.
+Attention la première Chute FlipFlop contrôle l'entrée des items dans la ligne et la dernière oriente sur les 2 derniers silos.
 
 Composition d'une ligne:
 * 6 Silos numérotés de 0 à 5 (pour correspondre aux ecrous d0 à d5)
