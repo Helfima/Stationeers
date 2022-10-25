@@ -20,7 +20,6 @@ alias Pmax r11
 alias Tcur r12
 alias Pcur r13
 #Constant
-define TYPE_FURNACE 545937711
 define TYPE_DIAL 554524804
 define FACTOR 800
 #settings
