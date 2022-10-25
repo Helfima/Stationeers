@@ -1,0 +1,46 @@
+# silo_display.ic10
+alias Silo0 d0
+alias Silo1 d1
+alias Silo2 d2
+alias Display0 d3
+alias Display1 d4
+alias Display2 d5
+# Alias Register
+alias Device1 r0
+alias Device2 r1
+alias IsOn r2
+alias Qty r10
+# Constant
+define TYPE_READER -345383640 # Occupancy Sensor
+define DEVICE 3 # Device number
+define STACK 100
+define STACK_L 200
+define STACK_H 1000
+# Settings
+s Display0 On 0
+s Display1 On 0
+s Display2 On 0
+start:
+yield
+lb IsOn TYPE_READER Setting 3 # 0:Average 1:Sum 2:Min 3:Max
+move r0 0
+loop:
+l Qty dr0 Quantity # Silo
+mul Qty Qty STACK
+add r1 r0 3
+s dr1 Setting Qty # Display
+s dr1 On IsOn # Display
+jal setColor
+add r0 r0 1
+blt r0 DEVICE loop
+j start
+
+setColor:
+brgt Qty STACK_H 6
+brgt Qty STACK_L 3
+s dr1 Color 4 #Red
+j ra
+s dr1 Color 5 #Yellow
+j ra
+s dr1 Color 2 #Green
+j ra

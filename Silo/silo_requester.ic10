@@ -1,4 +1,4 @@
-#silo_requester.ic10
+# silo_requester.ic10
 # Alias Register
 alias Choose r0 # Dial setting
 alias LastChoose r5 # Dial setting
@@ -35,7 +35,7 @@ sb TYPE_MIRROR Setting Hash
 wait:
 lb r10 TYPE_MIRROR Setting 1 # Read is OK
 jal changeColor
-yield
+sleep 0.1
 beq r10 Hash wait # Wait response
 move LastHash Hash
 j start

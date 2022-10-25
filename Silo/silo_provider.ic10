@@ -20,7 +20,7 @@ alias Request r2
 alias AbsRequest r3
 alias Qty r4
 alias Hash r5
-#Settings
+# Settings
 jal push_hash_ingot
 sb TYPE_SILO On 1
 sb TYPE_STACKER1 On 1

@@ -1,0 +1,122 @@
+# Furnace_Model.ic10
+s db Setting 0
+# model
+move sp 350
+push 070040007290529
+push 110040009290529
+push 040040010290529
+push 090040010290529
+push 050040010290529
+push 060040011290529
+push 080040011290529
+push 100040012290529
+push 062031012291429
+push 095022010291118
+push 067022006081429
+push 048022014192229
+push 068022015162122
+push 014321114292627
+push 058121110292324
+push 078921107112829
+push 098321113142526
+push 109321117292022
+# Encoded Values
+move sp 399
+push 0
+push 0.25
+push 0.5
+push 0.75
+push 1
+push 100
+push 350
+push 400
+push 550
+push 580
+push 600
+push 800
+push 900
+push 950
+push 1000
+push 1200
+push 1500
+push 1800
+push 2400
+push 9999
+push 10000
+push 18000
+push 20000
+push 23500
+push 24000
+push 25000
+push 30000
+push 40000
+push 50000
+push 99999
+# Hash Ore
+move sp 449
+push 0
+push -654790771 #Steel Ingot
+push 1724793494 #Coal Ore
+push -983091249 #Cobalt Ore
+push -707307845 #Copper Ore
+push -1348105509 #Gold Ore
+push 1758427767 #Iron Ore
+push -190236170 #Lead Ore
+push 1830218956 #Nickel Ore
+push -916518678 #Silver Ore
+push 1103972403 #Silicon Ore
+push -831480639 #Biomass
+# Hash Ingot
+push 0
+push 2134647745 # Lead Ingot
+push 252561409 # Charcoal
+push -404336834 # Copper Ingot
+push -929742000 # Silver Ingot
+push 226410516 # Gold Ingot
+push -1301215609 # Iron Ingot
+push -1406385572 # Nickel Ingot
+push -290196476 # Silicon Ingot
+push -654790771 # Steel Ingot
+push 502280180 # Electrum Ingot
+push -82508479 # Solder Ingot
+push 1058547521 # Constantan Ingot
+push -297990285 # Invar Ingot
+push 412924554 # Astroloy Ingot
+push -787796599 # Inconel Ingot
+push 156348098 # Waspaloy Ingot
+push 1579842814 # Hastelloy Ingot
+push -1897868623 # Stellite Ingot
+# Initialize
+move r0 0 #Start Stack
+move r1 0 #Index ingot 0  17
+start:
+add sp r1 351
+pop r15 #Lit le code
+# Decode
+add sp r1 463 #SP hash ingot
+pop r2 #Hash ingot
+move sp r0
+push r2
+move r0 sp
+move r13 2 #Initialise Index registre
+move r14 10000000000000 #Initialise le diviseur
+loop:
+div sp r15 r14
+trunc sp sp #Supprime la virgule
+mul r12 sp r14 #Prepare le cute
+sub r15 r15 r12 #Reduit le code
+add sp sp 400 #SP des valeurs
+brgt r13 4 2
+add sp sp 50 #SP des hash
+pop r2 #Lis la valeur
+move sp r0
+push r2
+move r0 sp
+div r14 r14 10 #Decale le diviseur
+brlt r13 7 2
+div r14 r14 10 #Decale le diviseur
+add r13 r13 1 #Decale le registre
+ble r13 11 loop
+add r1 r1 1
+ble r1 17 start
+s db On 0

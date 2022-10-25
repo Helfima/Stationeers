@@ -1,0 +1,28 @@
+# filtration_coolant.ic10
+alias Atmo db
+# Constant
+define TYPE_ATMO -2087593337
+define TYPE_SENSOR -1252983604
+define KELVIN 273
+define TMIN 10 # T cible
+define Echelon 7 # position atmo
+# Alias Register
+alias Tmin r0
+alias Tmax r1
+alias Tcur r2
+alias Tset r3
+alias Delta r4
+alias n r5
+# Settings
+add Tmin TMIN KELVIN
+start:
+yield
+lb n TYPE_ATMO On 1 # 0:Average 1:Sum 2:Min 3:Max
+lb Tcur TYPE_SENSOR Temperature 3 # 0:Average 1:Sum 2:Min 3:Max
+sub Delta Tcur Tmin
+div Delta Delta n # interval
+mul Tset Delta Echelon
+add Tset Tset Tmin
+s db Setting Tset
+s db Mode 1
+j start

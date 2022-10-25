@@ -1,0 +1,40 @@
+# Compact PID control
+# Standard form PID:
+# PV = Kp(e + 1/Ti Integral(0,t)edt + Td de/dt)
+alias sensor d0
+alias actuator d1
+
+alias e r10
+alias prevE r11
+alias PV r12 #process value
+alias iCalc r13
+alias dCalc r14
+define SP 293.15 #setpoint = target value
+define Kp 1 #aprox maxOutput/SP, 0.6*Ku
+define Ti 0 #classic: 0.5*Tu
+define Td 0 #classic: 0.125*Tu
+define minOutput 0
+define maxOutput 100
+
+start:
+yield
+l r0 sensor Setting
+sub e r0 SP #error, reverse=SP-r0
+mul PV Kp e #proportional
+breqz Ti 4 #integral
+div r0 PV Ti
+add iCalc iCalc r0
+add PV PV iCalc
+sub dCalc e prevE #derivative
+mul dCalc dCalc Kp
+mul dCalc dCalc Td
+div dCalc dCalc 0.5 #dt = 0.5s
+add PV PV dCalc
+move prevE e
+min iCalc maxOutput iCalc #limits
+max iCalc minOutput iCalc
+min PV maxOutput PV
+max PV minOutput PV
+s db Setting PV #setstate
+s actuator Setting PV
+j start
