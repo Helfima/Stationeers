@@ -1,18 +1,20 @@
-alias PipeAnaliser d0
-alias PumpIn d1
-alias PumpTempUp d2
-# constant
-define Tmin 290
-define Tmax 295
-# register
-alias TempGaz r0
-alias IsPumpIn r1
-alias IsPumpUp r2
-start:
+alias Transm d0
+alias Sens d1
+alias InVent d2
+alias OutVent d3
+alias TarPress r0
+alias CurPress r1
+alias IsOn r2
+define wiggle 1
+Start:
 yield
-l TempGaz PipeAnaliser Temperature
-sgt IsPumpIn TempGaz Tmax # IsPumpIn=1 si TempGaz > TempGaz
-s PumpIn On IsPumpIn
-slt IsPumpUp TempGaz Tmin# IsPumpUp=1 si TempGaz < TempGaz
-s PumpIn On IsPumpUp
-j start
+l TarPress Transm Setting
+l CurPress Sens Pressure
+add TarPress wiggle TarPress
+sgt IsOn CurPress TarPress
+s OutVent On IsOn
+l TarPress Transm Setting
+sub TarPress wiggle TarPress
+sgt IsOn TarPress CurPress
+s InVent On IsOn
+j Start

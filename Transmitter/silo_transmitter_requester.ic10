@@ -1,0 +1,100 @@
+# silo_transmitter_requester.ic10
+# Alias Register
+alias Choose r0 # Dial setting
+alias LastChoose r5 # Dial setting
+alias Hash r1 # Ingot Hash
+alias LastHash r2 # Ingot Hash
+alias Action r3 # Action Button
+alias Time r4
+alias Device r15
+# Constant
+define TYPE_TRANSMITTER -693235651
+define TYPE_BUTTON 491845673
+define TYPE_DIAL 554524804
+define TYPE_MIRROR 2096189278
+define TYPE_DISPLAY -815193061
+define START_SP 1 # 1,7:Ores 13,19,25:Ingots
+# Settings
+jal push_hash_ingot
+sb TYPE_DISPLAY On 1
+move Device TYPE_TRANSMITTER
+start:
+yield
+sb TYPE_DISPLAY Color 2 # Green
+lb Action TYPE_BUTTON Setting 1 # Read unique button
+lb Choose TYPE_DIAL Setting 1 # Read unique dial
+jal check_hash
+s db Setting Hash
+lb r10 Device Setting 1 # Read is OK
+sb TYPE_DISPLAY Setting r10
+bne Hash LastHash request
+beq Action 0 start # Do Nothing
+request:
+breq Choose LastChoose 3
+move Time 2
+move LastChoose Choose
+breq Time 0 3
+sub Time Time 1
+j start
+sb Device Setting Hash
+wait:
+lb r10 Device Setting 1 # Read is OK
+jal changeColor
+sleep 0.1
+beq r10 Hash wait # Wait response
+move LastHash Hash
+j start
+
+changeColor:
+yield
+lb r11 TYPE_DISPLAY Color 1
+breq r11 10 3
+sb TYPE_DISPLAY Color 10 # Pink
+j ra
+sb TYPE_DISPLAY Color 1 # Gray
+j ra
+
+check_hash:
+add sp Choose START_SP
+peek Hash
+j ra
+
+push_hash_ingot:
+move sp 0
+# Ores
+push 1724793494  # 1:Coal Ore
+push -983091249  # 2:Colbalt Ore
+push -707307845  # 3:Copper Ore
+push -1348105509 # 4:Gold Ore
+push 1758427767  # 5:Iron Ore
+push -190236170  # 6:Lead Ore
+
+push 1830218956  # 7:Nickel Ore
+push 1103972403  # 8:Silicon Ore
+push -916518678  # 9:Silver Ore
+push -1516581844 # 10:Uranium Ore
+push -831480639  # 11:Biomass
+push -654790771  # 12:Steel Ingot
+
+#Ingots
+push 2134647745  # 13:Lead Ingot
+push 252561409   # 14:Charcoal
+push -404336834  # 15:Copper Ingot
+push -929742000  # 16:Silver Ingot
+push 226410516   # 17:Gold Ingot
+push -1301215609 # 18:Iron Ingot
+
+push -1406385572 # 19:Nickel Ingot
+push -290196476  # 20:Silicon Ingot
+push -654790771  # 21:Steel Ingot
+push 502280180   # 22:Electrum Ingot
+push -82508479   # 23:Solder Ingot
+push 1058547521  # 24:Constantan Ingot
+
+push -297990285  # 25:Invar Ingot
+push 412924554   # 26:Astroloy Ingot
+push -787796599  # 27:Inconel Ingot
+push 156348098   # 28:Waspaloy Ingot
+push 1579842814  # 29:Hastelloy Ingot
+push -1897868623 # 30:Stellite Ingot
+j ra

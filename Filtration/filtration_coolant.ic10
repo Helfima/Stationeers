@@ -1,10 +1,12 @@
 # filtration_coolant.ic10
 alias Atmo db
+alias Pump d0
 # Constant
 define TYPE_ATMO -2087593337
 define TYPE_SENSOR -1252983604
 define KELVIN 273
 define TMIN 10 # T cible
+define MOLES_MIN 100
 define Echelon 7 # position atmo
 # Alias Register
 alias Tmin r0
@@ -13,6 +15,8 @@ alias Tcur r2
 alias Tset r3
 alias Delta r4
 alias n r5
+alias Moles r6
+alias IsMoles r7
 # Settings
 add Tmin TMIN KELVIN
 start:
@@ -25,4 +29,12 @@ mul Tset Delta Echelon
 add Tset Tset Tmin
 s db Setting Tset
 s db Mode 1
+bdseal Pump check_moles
 j start
+
+check_moles:
+l Moles Atmo TotalMolesInput
+sle IsMoles Moles MOLES_MIN
+s Pump On IsMoles
+s Pump Setting 50
+j ra

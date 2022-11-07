@@ -1,0 +1,62 @@
+# silo_packet_requester.ic10
+alias Line0 d0
+alias Line1 d1
+alias Line2 d2
+alias Line3 d3
+alias Line4 d4
+alias Line5 d5
+#Constant
+define TYPE_TRANSMITTER -693235651
+define TYPE_BUTTON 491845673
+define WAIT 0
+define PROVIDER 9000001
+define SLEEP 0.05
+define NONE -3
+define PACKET_SP 250
+define PACKET_SIZE 12
+define DEVICE_BEGIN 6
+# Alias Register
+alias Device r0
+alias Request r2
+alias Index r3
+alias Qty r4
+alias Hash r5
+alias Stack r6
+alias SpEnd r7
+alias Line r8
+alias Temp r15
+# Settings
+start:
+yield
+lb Request TYPE_BUTTON Setting 3 # 0:Average 1:Sum 2:Min 3:Max
+s db Setting Request
+beq Request WAIT start # Wait Request
+jal reset_device
+sb TYPE_TRANSMITTER Setting PROVIDER # Write line
+jal read_packet
+j start
+
+reset_device:
+move Device -1 # Reset Index
+loop_device:
+add Device Device 1
+bgt Device 5 ra # exit
+bdns dr0 loop_device # if no device exit
+s dr0 Setting 0
+j loop_device
+
+read_packet:
+lb Line TYPE_TRANSMITTER Setting 3 # 0:Average 1:Sum 2:Min 3:Max
+beq Line PROVIDER read_packet # wait response
+move Index -1 # Reset Index
+loop_packet:
+add Index Index 1
+bgt Index PACKET_SIZE ra # exit
+lb Line TYPE_TRANSMITTER Setting 3 # 0:Average 1:Sum 2:Min 3:Max
+sleep SLEEP
+sub Device Index DEVICE_BEGIN
+brlt r0 0 4
+brgt r0 5 3
+brdns dr0 2
+s dr0 Setting Line
+j loop_packet

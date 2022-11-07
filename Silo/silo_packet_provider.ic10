@@ -1,4 +1,4 @@
-# silo_provider.ic10
+# silo_packet_provider.ic10
 alias Silo0 d0
 alias Silo1 d1
 alias Silo2 d2
@@ -6,81 +6,58 @@ alias Silo3 d3
 alias Silo4 d4
 alias Silo5 d5
 #Constant
-define TYPE_SILO 1155865682 # Silo Hash
-define TYPE_STACKER1 -2020231820 # Stacker Hash
-define TYPE_STACKER2 1585641623 # Stacker Hash
-define STACK 50
-define WAIT 0
+define STACK_ORE 50
+define STACK_INGOT 100
+define QUERY_LIST 9001100
+define FREE 9000000
+define SLEEP 0.05
 define NONE -3
 define START_SP 1 # 1,7:Ores 13,19,25:Ingots
+define PACKET_SP 250
+define PACKET_SIZE 12
 # Alias Register
-alias Silo r0
-alias LastSilo r1
+alias Device r0
 alias Request r2
-alias AbsRequest r3
+alias Index r3
 alias Qty r4
 alias Hash r5
+alias Stack r6
+alias SpEnd r7
+alias Temp r15
 # Settings
+sle Temp START_SP 7
+select Stack Temp STACK_ORE STACK_INGOT
 jal push_hash_ingot
-sb TYPE_SILO On 1
-sb TYPE_STACKER1 On 1
-sb TYPE_STACKER1 Setting STACK
-sb TYPE_STACKER2 On 1
-sb TYPE_STACKER2 Setting STACK
+s db Setting FREE # Write line
 start:
 yield
 l Request db Setting
-beq Request WAIT start # Wait Request
-abs AbsRequest Request
-bgt AbsRequest 1000000 request_read # Request Hash
-jal read_silo
-s db Setting Qty
+beq Request 0 start # Wait Request
+beq Request FREE start # Wait Request
+bne Request QUERY_LIST init # No Response
+jal read_devices
+s db Setting FREE # Write line
 j start
-request_read:
-jal check_hash
-bne Silo NONE found_silo # Found Silo
-move LastSilo Silo
+init:
+s db Setting 0
+j start
+
+read_devices:
+move Device -1 # Reset Index
 move Qty 0 # Reset Quantity
-s db Setting Qty # End Request
-j start
-found_silo:
-beq Silo LastSilo request_open # Open Request
-# Quantity
-move LastSilo Silo
-jal read_silo
-j start
-request_open:
-jal action_silo
-jal read_silo
-j start
-
-read_silo:
-move Qty 0
-beq LastSilo NONE ra
-bdns rr1 ra # if no device exit
-l Qty rr1 Quantity
-mul Qty Qty STACK
-s db Setting Qty # Quantity Request
-j ra
-
-action_silo:
-beq Silo NONE ra
-bdns rr0 ra # if no device exit
-s rr0 Open 1
-sleep 1
-s rr0 Open 0
-j ra
-
-check_hash:
-move Silo 0
-loop_hash:
-add sp Silo START_SP
+loop_device:
+add Device Device 1
+bgt Device 5 ra # exit
+bdns dr0 loop_device # if no device exit
+l Qty dr0 Quantity
+mul Qty Qty Stack
+add sp Device START_SP
 peek Hash
-beqal Request Hash ra
-add Silo Silo 1
-ble Silo 5 loop_hash
-move Silo NONE
-j ra
+s db Setting Hash # Write line
+sleep SLEEP
+s db Setting Qty # Write line
+sleep SLEEP
+j loop_device
 
 push_hash_ingot:
 move sp 0

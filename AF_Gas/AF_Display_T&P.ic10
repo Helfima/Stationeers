@@ -26,12 +26,12 @@ define TYPE_DIAL 554524804
 define FACTOR 800
 #settings
 s DisplayTmin On 1
-s DisplayTmin Color 0
+s DisplayTmin Color -1
 s DisplayTcur On 1
 s DisplayTmax On 1
 s DisplayTmax Color 4
 s DisplayPmin On 1
-s DisplayPmin Color 0
+s DisplayPmin Color -1
 s DisplayPcur On 1
 s DisplayPmax On 1
 s DisplayPmax Color 4

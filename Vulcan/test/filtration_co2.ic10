@@ -1,0 +1,26 @@
+# filtration_co2.ic10
+alias Atmo db
+# Constant
+define MOLES_MIN 1
+define MOLES_MAX 1000
+define KELVIN 273
+define TMIN 600
+define TYPE_TANK 272136332
+define TYPE_SENSOR -1252983604
+# Alias Register
+alias IsOn r0
+alias Temp r1
+alias Moles r2
+alias Tmin r3
+alias IsMoles r4
+# Settings
+add Tmin TMIN KELVIN
+start:
+yield
+lb Moles TYPE_TANK TotalMoles 3 # 0:Average 1:Sum 2:Min 3:Max
+sle IsMoles Moles MOLES_MAX
+lb Temp TYPE_SENSOR Temperature 3 # 0:Average 1:Sum 2:Min 3:Max
+sge IsOn Temp Tmin
+and IsOn IsOn IsMoles
+s Atmo Mode IsOn #Turn On/Off 0:idle 1:active
+j start
