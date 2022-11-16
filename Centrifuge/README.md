@@ -27,9 +27,11 @@ Traitement de minerais en régime établi
 
 Attention le régime maximal ne sera pas atteind car il y a les phases de monté en rpm et de vidange.
 
-Le temps pour atteindre le régime établi est relativement long.
+Le temps pour atteindre le régime établi est relativement long, environs 600s.
 
-La machine se vidangera dans un fracas après avoir atteind 2000 minerais.
+Inutile de changer les coefficients dans les scripts, ils sont déjà optimaux, les variations sont de quelque 0.001 de minerais par second décart.
+
+La machine se vidangera dans un fracas après avoir atteind 2000 minerais avec au flow de 0.866 minerai par seconde.
 
 ## Affichage complémentaire
 

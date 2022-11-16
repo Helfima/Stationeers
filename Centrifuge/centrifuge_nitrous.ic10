@@ -1,17 +1,18 @@
-# Centrifuge Controller
+# centrifuge_nitrous.ic10
 alias Self db
-alias Display d0 # Optionnal Display Reagents QTY
+alias DisplayQty d0 # Optionnal Display Reagents QTY
+alias DisplayThr d1 # Optionnal Display Throttle value
 # Constant
 define TYPE_LEVER 1220484876
-define RPM_MAX 1200
-define RPM_MID 500 # begin combustion
-define RPM_MIN 150
-define STRESS_MAX 50
+define RMP_C 200
+define RMP_I 50
+define TIME_THR 15
+define STRESS_MAX 30
 define QTY_MAX 2000 # Quantity for Open
-define Kr 110
-define Kc 100
-define Ks 180
-define Kd 20
+define Kpc 0.13 # Default: 0.13
+define Kps 0.75 # Default: 0.75
+define Kd 30    # Default: 30
+define Ki 0.01  # Default: 0.01
 # Alias Register
 alias MThr r0 # mesure Throttle
 alias MRpm r1 # mesure Rpm
@@ -20,27 +21,31 @@ alias DRpm r3 # valeur Difference
 alias MStr r4 # mesure Stress
 alias LStr r5 # valeur Last Stress
 alias DStr r6 # valeur Difference
-alias Err r7
-alias CThr r8 # commande throttle
-alias CCom r9 # commande combustion
-alias Count r10
+alias IStr r7 # valeur Integrale
+alias Err r8
+alias CThr r9 # commande throttle
+alias CCom r10 # commande combustion
 alias QTY r11
 alias IsOn r12
 alias IsOpen r13
-alias Temp r15
+alias IsAction r14
+alias Time r15
 # Settings
 s Self Open 0
 stop:
+s Self Throttle 0
+s Self CombustionLimiter 0
+initialize:
+move IsAction 0
 move IsOpen 0
 move CThr 0
 move CCom 0
 move LRpm 0
 move LStr 0
-s Self Throttle 0
-s Self CombustionLimiter 0
+move IStr 0
 start:
 yield
-lb IsOn TYPE_LEVER Setting 3 # 0:Average 1:Sum 2:Min 3:Max
+lb IsAction TYPE_LEVER Setting 3 # 0:Average 1:Sum 2:Min 3:Max
 l MRpm Self Rpm
 l MThr Self Throttle
 l MStr Self Stress
@@ -49,64 +54,70 @@ move LRpm MRpm
 sub DStr MStr LStr
 move LStr MStr
 jal reagents
-jal emptying
-beq IsOn 0 stop
+jal open
+beq IsAction 0 stop
 jal throttle
 jal combustion
 j start
-emptying:
+
+open:
 brlt QTY QTY_MAX 2
 s Self Open 1
-brgt QTY 10 2
+brgt QTY 0 2
 s Self Open 0
 l IsOpen Self Open
-beq IsOpen 1 stop
+breq IsOpen 1 3
+move Time TIME_THR
 j ra
+s Self Throttle Time
+s Self CombustionLimiter 0
+sub Time Time 1
+j initialize
+
 throttle:
 move CThr 0
-add Err MRpm RPM_MIN
-div Err Err RPM_MAX # fonction du rpm
-mul Err Err Kr
-brgt MStr STRESS_MAX 2 # bypass trop de stress
+sub Err STRESS_MAX MStr
+mul CThr Err Kps
+add IStr IStr Err
+brgt MRpm RMP_I 2
+move IStr 0 # skip integrale
+mul Err IStr Ki
 add CThr CThr Err
-div Err MStr 100 # compensation du stress
-mul Err Err Ks
-sub CThr CThr Err
-mul Err DRpm Kd # compensation ralentissement
-brlt MRpm RPM_MIN 2 # bypass si rpm bas
+mul Err DStr Kd
 sub CThr CThr Err
 s Self Throttle CThr
+bdns d1 ra
+s d1 Setting CThr
 j ra
+
 combustion:
-sub Err MRpm RPM_MID
-sub Temp RPM_MAX RPM_MID
-div Err Err Temp # fonction du rpm
-mul CCom Err Kc
+sub Err MRpm RMP_C
+mul CCom Err Kpc
 s Self CombustionLimiter CCom
 j ra
 
 reagents:
 move QTY 0
-lr Count Self Contents Hydrocarbon
-add QTY QTY Count
-lr Count Self Contents Cobalt
-add QTY QTY Count
-lr Count Self Contents Copper
-add QTY QTY Count
-lr Count Self Contents Gold
-add QTY QTY Count
-lr Count Self Contents Iron
-add QTY QTY Count
-lr Count Self Contents Lead
-add QTY QTY Count
-lr Count Self Contents Nickel
-add QTY QTY Count
-lr Count Self Contents Silicon
-add QTY QTY Count
-lr Count Self Contents Silver
-add QTY QTY Count
-lr Count Self Contents Uranium
-add QTY QTY Count
+lr Err Self Contents Hydrocarbon
+add QTY QTY Err
+lr Err Self Contents Cobalt
+add QTY QTY Err
+lr Err Self Contents Copper
+add QTY QTY Err
+lr Err Self Contents Gold
+add QTY QTY Err
+lr Err Self Contents Iron
+add QTY QTY Err
+lr Err Self Contents Lead
+add QTY QTY Err
+lr Err Self Contents Nickel
+add QTY QTY Err
+lr Err Self Contents Silicon
+add QTY QTY Err
+lr Err Self Contents Silver
+add QTY QTY Err
+lr Err Self Contents Uranium
+add QTY QTY Err
 bdns d0 ra
 s d0 Setting QTY
 j ra

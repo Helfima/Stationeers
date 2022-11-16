@@ -24,6 +24,8 @@ define TYPE_LEVER 1220484876
 define TYPE_MIRROR 2096189278
 define TYPE_SENSOR -1252983604
 define FACTOR 800
+define QUERY_FREE 9000000
+define QUERY_ITEM 9000101
 # Settings
 s db Setting 0
 move Index 0
@@ -60,19 +62,22 @@ move Index 2 # Register Index
 loopIndex:
 move Value 0
 move Hash rr10
-add Qty Index 3 # Register Index
+add r8 Index 3 # Register Index
 move Qty  rr8
 beq Qty 0 nextOre # Next si Qty=0
-loopOre:
-sb TYPE_MIRROR Setting Hash # Device Mirror
-wait:
 lb Temp TYPE_MIRROR Setting 3 # 0:Average 1:Sum 2:Min 3:Max
+brne Temp QUERY_FREE -1 # Wait
+sb TYPE_MIRROR Setting QUERY_ITEM
+s db Setting QUERY_ITEM
+yield
+sb TYPE_MIRROR Setting Hash
 s db Setting Hash
-bne Temp Hash wait # Wait response
-add Value Value 50
-s db Setting Value
-sleep 3 # delay for output silo_provider.ic10
-ble Value Qty loopOre # Call next Qty
+yield
+sb TYPE_MIRROR Setting Qty
+s db Setting Qty
+yield
+lb Temp TYPE_MIRROR Setting 3 # 0:Average 1:Sum 2:Min 3:Max
+brne Temp QUERY_FREE -1 # Wait
 nextOre:
 add Index Index 1
 blt Index 5 loopIndex

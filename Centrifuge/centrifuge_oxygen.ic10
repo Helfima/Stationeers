@@ -1,15 +1,14 @@
-# Centrifuge Controller
+# centrifuge_oxygen.ic10
 alias Self db
-alias Display d0
+alias Display d0 # Optionnal Display Reagents QTY
 # Constant
 define TYPE_LEVER 1220484876
-define RPM_MIN 300
-define STRESS_MAX 40
-define STRESS_MIN 5
-define QTY_MAX 500
-define KUpThr 5   # coef Throttle
-define KDownThr 5   # coef Throttle
-define Kcom 1   # coef Combustion
+define STRESS_MAX 30
+define QTY_MAX 2000 # Quantity for Open
+define Kpc 0.22
+define Kps 0.75
+define Kd 30
+define Ki 0.01
 # Alias Register
 alias MThr r0 # mesure Throttle
 alias MRpm r1 # mesure Rpm
@@ -18,20 +17,24 @@ alias DRpm r3 # valeur Difference
 alias MStr r4 # mesure Stress
 alias LStr r5 # valeur Last Stress
 alias DStr r6 # valeur Difference
-alias Sign r7
+alias Err r7
 alias CThr r8 # commande throttle
 alias CCom r9 # commande combustion
 alias Count r10
 alias QTY r11
 alias IsOn r12
 alias IsOpen r13
+alias IStr r14
+alias Temp r15
 # Settings
+s Self Open 0
 stop:
 move IsOpen 0
 move CThr 0
 move CCom 0
 move LRpm 0
 move LStr 0
+move IStr 0
 s Self Throttle 0
 s Self CombustionLimiter 0
 start:
@@ -59,41 +62,21 @@ l IsOpen Self Open
 beq IsOpen 1 stop
 j ra
 throttle:
-brgt MStr STRESS_MAX 5 # bypass
-brgt DStr 0 3 # si Diff negatif impulsion
-add CThr CThr KUpThr
-j throttle_next
-brlt MStr STRESS_MIN 3 # si stress > min on diminue
-sub CThr CThr KDownThr
-j throttle_next
-brge DRpm 0 3 # si Diff negatif impulsion
-add CThr CThr 10
-j throttle_next
-brgt MStr 0 2 # si stress = 0  on augmente
-add CThr CThr KUpThr
-throttle_next:
-min CThr CThr 100
-max CThr CThr 0
+move CThr 0
+sub Err STRESS_MAX MStr
+mul CThr Err Kps
+add IStr IStr Err
+mul Temp IStr Ki
+add CThr CThr Temp
+mul Temp DStr Kd
+sub CThr CThr Temp
 s Self Throttle CThr
-beq MStr 0 ra
-sleep 1
-s Self Throttle 0
-sleep 1
 j ra
 combustion:
-brgt MRpm RPM_MIN 3 # si rpm < min on diminue
-sub CCom CCom 10
-j combustion_next
-brle DStr 0 3 # si stress augmente on diminue
-sub CCom CCom Kcom
-j combustion_next
-brgt MStr 0 2 # si stress = 0  on augmente
-add CCom CCom Kcom
-combustion_next:
-min CCom CCom 100
-max CCom CCom 0
+mul CCom MRpm Kpc
 s Self CombustionLimiter CCom
 j ra
+
 reagents:
 move QTY 0
 lr Count Self Contents Hydrocarbon

@@ -1,10 +1,10 @@
 # harvie_flipflop.ic10
-alias Harvie1 d0
-alias Flipflop1 d1
-alias Tray1 d2
-alias Harvie2 d3
-alias Flipflop2 d4
-alias Tray2 d5
+alias Harvie0 d0
+alias Flipflop0 d1
+alias Tray0 d2
+alias Harvie1 d3
+alias Flipflop1 d4
+alias Tray1 d5
 # Alias Register
 alias State0 r0 # 0:free 1:import 2:plant 3:seed 4:harvest
 alias Device0 r1
@@ -15,14 +15,14 @@ alias IsSeeding r5
 alias IsOccupied r6
 alias Temp r10
 #settings
-ls State0 Tray1 0 Occupied
+ls State0 Tray0 0 Occupied
 mul State0 State0 2
-ls State3 Tray2 0 Occupied
+ls State3 Tray1 0 Occupied
 mul State3 State3 2
+s Harvie0 On 1
+s Flipflop0 On 0
 s Harvie1 On 1
 s Flipflop1 On 0
-s Harvie2 On 1
-s Flipflop2 On 0
 start:
 yield
 move r1 0

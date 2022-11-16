@@ -1,0 +1,49 @@
+# Adv Furnace Hash Ores Controller
+alias MemoryOre1 d0
+alias MemoryOre2 d1
+alias MemoryOre3 d2
+alias DisplayOre1 d3
+alias DisplayOre2 d4
+alias DisplayOre3 d5
+# Alias Register
+alias Hash r1
+alias Hash1 r2
+alias Hash2 r3
+alias Hash3 r4
+alias Qty1 r5
+alias Qty2 r6
+alias Qty3 r7
+alias Tmin r8
+alias Tmax r9
+alias Pmin r10
+alias Pmax r11
+alias Tcur r12
+alias Pcur r13
+#Constant
+define TYPE_DIAL 554524804
+define FACTOR 800
+#settings
+start:
+yield
+lb sp TYPE_DIAL Setting 1
+s db Setting sp
+jal loadValues
+move r0 0
+loop:
+add r15 r0 2
+s dr0 Setting rr15
+add r0 r0 1
+ble r0 5 loop
+j start
+
+loadValues:
+mul sp sp 11
+move r15 11
+add sp sp r15
+pop rr15
+sub r15 r15 1
+brne r15 0 -2
+mul Qty1 Qty1 FACTOR
+mul Qty2 Qty2 FACTOR
+mul Qty3 Qty3 FACTOR
+j ra

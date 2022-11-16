@@ -5,16 +5,19 @@ alias Line2 d2
 alias Line3 d3
 alias Line4 d4
 alias Line5 d5
-#Constant
+# Constant
 define TYPE_MIRROR 2096189278
 define TYPE_BUTTON 491845673
 define TYPE_DIAL 554524804
+define TYPE_CONSOLE -815193061
 define WAIT 9000000
 define SLEEP 0.05
 define NONE -3
 define PACKET_SP 250
 define PACKET_SIZE 12
 define DEVICE_BEGIN 0
+define QMIN 800
+define QMAX 1600
 # Alias Register
 alias Device r0
 alias Action r1
@@ -26,6 +29,8 @@ alias Hash r6
 alias Stack r7
 alias SpEnd r8
 alias Line r9
+alias Color1 r12
+alias Color2 r13
 alias Provider r14
 alias Temp r15
 # Settings
@@ -38,11 +43,12 @@ lb Action TYPE_BUTTON Setting 1 # Read unique button
 lb Choose TYPE_DIAL Setting 1 # Read unique dial
 s db Setting Choose
 beq Choose 0 init # Wait Request
-bne Line WAIT start # Wait Network Free
 mul Choose Choose 1000
 add Provider Choose 9000100
+bne Line WAIT start # Wait Network Free
 sb TYPE_MIRROR Setting Provider # Write line
 jal read_packet
+sleep 1
 j start
 
 reset_device:
@@ -64,8 +70,18 @@ bgt Index PACKET_SIZE ra # exit
 lb Line TYPE_MIRROR Setting 1 # 0:Average 1:Sum 2:Min 3:Max
 sleep SLEEP
 sub Device Index DEVICE_BEGIN
-brlt r0 0 4
-brgt r0 5 3
-brdns dr0 2
+blt r0 0 loop_packet
+bgt r0 5 loop_packet
+bdns dr0 loop_packet
 s dr0 Setting Line
+l Temp dr0 PrefabHash
+s db Setting Temp
+bne Temp TYPE_CONSOLE loop_packet
+brgt Line QMIN 3
+s dr0 Color 4 # Red
+j loop_packet
+brgt Line QMAX 3
+s dr0 Color 5 # Yellow
+j loop_packet
+s dr0 Color 2 # Green
 j loop_packet

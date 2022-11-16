@@ -14,7 +14,7 @@ yield
 lb SH TYPE_SENSOR Horizontal 3 # 0:Average 1:Sum 2:Min 3:Max
 lb SV TYPE_SENSOR Vertical 3 # 0:Average 1:Sum 2:Min 3:Max
 s db Setting SV
-sub SV 90 SV
+sub SV 90 SV # Reglage vertical si besoin
 sub SH SH 90 # Reglage horizontal si besoin
 sb TYPE_SOLAR_HEAVY Horizontal SH
 sb TYPE_SOLAR_HEAVY Vertical SV
