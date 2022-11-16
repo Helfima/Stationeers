@@ -14,8 +14,8 @@ Composition des carburant:
 * Fuel Nitrous = H2:N2O (1:1) ratio de 1 Hydrogen (Volatile) pour 1 Nitrous Oxide
 
 Mettre un circuit intégré dans la machine, appliquer le programme selon le carburant utilisé:
-* Fuel Oxygen = centrifuge_oxygen.ic10
-* Fuel Nitrous = centrifuge_nitrous.ic10
+* Fuel Oxygen = [centrifuge_oxygen.ic10](/Centrifuge/centrifuge_oxygen.ic10)
+* Fuel Nitrous = [centrifuge_nitrous.ic10](/Centrifuge/centrifuge_nitrous.ic10)
 
 Vitesse Rpm en régime établi
 * Fuel Oxygen = 528
