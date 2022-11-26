@@ -24,9 +24,9 @@ define TYPE_MIXER 2104106366
 define TYPE_LEVER 1220484876
 define TYPE_BUTTON 491845673
 define FACTOR 800
-define Kp 1
+define Kp 0.5
 define Ki 0.001
-define Kd 5
+define Kd 10
 sb TYPE_FURNACE On 1
 closeAll:
 move EInlast 0
@@ -102,7 +102,7 @@ j closeAll
 regulation:
 add r9 r8 1 #Registre suivant
 sub Temp1 P0 Pcur
-div Temp1 Temp1 100
+div Temp1 Temp1 50
 mul Temp1 Temp1 r10 #Invert sign
 sub Temp2 T0 Tcur
 div Temp2 Temp2 10

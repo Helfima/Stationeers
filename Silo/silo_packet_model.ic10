@@ -1,0 +1,35 @@
+move sp 0
+# Ores
+push 1724793494  # 1:Coal Ore
+push -983091249  # 2:Colbalt Ore
+push -707307845  # 3:Copper Ore
+push -1348105509 # 4:Gold Ore
+push 1758427767  # 5:Iron Ore
+push -190236170  # 6:Lead Ore
+push 1830218956  # 7:Nickel Ore
+push 1103972403  # 8:Silicon Ore
+push -916518678  # 9:Silver Ore
+push -1516581844 # 10:Uranium Ore
+push -831480639  # 11:Biomass
+push -654790771  # 12:Steel Ingot
+#Ingots
+push 2134647745  # 13:Lead Ingot
+push 252561409   # 14:Charcoal
+push -404336834  # 15:Copper Ingot
+push -929742000  # 16:Silver Ingot
+push 226410516   # 17:Gold Ingot
+push -1301215609 # 18:Iron Ingot
+push -1406385572 # 19:Nickel Ingot
+push -290196476  # 20:Silicon Ingot
+push -654790771  # 21:Steel Ingot
+push 502280180   # 22:Electrum Ingot
+push -82508479   # 23:Solder Ingot
+push 1058547521  # 24:Constantan Ingot
+push -297990285  # 25:Invar Ingot
+push 412924554   # 26:Astroloy Ingot
+push -787796599  # 27:Inconel Ingot
+push 156348098   # 28:Waspaloy Ingot
+push 1579842814  # 29:Hastelloy Ingot
+push -1897868623 # 30:Stellite Ingot
+
+s db On 0

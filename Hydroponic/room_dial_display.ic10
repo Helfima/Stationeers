@@ -1,0 +1,55 @@
+# room_dial_display.ic10
+alias self db
+alias Display_t d0
+alias Display_p d1
+alias Display_co2 d2
+alias Display_n2 d3
+alias Display_o2 d4
+alias Emetter d5
+# Constant
+define KELVIN 273
+define FREE 9000000
+# Alias Register
+alias T r0
+alias P r1
+alias CO2 r2
+alias N2 r3
+alias O2 r4
+alias Device r9
+alias Temp r15
+# Settings
+move r0 0
+move r1 0
+move r2 0
+move r3 0
+move r4 0
+start:
+s self Setting FREE
+yield
+jal read_emetter
+jal write_display
+j start
+
+read_emetter:
+l Temp Emetter Setting
+bne Temp FREE ra
+move Device 0
+loop_emetter:
+yield
+l Temp Emetter Setting
+s self Setting Temp
+brne r9 0 2
+sub Temp Temp KELVIN
+move rr9 Temp
+add Device Device 1
+ble Device 4 loop_emetter
+j ra
+
+write_display:
+move Device 0
+loop_device:
+s dr9 On 1
+s dr9 Setting rr9
+add Device Device 1
+ble Device 4 loop_device
+j ra

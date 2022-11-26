@@ -41,7 +41,6 @@ move LastHash Hash
 j start
 
 changeColor:
-yield
 lb r11 TYPE_DISPLAY Color 1
 breq r11 10 3
 sb TYPE_DISPLAY Color 10 # Pink

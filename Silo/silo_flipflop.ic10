@@ -6,16 +6,30 @@ alias FlipFlop3 d3
 alias FlipFlop4 d4
 alias FlipFlop5 d5
 #Constant
+define TYPE_SILO 1155865682 # Silo Hash
 define TYPE_FLIPFLOP 1155865682 # FlipFlop Hash
+define TYPE_STACKER1 -2020231820 # Stacker Hash
+define TYPE_STACKER2 1585641623 # Stacker Hash
+define STACK_ORE 50
+define STACK_INGOT 100
 define START_SP 1 # 1,7:Ores 13,19,25:Ingots
 # Alias Register
 alias FlipFlop r0
 alias Request r1
 alias Hash r2
 alias Index r3
+alias Stack r6
+alias Temp r15
 #Settings
+sle Temp START_SP 7
+select Stack Temp STACK_ORE STACK_INGOT
 jal push_hash_ingot
 sb TYPE_FLIPFLOP On 1
+sb TYPE_SILO On 1
+sb TYPE_STACKER1 On 1
+sb TYPE_STACKER1 Setting Stack
+sb TYPE_STACKER2 On 1
+sb TYPE_STACKER2 Setting Stack
 start:
 yield
 move r0 0

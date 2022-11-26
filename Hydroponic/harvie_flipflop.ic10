@@ -5,6 +5,8 @@ alias Tray0 d2
 alias Harvie1 d3
 alias Flipflop1 d4
 alias Tray1 d5
+# Constant
+define TYPE_LEVER 1220484876
 # Alias Register
 alias State0 r0 # 0:free 1:import 2:plant 3:seed 4:harvest
 alias Device0 r1
@@ -13,21 +15,23 @@ alias State3 r3 # 0:free 1:import 2:plant 3:seed 4:harvest
 alias IsMature r4
 alias IsSeeding r5
 alias IsOccupied r6
+alias IsOn r7
 alias Temp r10
-#settings
+# Settings
 ls State0 Tray0 0 Occupied
 mul State0 State0 2
 ls State3 Tray1 0 Occupied
 mul State3 State3 2
-s Harvie0 On 1
+s Harvie0 On 0
 s Flipflop0 On 0
-s Harvie1 On 1
+s Harvie1 On 0
 s Flipflop1 On 0
 start:
 yield
+lb IsOn TYPE_LEVER Setting 1 # 0:Average 1:Sum 2:Min 3:Max
 move r1 0
 next:
-s db Setting rr1
+s db Setting r0
 jal functionSorter
 jal functionPlant
 jal functionSeeding
@@ -57,17 +61,20 @@ s dr2 On 1
 j ra
 
 functionPlant:
+s dr1 On IsOn
+beq IsOn 0 ra
 add r2 r1 2 # Device Tray
 ls IsOccupied dr2 0 Occupied # Tray Occupied
 beq IsOccupied 1 ra # Already Plant
-ls IsOccupied dr1 0 Occupied # Harvie Import
+ls IsOccupied dr1 0 Occupied # Harvie 0:Import 1:Export 2:Hand
 beq IsOccupied 0 ra # Empty
 s dr1 Plant 1 # Harvie Plant
 move rr1 2 # Update state plant
 j ra
 
 functionSeeding:
-ls IsOccupied dr1 2 Occupied # Harvie Hand
+beq IsOn 0 ra
+ls IsOccupied dr1 2 Occupied # Harvie 0:Import 1:Export 2:Hand
 beq IsOccupied 1 ra # Occupied hand
 add r2 r1 2 # Device Tray
 ls IsSeeding dr2 0 Seeding # Tray Seeding
@@ -77,6 +84,7 @@ move rr1 3 # Update state seed
 j ra
 
 functionHarvest:
+beq IsOn 0 ra
 add r2 r1 2 # Device Tray
 ls IsMature dr2 0 Mature # Tray Mature
 ble IsMature 0 ra # Not Mature
@@ -85,6 +93,7 @@ move rr1 4 # Update state harvest
 j ra
 
 functionFinish:
+beq IsOn 0 ra
 blt rr1 4 ra # Not Planted
 ls IsOccupied dr1 2 Occupied # Harvie Occupied
 beq IsOccupied 1 ra # Planting
