@@ -76,15 +76,15 @@ j initialize
 
 throttle:
 move CThr 0
-sub Err STRESS_MAX MStr
-mul CThr Err Kps
-add IStr IStr Err
-brgt MRpm RMP_I 2
+sub Err STRESS_MAX MStr # calcul de l'erreur
+mul CThr Err Kps # U(t)=Up Proportionnelle
+add IStr IStr Err # SUM(Err) Somme des erreurs
+brgt MRpm RMP_I 2 # vitesse minimale
 move IStr 0 # skip integrale
-mul Err IStr Ki
-add CThr CThr Err
-mul Err DStr Kd
-sub CThr CThr Err
+mul Err IStr Ki # Ui Intégrale
+add CThr CThr Err # U(t)=Up+Ui
+mul Err DStr Kd # Ud dérivée
+sub CThr CThr Err # U(t)=Up+Ui+Ud
 s Self Throttle CThr
 bdns d1 ra
 s d1 Setting CThr

@@ -4,15 +4,20 @@ alias DisplayReagents d0
 alias Choose r0
 alias Hash r1
 alias Count r2
+alias IsOn r3
 #Constant
 define TYPE_FURNACE 545937711
 define TYPE_DIAL 554524804
+define TYPE_DISPLAY -815193061
+define TYPE_MONITOR 801677497
+define TYPE_OCCUPANCY 322782515
 #Settings
 s DisplayReagents Color 10
 start:
 yield
-lb Choose TYPE_DIAL Setting 1
-lb Count TYPE_FURNACE Reagents 1
+jal check_occupancy
+lb Choose TYPE_DIAL Setting 1 # 0:Average 1:Sum 2:Min 3:Max
+lb Count TYPE_FURNACE Reagents 1 # 0:Average 1:Sum 2:Min 3:Max
 s DisplayReagents Setting Count
 jal readHashIngot
 s db Setting Hash
@@ -22,4 +27,10 @@ readHashIngot:
 mul sp Choose 11
 add sp sp 1
 pop Hash
+j ra
+
+check_occupancy:
+lb IsOn TYPE_OCCUPANCY Activate 3 # 0:Average 1:Sum 2:Min 3:Max
+sb TYPE_DISPLAY On IsOn
+sb TYPE_MONITOR On IsOn
 j ra

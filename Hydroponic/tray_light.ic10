@@ -1,0 +1,126 @@
+# tray_light.ic10
+alias Tray0 d0
+alias DisplayMin d1
+alias DisplaySec d2
+alias DisplayEff d3
+alias DisplayMat d4
+alias DisplayTim d5
+# Constant
+define TYPE_LIGHT -1758710260
+define DELAY 30
+# Alias Register
+alias IsOn r0
+alias IsOccupied r1
+alias Percent r2
+alias LastPercent r3
+alias Err r4
+alias Time r5
+alias IsModel r6
+alias Seed r7
+alias Light r8
+alias Darkness r9
+alias TimeGrowth r10
+alias Hash r11
+alias Min r12
+alias Sec r13
+alias Clock r14
+alias Temp r15
+# Settings
+move LastPercent 0
+move Time 0
+move IsModel 0
+start:
+yield
+s db Setting Darkness
+ls IsOccupied Tray0 0 Occupied
+jal read_model
+jal check_clock
+jal check_maturity
+jal check_efficiency
+jal check_timer
+sub Time Time 1
+bge Time 0 start # wait timer
+jal check_light
+mul Time DELAY 2 # reset timer in second
+j start
+
+check_light:
+lb IsOn TYPE_LIGHT On 3 # 0:Average 1:Sum 2:Min 3:Max
+ls Percent Tray0 0 Efficiency
+sub Temp LastPercent Percent
+brlt LastPercent Percent 4
+select IsOn IsOn 0 1 # switch on/off
+select IsOn Light IsOn 0 # only dark
+select IsOn Darkness IsOn 1 # only light
+select IsOn IsOccupied IsOn 0 # turn off
+sb TYPE_LIGHT On IsOn
+move LastPercent Percent
+j ra
+
+check_clock:
+s DisplayMin On IsOccupied
+s DisplaySec On IsOccupied
+sub Clock Clock 0.5
+select Clock IsOccupied Clock TimeGrowth # reset clock
+div Sec Clock 1
+div Min Sec 60
+trunc Min Min
+s DisplayMin Setting Min
+s DisplayMin Color 10
+mul Min Min 60
+sub Sec Sec Min
+trunc Temp Sec
+s DisplaySec Setting Temp
+brne Temp Sec 3
+s DisplaySec Color 10
+j ra
+s DisplaySec Color 11
+j ra
+
+check_maturity:
+s DisplayMat On IsOccupied
+ls Temp Tray0 0 Growth
+s DisplayMat Setting Temp
+s DisplayMat Color 5
+j ra
+
+check_efficiency:
+s DisplayEff On IsOccupied
+ls Percent Tray0 0 Efficiency
+s DisplayEff Setting Percent
+brlt LastPercent Percent 3
+s DisplayEff Color 4
+j ra
+s DisplayEff Color 2
+j ra
+
+check_timer:
+s DisplayTim On IsOccupied
+div Temp Time 2
+trunc Temp Temp
+s DisplayTim Setting Temp
+s DisplayTim Color 1
+j ra
+
+read_model:
+ls IsOccupied Tray0 0 Occupied # Tray Occupied
+beq IsOccupied 0 reset_model # Empty
+beq IsModel 1 ra # already
+ls Hash Tray0 0 PrefabHash # Tray Hash
+move sp -4
+loop_model:
+add sp sp 5 # decale index
+peek Temp
+bgt sp 120 ra # exit
+bne Temp Hash loop_model
+add sp sp 4
+pop TimeGrowth
+pop Darkness
+pop Light
+pop Seed
+move IsModel 1
+move Clock TimeGrowth
+j ra
+reset_model:
+move IsModel 0
+j ra

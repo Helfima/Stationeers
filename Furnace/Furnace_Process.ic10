@@ -92,7 +92,7 @@ s PumpIn Setting Temp
 sgt Temp Temp 0
 s PumpIn On Temp
 lb Temp TYPE_SENSOR Pressure 1 # Device Sensor
-sub Temp Temp 5 # Room Pressure
+sub Temp Temp 10 # Room Pressure
 mul Temp Temp 50 # Velocity
 min Temp Temp 100 # Maximum
 s PumpOut Setting Temp

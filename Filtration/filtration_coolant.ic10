@@ -3,38 +3,42 @@ alias Atmo db
 alias Pump d0
 # Constant
 define TYPE_ATMO -2087593337
-define TYPE_SENSOR -1252983604
+define TYPE_MEMORY -851746783
 define KELVIN 273
-define TMIN 10 # T cible
-define MOLES_MIN 100
-define Echelon 7 # position atmo
+define P_MIN 110
+define P_MAX 1500
 # Alias Register
 alias Tmin r0
-alias Tmax r1
-alias Tcur r2
-alias Tset r3
-alias Delta r4
-alias n r5
-alias Moles r6
-alias IsMoles r7
+alias Tset r1
+alias Delta r2
+alias Pmax r3
+alias Pin r4
+alias IsPin r5
+alias Tin r6
+alias IsOpen r7
 # Settings
-add Tmin TMIN KELVIN
 start:
 yield
-lb n TYPE_ATMO On 1 # 0:Average 1:Sum 2:Min 3:Max
-lb Tcur TYPE_SENSOR Temperature 3 # 0:Average 1:Sum 2:Min 3:Max
-sub Delta Tcur Tmin
-div Delta Delta n # interval
-mul Tset Delta Echelon
-add Tset Tset Tmin
-s db Setting Tset
-s db Mode 1
+jal check_setting
 bdseal Pump check_moles
 j start
 
+check_setting:
+lb Delta TYPE_MEMORY Setting 2 # 0:Average 1:Sum 2:Min 3:Max
+lb Tmin TYPE_MEMORY Setting 3 # 0:Average 1:Sum 2:Min 3:Max
+add Tmin Tmin KELVIN
+l Tin Atmo TemperatureInput
+add Tin Tin Delta
+max Tset Tmin Tin
+s db Setting Tset
+s db Mode 1 #Turn On/Off 0:idle 1:active
+j ra
+
 check_moles:
-l Moles Atmo TotalMolesInput
-sle IsMoles Moles MOLES_MIN
-s Pump On IsMoles
+l IsOpen Atmo Open
+select Pmax IsOpen P_MIN P_MAX
+l Pin Atmo PressureInput
+sle IsPin Pin Pmax
+s Pump On IsPin
 s Pump Setting 50
 j ra

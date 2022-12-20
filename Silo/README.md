@@ -6,6 +6,12 @@ Scripts de pilotage des silos de stockage.
 
 Comme toujours on cherche le minimum de réglage ou sa simplicité.
 
+## Model
+
+Les scripts utilisent un model de données pour réduire les nombres de lignes.
+
+Placer le model [silo_packet_model.ic10](/Silo/silo_packet_model.ic10) sur chaque IC, allumer le housing et attendre son arrêt signifiant que le model est placé dans la Stack de le IC et utilisable par les scripts qu'on met par la suite.
+
 ## Stockage
 Chaque ligne est composée de 6 silos car les ICs ne contrôlent que 6 appareils.
 
@@ -19,27 +25,37 @@ Composition d'une ligne:
 * 6 Silos numérotés de 0 à 5 (pour correspondre aux ecrous d0 à d5)
 * 6 Chute FlipFlop numérotés de 0 à 5 (pour correspondre aux ecrous d0 à d5)
 * 6 Stackers (inutile de les nommés)
-* 2 Housings nommées silo_flipflop et silo_provider
-* 2 Circuits
-* 1 Logic mirror (pour la partie demande)
+* 3 Housings nommées silo_flipflop, silo_provider1 et silo_provider2
+* 3 Circuits
+* 2 Logic mirror (pour la partie demande et l'affichage)
 * 1 Ordinateur et sa carte mère (optionnel)
 
-Pour la partie électrique, connectez tout dans un seul circuit.
+Pour la partie électrique, connectez chaque ligne de 6 silos dans un seul circuit.
 
-Il faut 2 scripts par ligne, dans chaque script il faut modifier la constante START_SP selon le contenu souhaité:
+J'ai doublé le provider pour éviter des problèmes de dialogue:
+* Les 5 rangés étant lié via les mirrors pour l'affichage du contenu.
+* Les 2 rangés de minerais sont lié via les mirrors avec le fourneau
+* Les 3 rangés de lingots sont lié via les mirrors avec le magasin
+
+Il faut 3 scripts par ligne, dans chaque script il faut modifier la constante STORAGE_LINE selon le contenu souhaité:
 * Pilote le routage: [silo_flipflop.ic10](/Silo/silo_flipflop.ic10)
-* Pilote la sortie: [silo_provider.ic10](/Silo/silo_provider.ic10)
+* Pilote la sortie pour les demandes: [silo_packet_provider.ic10](/Silo/silo_packet_provider.ic10)
+* Pilote la sortie pour l'affichage': [silo_packet_provider.ic10](/Silo/silo_packet_provider.ic10)
 
-la constante START_SP aura pour valeur:
-* 1 ou 7: pour les minerais (2 lignes de 6 silos)
-* 13, 19 ou 25: pour les lingots (3 lignes de 6 silos)
+la constante STORAGE_LINE aura pour valeur:
+* 1 ou 2: pour les minerais (2 lignes de 6 silos)
+* 3, 4 ou 5: pour les lingots (3 lignes de 6 silos)
 
 ![Vue global des lingots](/Silo/Silos.png)
 
 ## Demande
 
+le protocole de requête [ici](/Silo/silo_packet.md)
+
+Le script de requête attend qu'au moins un provider renvois 9000000 et peut alors envoyer le hash puis la quantité voulu.
+
 Un script permettant de faire une requête sur les lingots:
-* Pilote la requête: [silo_requester.ic10](/Silo/silo_requester.ic10)
+* Pilote la requête: [silo_packet_requester.ic10](/Silo/silo_packet_requester.ic10)
 
 Composition:
 * 1 bouton poussoir

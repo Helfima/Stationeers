@@ -1,20 +1,26 @@
-alias Transm d0
-alias Sens d1
-alias InVent d2
-alias OutVent d3
-alias TarPress r0
-alias CurPress r1
-alias IsOn r2
-define wiggle 1
-Start:
+alias ButtonOnes d0
+alias ButtonTens d1
+alias ButtonHundreds d2
+alias ButtonReset d3
+alias MemoryChip d4
+alias DisplayConsole d5
+# Alias Register
+alias action r0
+alias value r4
+loop:
 yield
-l TarPress Transm Setting
-l CurPress Sens Pressure
-add TarPress wiggle TarPress
-sgt IsOn CurPress TarPress
-s OutVent On IsOn
-l TarPress Transm Setting
-sub TarPress wiggle TarPress
-sgt IsOn TarPress CurPress
-s InVent On IsOn
-j Start
+l action ButtonOnes Setting
+brne action 1 2 # bypass if not this button
+    add value value 1
+l action ButtonTens Setting
+brne action 1 2 # bypass if not this button
+    add value value 10
+l action ButtonHundreds Setting
+brne action 1 2 # bypass if not this button
+    add value value 100
+l action ButtonReset Setting
+brne action 1 2 # bypass if not this button
+    move value 0
+s MemoryChip Setting value
+s DisplayConsole Setting value
+j loop

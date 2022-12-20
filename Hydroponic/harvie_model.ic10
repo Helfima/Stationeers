@@ -1,0 +1,78 @@
+move sp 400
+push 176446172   # Alien Mushroom
+push -1057658015 # Wheat
+push 258339687   # Corn
+push 266654416   # Darga Fern
+push -1159179557 # Endothermic Plant Creative
+push 892110467   # Fern
+push -1573623434 # Flower (Blue)
+push -1513337058 # Flower (Green)
+push -1411986716 # Flower (Orange)
+push -81376085   # Flower (Red)
+push 1712822019  # Flower (Yellow)
+push -177792789  # Hades Flower (Alpha strain)
+push 1819167057  # Hades Flower (Beta strain)
+push 2044798572  # Mushroom
+push 2042955224  # Peace Lily
+push 1929046963  # Potato
+push 1277828144  # Pumpkin
+push 658916791   # Rize
+push 1924673028  # Soybean
+push -1208890208 # Thermogenic Plant Creative
+push -998592080  # Tomato
+push -800947386  # Tropical Lily
+push 851290561   # Winterspawn (Alpha variant)
+push -1414203269 # Winterspawn (Beta variant)
+
+move sp 450
+push 01103600 # Alien Mushroom
+push 11103600 # Wheat
+push 11107200 # Corn
+push 01104800 # Darga Fern
+push 01100720 # Endothermic Plant Creative
+push 11102400 # Fern
+push 01100480 # Flower (Blue)
+push 01100480 # Flower (Green)
+push 01100480 # Flower (Orange)
+push 01100480 # Flower (Red)
+push 01100480 # Flower (Yellow)
+push 01103600 # Hades Flower (Alpha strain)
+push 01106000 # Hades Flower (Beta strain)
+push 10103600 # Mushroom
+push 01104800 # Peace Lily
+push 11001200 # Potato
+push 11114400 # Pumpkin
+push 11103600 # Rize
+push 11103600 # Soybean
+push 01100960 # Thermogenic Plant Creative
+push 11114400 # Tomato
+push 01100720 # Tropical Lily
+push 01103600 # Winterspawn (Alpha variant)
+push 01104800 # Winterspawn (Beta variant)
+
+# Initialize
+move r0 0 # index
+start:
+# read hash
+add sp r0 401
+pop r2 # read hash
+# read code
+add sp r0 451
+pop r3 # read code
+# write data
+move r15 10000000 # initialise le diviseur
+mul sp r0 5
+push r2 # write hash
+# decode
+loop:
+div r4 r3 r15
+trunc r4 r4
+push r4
+mul r4 r4 r15
+sub r3 r3 r4
+div r15 r15 10
+bgt r15 10000 loop
+push r3 # write le reste
+add r0 r0 1
+ble r0 24 start
+s db On 0

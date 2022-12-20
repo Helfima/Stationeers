@@ -1,0 +1,66 @@
+# filtration_storage.ic10
+alias Atmo d0
+alias LedAtmo d1
+alias StorageWaste d2
+alias LedWaste d3
+alias StorageO2 d4
+alias LedO2 d5
+# Constant
+define TYPE_PUMP -321403609
+define PERCENT 0.10
+define P_MIN 0 # kpa
+define P_MAX 6000 # kpa
+define KELVIN 273
+# Alias Register
+alias IsOn r0
+alias IsOccupied r1
+alias Percent r2
+alias GasFilter r3
+alias P r4
+alias Input r5
+alias Temp r15
+# Settings
+#s Atmo On 0 #Turn Off
+start:
+s db Setting 0
+yield
+jal storage_waste
+jal storage_o2
+jal filtration
+j start
+
+storage_waste:
+ls IsOccupied StorageWaste 0 Occupied
+seq IsOn IsOccupied 1
+ls P StorageWaste 0 Pressure
+div P P 1000 #convert in kPa
+sgt Temp P P_MIN
+and IsOn IsOn Temp
+sb TYPE_PUMP On IsOn
+div Percent P P_MAX
+sub Percent 1 Percent
+s LedWaste Setting Percent
+j ra
+
+storage_o2:
+ls IsOccupied StorageO2 0 Occupied
+seq IsOn IsOccupied 1
+ls P StorageO2 0 Pressure
+div P P 1000 #convert in kPa
+slt Temp P P_MAX
+and IsOn IsOn Temp
+l Input Atmo RatioOxygenInput
+sgt Temp Input PERCENT
+and IsOn IsOn Temp
+s Atmo Mode IsOn #Turn On/Off 0:idle 1:active
+div Percent P P_MAX
+s LedO2 Setting Percent
+j ra
+
+filtration:
+ls GasFilter Atmo 0 Damage
+ls Temp Atmo 1 Damage
+add Percent GasFilter Temp
+div Percent Percent 2
+s LedAtmo Setting Percent
+j ra

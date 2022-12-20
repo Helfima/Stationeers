@@ -8,15 +8,19 @@ alias Tray1 d5
 # Constant
 define TYPE_LEVER 1220484876
 # Alias Register
-alias State0 r0 # 0:free 1:import 2:plant 3:seed 4:harvest
+alias State0 r0 # 0:free 1:import 2:plant 3:model 4:seed 5:harvest
 alias Device0 r1
-alias Device1 r2
-alias State3 r3 # 0:free 1:import 2:plant 3:seed 4:harvest
-alias IsMature r4
-alias IsSeeding r5
-alias IsOccupied r6
-alias IsOn r7
+alias HasSeed0 r2
+alias State3 r3 # 0:free 1:import 2:plant 3:model 4:seed 5:harvest
+alias Device3 r4
+alias HasSeed3 r5
+alias IsMature r6
+alias IsSeeding r7
+alias IsOccupied r8
+alias IsOn r9
 alias Temp r10
+alias Timer r11
+alias Hash r14
 # Settings
 ls State0 Tray0 0 Occupied
 mul State0 State0 2
@@ -28,12 +32,13 @@ s Harvie1 On 0
 s Flipflop1 On 0
 start:
 yield
+s db Setting r0
 lb IsOn TYPE_LEVER Setting 1 # 0:Average 1:Sum 2:Min 3:Max
 move r1 0
 next:
-s db Setting r0
 jal functionSorter
 jal functionPlant
+jal read_model
 jal functionSeeding
 jal functionHarvest
 jal functionFinish
@@ -41,64 +46,78 @@ breq r1 0 2 #go next harvie
 j start
 move r1 3
 j next
-
 functionSorter:
-add r2 r1 1 # Device FlipFlop
-s dr2 On 0
-s dr2 Setting 0
-s dr2 SettingOutput 0
-ls IsOccupied dr2 0 Occupied
+add r4 r1 1 # Device FlipFlop
+s dr4 On 0
+s dr4 Setting 0
+s dr4 SettingOutput 0
+ls IsOccupied dr4 0 Occupied
 beq IsOccupied 0 ra # Do Nothing
 bgt rr1 0 normalWay # State > 0 => Already Plant
 harvieWay:
 move rr1 1 # Update state import
-s dr2 Mode 1 # FlipFlop Way:Harvie
+s dr4 Mode 1 # FlipFlop Way:Harvie
 j activeWay
 normalWay:
-s dr2 Mode 0 # FlipFlop Way:Normal
+s dr4 Mode 0 # FlipFlop Way:Normal
 activeWay:
-s dr2 On 1
+s dr4 On 1
 j ra
-
 functionPlant:
 s dr1 On IsOn
 beq IsOn 0 ra
-add r2 r1 2 # Device Tray
-ls IsOccupied dr2 0 Occupied # Tray Occupied
+add r4 r1 2 # Device Tray
+ls IsOccupied dr4 0 Occupied # Tray Occupied
 beq IsOccupied 1 ra # Already Plant
 ls IsOccupied dr1 0 Occupied # Harvie 0:Import 1:Export 2:Hand
 beq IsOccupied 0 ra # Empty
 s dr1 Plant 1 # Harvie Plant
 move rr1 2 # Update state plant
+move Timer 60
 j ra
-
 functionSeeding:
 beq IsOn 0 ra
-ls IsOccupied dr1 2 Occupied # Harvie 0:Import 1:Export 2:Hand
-beq IsOccupied 1 ra # Occupied hand
-add r2 r1 2 # Device Tray
-ls IsSeeding dr2 0 Seeding # Tray Seeding
-ble IsSeeding 0 ra # Not Seeding
+blt rr1 3 ra # wait model
+add r4 r1 2 # Device Tray
+ls IsSeeding dr4 0 Seeding # Tray Seeding
+blt IsSeeding 0 ra # Not Seeding
 s dr1 Harvest 1 # Harvie Harvest
-move rr1 3 # Update state seed
+move rr1 4 # Update state seed
 j ra
-
 functionHarvest:
 beq IsOn 0 ra
-add r2 r1 2 # Device Tray
-ls IsMature dr2 0 Mature # Tray Mature
+add r4 r1 2 # Device Tray
+breq rr4 0 2 # bypass wait seeding
+blt rr1 4 ra # wait seeding
+ls IsMature dr4 0 Mature # Tray Mature
 ble IsMature 0 ra # Not Mature
 s dr1 Harvest 1 # Harvie Harvest
-move rr1 4 # Update state harvest
+move rr1 5 # Update state harvest
 j ra
-
 functionFinish:
 beq IsOn 0 ra
-blt rr1 4 ra # Not Planted
-ls IsOccupied dr1 2 Occupied # Harvie Occupied
-beq IsOccupied 1 ra # Planting
-add r2 r1 2 # Device Tray
-ls IsOccupied dr2 0 Occupied # Tray Occupied
+blt rr1 3 ra # Not Planted
+add r4 r1 2 # Device Tray
+ls IsOccupied dr4 0 Occupied # Tray Occupied
 beq IsOccupied 1 ra # Not Finish
 move rr1 0
+move rr4 0
+j ra
+read_model:
+add r4 r1 2 # Device Tray
+ls IsOccupied dr4 0 Occupied # Tray Occupied
+beq IsOccupied 0 ra # Empty
+bne rr1 2 ra # wait plant
+brle Timer 0 3
+sub Timer Timer 1
+j ra
+ls Hash dr4 0 PrefabHash # Tray Hash
+move sp -4
+add sp sp 5 # decale index
+peek Temp
+brgt sp 120 4 # exit
+brne Temp Hash -3
+add sp sp 1
+pop rr4
+move rr1 3
 j ra
