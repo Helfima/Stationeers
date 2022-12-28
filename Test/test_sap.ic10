@@ -1,0 +1,15 @@
+# test_sap.ic10
+alias Display d0
+alias Dial d1
+# Constant
+define KELVIN 273
+# Alias Register
+# Settings
+s Dial Mode 100
+#s Atmo On 0 #Turn Off
+start:
+yield
+l r0 Dial Setting
+sap r1 r0 50 0.1
+s Display Setting r1
+j start

@@ -56,10 +56,6 @@ bgt Device 5 free # exit
 bdns dr0 loop_list # if no device exit
 l Qty dr0 Quantity
 mul Qty Qty Stack
-add sp Device StartSp
-peek Hash
-s db Setting Hash # Write line
-yield
 s db Setting Qty # Write line
 yield
 j loop_list

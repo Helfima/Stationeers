@@ -7,7 +7,7 @@ alias DisplayMat d4
 alias DisplayTim d5
 # Constant
 define TYPE_LIGHT -1758710260
-define DELAY 30
+define DELAY 60
 # Alias Register
 alias IsOn r0
 alias IsOccupied r1

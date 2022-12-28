@@ -1,4 +1,6 @@
-# Adv Furnace Controller
+# Furnace\Furnace_Furnace_PID.ic10
+alias DialIngot d0
+alias DialQty d1
 # Alias Register
 alias Process r0
 alias Temp r1
@@ -17,13 +19,12 @@ alias P0 r13
 alias Tcur r14
 alias Pcur r15
 define TYPE_FURNACE 545937711
-define TYPE_DIAL 554524804
 define TYPE_ANALYSER 435685051
 define TYPE_PUMP -321403609
 define TYPE_MIXER 2104106366
 define TYPE_LEVER 1220484876
 define TYPE_BUTTON 491845673
-define FACTOR 800
+define FACTOR 200
 define Kp 0.5
 define Ki 0.001
 define Kd 10
@@ -44,7 +45,7 @@ lb Temp TYPE_BUTTON Setting 1 # 0:Average 1:Sum 2:Min 3:Max
 brne Temp 1 3
 sb TYPE_FURNACE Open 1
 yield
-lb sp TYPE_DIAL Setting 1 # Read unique dial
+l sp DialIngot Setting
 mul sp sp 11
 move r15 11
 add sp sp r15
@@ -90,8 +91,10 @@ jal regulation
 sb TYPE_FURNACE SettingInput Temp
 j start
 finally:
+l Temp DialQty Setting
+mul Temp1 Temp FACTOR
 lb Temp TYPE_FURNACE Reagents 1
-blt Temp FACTOR ra
+blt Temp Temp1 ra
 lb Temp TYPE_FURNACE Mode 1
 beq Temp 0 ra
 lb Temp TYPE_FURNACE Mode 1

@@ -28,10 +28,10 @@ mul StartSp STORAGE_LINE 6
 sub StartSp StartSp 5 # 1,7:Ores 13,19,25:Ingots
 sb TYPE_FLIPFLOP On 1
 sb TYPE_SILO On 1
-sb TYPE_STACKER1 On 1
 sb TYPE_STACKER1 Setting Stack
-sb TYPE_STACKER2 On 1
+sb TYPE_STACKER1 On 1
 sb TYPE_STACKER2 Setting Stack
+sb TYPE_STACKER2 On 1
 start:
 yield
 move r0 0

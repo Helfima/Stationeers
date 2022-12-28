@@ -4,7 +4,7 @@ alias Analyser d0
 alias Storage d1
 # Constant
 define MOLES_MIN 1
-define PERCENT 0.01
+define PERCENT 0.00
 define T_INPUT_MAX 200 # Degre celcius
 define T_OUTPUT_MAX 40 # Degre celcius
 define P_OUTPUT_MAX 6000 # kpa

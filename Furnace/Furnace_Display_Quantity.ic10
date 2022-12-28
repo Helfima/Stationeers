@@ -1,0 +1,110 @@
+# Furnace\Furnace_Display_Quantity.ic10
+alias Furnace d0
+alias DialIngot d1
+alias DialQty d2
+alias QtyOre1 d3
+alias QtyOre2 d4
+alias QtyOre3 d5
+# Alias Register
+alias Hash r1
+alias Hash1 r2
+alias Hash2 r3
+alias Hash3 r4
+alias Qty1 r5
+alias Qty2 r6
+alias Qty3 r7
+alias Qty r8
+alias Type r9
+alias DColor r10
+alias Timer r12
+alias Process r13
+alias Factor r14
+alias Temp r15
+#Constant
+define TYPE_LEVER 1220484876
+define FACTOR 200
+define CLOCK 3
+#settings
+move Type 0
+move Timer CLOCK
+s DialIngot Mode 17
+s DialQty Mode 4
+start:
+yield
+l Temp DialQty Setting
+mul Factor Temp FACTOR
+l sp DialIngot Setting
+lb Process TYPE_LEVER Setting 1 # 0:Average 1:Sum 2:Min 3:Max
+s db Setting Type
+jal loadValues
+sub Timer Timer 1
+brgt Timer 0 3
+select Type Type 0 1
+move Timer CLOCK
+select Type Process Type 1 # bypass type
+move Hash Hash1
+jal read_reagents
+select DColor Type 1 10
+select Qty Type Qty1 Qty
+s QtyOre1 Setting Qty
+s QtyOre1 Color DColor
+move Hash Hash2
+jal read_reagents
+select Qty Type Qty2 Qty
+s QtyOre2 Setting Qty
+s QtyOre2 Color DColor
+move Hash Hash3
+jal read_reagents
+select Qty Type Qty3 Qty
+s QtyOre3 Setting Qty
+s QtyOre3 Color DColor
+j start
+
+loadValues:
+mul sp sp 11
+move r15 7 # default 11, lecture des quantités
+add sp sp r15
+pop rr15
+sub r15 r15 1
+brne r15 0 -2
+mul Qty1 Qty1 Factor
+mul Qty2 Qty2 Factor
+mul Qty3 Qty3 Factor
+j ra
+
+read_reagents:
+move Qty 0
+beq Hash 0 ra # exit
+brne Hash 1758427767 3 # Iron
+lr Qty Furnace Contents Iron
+j ra
+brne Hash 1830218956 3 # Nickel
+lr Qty Furnace Contents Nickel
+j ra
+brne Hash -983091249 3 # Cobalt
+lr Qty Furnace Contents Cobalt
+j ra
+brne Hash -707307845 3 # Copper
+lr Qty Furnace Contents Copper
+j ra
+brne Hash -1348105509 3 # Gold
+lr Qty Furnace Contents Gold
+j ra
+brne Hash -190236170 3 # Lead
+lr Qty Furnace Contents Lead
+j ra
+brne Hash -916518678 3 # Silver
+lr Qty Furnace Contents Silver
+j ra
+brne Hash 1103972403 3 # Silicon
+lr Qty Furnace Contents Silicon
+j ra
+brne Hash 1724793494 3 # Coal
+lr Qty Furnace Contents Hydrocarbon
+j ra
+brne Hash -654790771 3 # Steel
+lr Qty Furnace Contents Steel
+j ra
+brne Hash -831480639 2 # Biomass
+lr Qty Furnace Contents Biomass
+j ra

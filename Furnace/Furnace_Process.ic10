@@ -1,6 +1,8 @@
-# Furnace_Process.ic10
-alias PumpIn d0
-alias PumpOut d1
+# Furnace\Furnace_Process.ic10
+alias DialIngot d0
+alias DialQty d1
+alias PumpIn d3
+alias PumpOut d4
 # Alias Register
 alias Active r0
 alias Hash r1
@@ -11,6 +13,7 @@ alias Qty1 r5
 alias Qty2 r6
 alias Qty3 r7
 alias Qty r8
+alias Factor r9
 alias Index r10
 alias Temp r12
 alias Temp1 r13
@@ -18,12 +21,11 @@ alias Temp2 r14
 alias Value r15
 # Constant
 define TYPE_FURNACE 545937711
-define TYPE_DIAL 554524804
 define TYPE_BUTTON 491845673
 define TYPE_LEVER 1220484876
 define TYPE_MIRROR 2096189278
 define TYPE_SENSOR -1252983604
-define FACTOR 800
+define FACTOR 200
 define QUERY_FREE 9000000
 define QUERY_ITEM 9000101
 # Settings
@@ -32,7 +34,9 @@ move Index 0
 move Active 0
 start:
 yield
-lb sp TYPE_DIAL Setting 1 # Read unique dial
+l Temp DialQty Setting
+mul Factor Temp FACTOR
+l sp DialIngot Setting
 jal loadValues
 lb Temp TYPE_LEVER Setting 1 # Read unique lever
 jal checkActive
@@ -57,7 +61,7 @@ j ra
 request:
 bne Active 1 ra
 lb Temp TYPE_FURNACE Reagents 1
-bge Temp FACTOR ra
+bge Temp Factor ra
 move Index 2 # Register Index
 loopIndex:
 move Value 0
@@ -101,12 +105,12 @@ s PumpOut On Temp
 j ra
 loadValues:
 mul sp sp 11
-move r15 11
+move r15 7 # default 11, lecture des quantités
 add sp sp r15
 pop rr15
 sub r15 r15 1
 brne r15 1 -2 # No Hash
-mul Qty1 Qty1 FACTOR
-mul Qty2 Qty2 FACTOR
-mul Qty3 Qty3 FACTOR
+mul Qty1 Qty1 Factor
+mul Qty2 Qty2 Factor
+mul Qty3 Qty3 Factor
 j ra

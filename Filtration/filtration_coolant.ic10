@@ -19,6 +19,7 @@ alias IsOn r5
 alias Tin r6
 alias Tout r7
 alias Twaste r8
+alias Percent r12
 alias IsOpen r13
 alias IsMaster r14
 alias Temp r15
@@ -27,7 +28,6 @@ start:
 yield
 l IsOpen Atmo Open
 seq IsMaster IsOpen 0 # Master is closed
-lb Tout TYPE_SENSOR Temperature 3 # 0:Average 1:Sum 2:Min 3:Max
 lb Tmin TYPE_MEMORY Setting 3 # 0:Average 1:Sum 2:Min 3:Max
 add Tmin Tmin KELVIN
 jal check_setting
@@ -42,7 +42,6 @@ l Twaste Atmo TemperatureOutput2
 add Tin Tin Delta
 max Tset Tmin Tin
 s db Setting Tset
-s db Mode 1 #Turn On/Off 0:idle 1:active
 j ra
 
 check_pressure:
@@ -54,7 +53,14 @@ s Pump Setting 500
 j ra
 
 check_temperature:
+lb Tout TYPE_SENSOR Temperature 3 # 0:Average 1:Sum 2:Min 3:Max
+add Tout Tout 100
 l Tin Atmo TemperatureInput
 sgt IsOn Tin Tout
 sb TYPE_VALVE On IsOn
+sna Temp Tmin Tin Percent
+select IsOn IsOn 0 Temp
+select Percent IsOn 0.01 0.02
+#Turn On/Off 0:idle 1:active
+sb TYPE_ATMO Mode IsOn 
 j ra

@@ -1,0 +1,63 @@
+# Trader\dish.ic10
+alias DialH d0
+alias DialV d1
+alias DialDevice d2
+alias DisplayH d3
+alias DisplayV d4
+# Alias Register
+alias H r0
+alias V r1
+alias Device r2
+alias IsPresent r3
+alias Hash r4
+alias IsOn r5
+alias Temp r15
+# Constant
+define TYPE_DISH_SMALL -2138748650
+define TYPE_DISH_MEDIUM 439026183
+define TYPE_DISH_LARGE 1913391845
+define TYPE_COMPUTER -626563514
+define TYPE_OCCUPANCY 322782515
+define TYPE_DISPLAY -815193061
+# Settings
+move sp 0
+push 0
+push TYPE_DISH_SMALL
+push TYPE_DISH_MEDIUM
+push TYPE_DISH_LARGE
+s DialH Mode 360
+s DialV Mode 90
+s DialDevice Mode 3
+start:
+yield
+lb IsPresent TYPE_OCCUPANCY Activate 3 # 0:Average 1:Sum 2:Min 3:Max
+l Device DialDevice Setting
+sb TYPE_COMPUTER On IsPresent
+sb TYPE_DISPLAY On IsPresent
+jal device_on_off
+beq IsPresent 0 start # do nothing
+beq Device 0 start # do nothing
+# move dish
+l H DialH Setting
+l V DialV Setting
+l Device DialDevice Setting
+move sp Device
+add sp sp 1
+pop Hash
+sb Hash Horizontal H
+sb Hash Vertical V
+lb Temp Hash Horizontal 3 # 0:Average 1:Sum 2:Min 3:Max
+s DisplayH Setting Temp
+lb Temp Hash Vertical 3 # 0:Average 1:Sum 2:Min 3:Max
+s DisplayV Setting Temp
+j start
+
+device_on_off:
+move sp 4
+device_loop:
+pop Hash
+seq IsOn sp Device
+and IsOn IsOn IsPresent
+sb Hash On IsOn
+bne sp 0 device_loop
+j ra
