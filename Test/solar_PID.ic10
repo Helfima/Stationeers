@@ -1,0 +1,46 @@
+# Test\solar_PID.ic10
+# Sensor: port see south
+# Solar Panel: port see south
+define TYPE_SOLAR_HEAVY -934345724
+define TYPE_SENSOR 1076425094
+define Kp 1
+define Ki 0.01
+define Kd 5
+# alias
+alias Mesure r0
+alias err r1
+alias lastErr r2
+alias iErr r3
+alias pVal r4
+alias iVal r5
+alias dVal r6
+alias hVal r7
+alias vVal r8
+# settings
+move iErr 0
+sb TYPE_SENSOR Mode 0
+start:
+yield
+lb Mesure TYPE_SOLAR_HEAVY Ratio 3 # 0:Average 1:Sum 2:Min 3:Max
+lb hVal TYPE_SENSOR Horizontal 3 # 0:Average 1:Sum 2:Min 3:Max
+sub hVal hVal 90 # Reglage horizontal si besoin
+sb TYPE_SOLAR_HEAVY Horizontal hVal
+
+s db Setting Mesure
+mul Mesure Mesure 90
+sub err 90 Mesure
+
+mul pVal err Kp
+
+add iErr iErr err
+mul iVal iErr Ki
+
+sub dVal lastErr err
+mul dVal dVal Kd
+move lastErr err
+
+add vVal pVal iVal
+add vVal vVal dVal
+
+sb TYPE_SOLAR_HEAVY Vertical vVal
+j start

@@ -25,31 +25,32 @@ push 851290561   # Winterspawn (Alpha variant)
 push -1414203269 # Winterspawn (Beta variant)
 
 move sp 450
-push 01103600 # Alien Mushroom
-push 11103600 # Wheat
-push 11107200 # Corn
-push 01104800 # Darga Fern
-push 01100720 # Endothermic Plant Creative
-push 11102400 # Fern
-push 01100480 # Flower (Blue)
-push 01100480 # Flower (Green)
-push 01100480 # Flower (Orange)
-push 01100480 # Flower (Red)
-push 01100480 # Flower (Yellow)
-push 01103600 # Hades Flower (Alpha strain)
-push 01106000 # Hades Flower (Beta strain)
-push 10103600 # Mushroom
-push 01104800 # Peace Lily
-push 11102400 # Potato
-push 11114400 # Pumpkin
-push 11103600 # Rize
-push 11103600 # Soybean
-push 01100960 # Thermogenic Plant Creative
-push 11114400 # Tomato
-push 01100720 # Tropical Lily
-push 01103600 # Winterspawn (Alpha variant)
-push 01104800 # Winterspawn (Beta variant)
+push 0100503600 # Alien Mushroom
+push 1100503600 # Wheat
+push 1100507200 # Corn
+push 0100504800 # Darga Fern
+push 0100500720 # Endothermic Plant Creative
+push 1080502400 # Fern
+push 0100500480 # Flower (Blue)
+push 0100500480 # Flower (Green)
+push 0100500480 # Flower (Orange)
+push 0100500480 # Flower (Red)
+push 0100500480 # Flower (Yellow)
+push 0100503600 # Hades Flower (Alpha strain)
+push 0100506000 # Hades Flower (Beta strain)
+push 1002803600 # Mushroom
+push 0100504800 # Peace Lily
+push 1100302400 # Potato
+push 1100514400 # Pumpkin
+push 1100503600 # Rize
+push 1100503600 # Soybean
+push 0100500960 # Thermogenic Plant Creative
+push 1080514400 # Tomato
+push 0100500720 # Tropical Lily
+push 0100503600 # Winterspawn (Alpha variant)
+push 0100504800 # Winterspawn (Beta variant)
 
+define DIVISEUR 1000000000
 # Initialize
 move r0 0 # index
 start:
@@ -60,7 +61,7 @@ pop r2 # read hash
 add sp r0 451
 pop r3 # read code
 # write data
-move r15 10000000 # initialise le diviseur
+move r15 DIVISEUR # initialise le diviseur
 mul sp r0 5
 push r2 # write hash
 # decode
@@ -70,8 +71,8 @@ trunc r4 r4
 push r4
 mul r4 r4 r15
 sub r3 r3 r4
-div r15 r15 10
-bgt r15 10000 loop
+div r15 r15 100
+bgt r15 1000 loop
 push r3 # write le reste
 add r0 r0 1
 ble r0 24 start

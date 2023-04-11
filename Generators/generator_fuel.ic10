@@ -1,0 +1,20 @@
+# Generators\generator_fuel.ic10
+# Constant
+define TYPE_LEVER 1220484876
+define TYPE_DIAL 554524804
+define TYPE_PUMP -321403609
+define TYPE_GENERATOR 1165997963
+# Alias Register
+alias IsOn r0
+alias Choose r1
+alias Temp r15
+# Settings
+sb TYPE_DIAL Mode 100
+start:
+yield
+lb IsOn TYPE_LEVER Open 3 # 0:Average 1:Sum 2:Min 3:Max
+lb Choose TYPE_DIAL Setting 3 # 0:Average 1:Sum 2:Min 3:Max
+sb TYPE_GENERATOR On IsOn
+sb TYPE_PUMP On IsOn
+sb TYPE_PUMP Setting Choose
+j start

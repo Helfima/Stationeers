@@ -7,12 +7,13 @@ alias DisplayMat d4
 alias DisplayTim d5
 # Constant
 define TYPE_LIGHT -1758710260
-define DELAY 60
+define DAY 20 # 20 min
+define DELAY 300
 # Alias Register
 alias IsOn r0
 alias IsOccupied r1
-alias Percent r2
-alias LastPercent r3
+alias DarkTime r2
+alias LastEfficiency r3
 alias Err r4
 alias Time r5
 alias IsModel r6
@@ -26,35 +27,37 @@ alias Sec r13
 alias Clock r14
 alias Temp r15
 # Settings
-move LastPercent 0
+move LastEfficiency 0
 move Time 0
 move IsModel 0
 start:
 yield
-s db Setting Darkness
+#s db Setting Darkness
 ls IsOccupied Tray0 0 Occupied
 jal read_model
-jal check_clock
-jal check_maturity
-jal check_efficiency
-jal check_timer
+bdseal DisplayMin check_clock
+bdseal DisplayMat check_maturity
+bdseal DisplayEff check_efficiency
+bdseal DisplayTim check_timer
+jal check_light
 sub Time Time 1
 bge Time 0 start # wait timer
-jal check_light
 mul Time DELAY 2 # reset timer in second
 j start
 
 check_light:
-lb IsOn TYPE_LIGHT On 3 # 0:Average 1:Sum 2:Min 3:Max
-ls Percent Tray0 0 Efficiency
-sub Temp LastPercent Percent
-brlt LastPercent Percent 4
-select IsOn IsOn 0 1 # switch on/off
-select IsOn Light IsOn 0 # only dark
-select IsOn Darkness IsOn 1 # only light
+mul DarkTime Darkness DELAY
+#add Temp Light Darkness
+div DarkTime DarkTime DAY
+s db Setting DarkTime
+mul DarkTime DarkTime 2
+sgt IsOn Time DarkTime # on if not darkness
+sgt Temp Light 0
+select IsOn Temp IsOn 0 # only dark
+sgt Temp Darkness 0
+select IsOn Temp IsOn 1 # only light
 select IsOn IsOccupied IsOn 0 # turn off
 sb TYPE_LIGHT On IsOn
-move LastPercent Percent
 j ra
 
 check_clock:
@@ -71,10 +74,9 @@ mul Min Min 60
 sub Sec Sec Min
 trunc Temp Sec
 s DisplaySec Setting Temp
-brne Temp Sec 3
-s DisplaySec Color 10
-j ra
-s DisplaySec Color 11
+seq Temp Temp Sec
+select Temp Temp 10 11
+s DisplaySec Color Temp
 j ra
 
 check_maturity:
@@ -86,12 +88,12 @@ j ra
 
 check_efficiency:
 s DisplayEff On IsOccupied
-ls Percent Tray0 0 Efficiency
-s DisplayEff Setting Percent
-brlt LastPercent Percent 3
-s DisplayEff Color 4
-j ra
-s DisplayEff Color 2
+ls Temp Tray0 0 Efficiency
+s DisplayEff Setting Temp
+slt Temp LastEfficiency Temp
+select Temp Temp 4 2
+s DisplayEff Color Temp
+move LastEfficiency Temp
 j ra
 
 check_timer:

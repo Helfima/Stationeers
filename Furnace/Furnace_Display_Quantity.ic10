@@ -20,11 +20,11 @@ alias Timer r12
 alias Process r13
 alias Factor r14
 alias Temp r15
-#Constant
+# Constant
 define TYPE_LEVER 1220484876
 define FACTOR 200
 define CLOCK 3
-#settings
+# Settings
 move Type 0
 move Timer CLOCK
 s DialIngot Mode 17
