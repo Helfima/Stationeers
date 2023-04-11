@@ -36,10 +36,10 @@ Il faut placer dans le même réseau:
 * les affichages des états (optionnel)
 
 Le script flipflop gère les flipflop pour orienter la semence dans le bon harvie, ne par oublier de mettre un stacker (settings=1) en début de ligne pour cadencer le flux et séparer graine par graine.
-[Controller flipflop](/Hydroponic/harvie_flipflop.ic10)
+[harvie_flipflop.ic10](/Hydroponic/harvie_flipflop.ic10)
 
 Le script light gère l'affichage et la lumière par cycle de 300s, le ratio jour nuit se fera sur 300s.
-[Controller ligth](/Hydroponic/tray_light.ic10)
+[tray_light.ic10](/Hydroponic/tray_light.ic10)
 
 ### Gestion environement
 la gestion environement gère la température, la pression et ses gaz O2, CO2 et N2
@@ -51,7 +51,7 @@ Il faut placer dans le même réseau:
 * les 2 passives vents pour l'arrivé et la sortie des gaz
 
 L'emetter lit la valeur des dials et génère une boucle de valeurs
-[Controller emetter](/Hydroponic/room_dial_emetter.ic10)
+[room_dial_emetter.ic10](/Hydroponic/room_dial_emetter.ic10)
 
 Lit l'émetter et pliote les pompes et la climatisation
-[Controller dial](/Hydroponic/room_dial_air.ic10)
+[room_dial_air.ic10](/Hydroponic/room_dial_air.ic10)
