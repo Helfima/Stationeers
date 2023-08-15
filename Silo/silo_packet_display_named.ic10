@@ -1,0 +1,105 @@
+# Silo\silo_packet_display_named.ic10
+# Constant
+define TYPE_DISPLAY -815193061 # Small Display
+define TYPE_MEMORY -851746783
+define MEMO_QTY HASH("Memory Quantity")
+define TYPE_DIAL 554524804
+define TYPE_MONITOR 801677497
+define TYPE_OCCUPANCY 322782515
+define QUERY_FREE 9000000
+define QUERY_LIST 9000100
+define PACKET_SIZE 12
+define DEVICE_BEGIN 0
+define QMIN 800
+define QMAX 1600
+# Alias Register
+alias Device r0
+alias StartSp r1
+alias Choose r2
+alias LastChoose r3
+alias Index r4
+alias Qty r5
+alias Hash r6
+alias Stack r7
+alias SpEnd r8
+alias Line r9
+alias Color1 r12
+alias Color2 r13
+alias Provider r14
+alias Temp r15
+# Settings
+sb TYPE_DIAL Mode 5
+init:
+jal reset_device
+start:
+yield
+lb Choose TYPE_DIAL Setting 1 # Read unique dial
+s db Setting Choose
+beq Choose 0 init # Wait Request
+mul Provider Choose 1000
+add Provider Provider 9000100
+sbn TYPE_MEMORY MEMO_QTY Setting Provider
+jal read_quantity
+jal change_color
+jal write_hash
+jal check_occupancy
+j start
+
+reset_device:
+move Device -1 # Reset Index
+loop_device:
+add Device Device 1
+bgt Device 5 ra # exit
+add Temp Device 100
+sbn TYPE_DISPLAY Temp Setting 0
+j loop_device
+
+read_quantity:
+l Qty db:0 Channel0 
+sbn TYPE_DISPLAY 100 Setting Qty
+l Qty db:0 Channel1 
+sbn TYPE_DISPLAY 101 Setting Qty
+l Qty db:0 Channel2
+sbn TYPE_DISPLAY 102 Setting Qty
+l Qty db:0 Channel3
+sbn TYPE_DISPLAY 103 Setting Qty
+l Qty db:0 Channel4
+sbn TYPE_DISPLAY 104 Setting Qty
+l Qty db:0 Channel5
+sbn TYPE_DISPLAY 105 Setting Qty
+j ra
+
+write_hash:
+mul StartSp Choose 6
+sub StartSp StartSp 5 # 1,7:Ores 13,19,25:Ingots
+move Device -1 # Reset Index
+loop_hash:
+add Device Device 1
+add sp StartSp Device
+pop Hash
+bgt Device 5 ra # exit
+add Temp Device 100
+sbn TYPE_MEMORY Temp Setting Hash
+j loop_hash
+
+check_occupancy:
+lb Temp TYPE_OCCUPANCY Activate 3 # 0:Average 1:Sum 2:Min 3:Max
+sb TYPE_DISPLAY On Temp
+sb TYPE_MONITOR On Temp
+j ra
+
+change_color:
+move Device -1 # Reset Index
+loop_color:
+add Device Device 1
+bgt Device 5 ra # exit
+add Temp Device 100
+lbn Qty TYPE_DISPLAY Temp Setting 3 # 0:Average 1:Sum 2:Min 3:Max
+brgt Qty QMAX 6
+brgt Qty QMIN 3
+sbn TYPE_DISPLAY Temp Color 4 # Red
+j loop_color
+sbn TYPE_DISPLAY Temp Color 5 # Yellow
+j loop_color
+sbn TYPE_DISPLAY Temp Color 2 # Green
+j loop_color

@@ -1,19 +1,19 @@
 # centrifuge_display.ic10
 alias Self d0
-alias DiffRPM d1
-alias DiffStress d2
-alias Reagents d3
-alias FlowReagents d4
-alias Clock d5
 # Constant
 define TYPE_LEVER 1220484876
-define RPM_MIN 300
-define STRESS_MAX 40
-define STRESS_MIN 5
-define QTY_MAX 500
-define KUpThr 5   # coef Throttle
-define KDownThr 5   # coef Throttle
-define Kcom 1   # coef Combustion
+define TYPE_MONITOR 801677497
+define TYPE_DISPLAY -815193061 # Small Display
+define DISP_REAGENTS HASH("Display Reagents")
+define DISP_FLOW HASH("Display Reagents Flow")
+define DISP_CLOCK HASH("Display Clock")
+define TYPE_MEMORY -851746783
+define MEMO_STRESS HASH("Memory Stress")
+define MEMO_RPM HASH("Memory RPM")
+define MEMO_THROTTLE HASH("Memory Throttle")
+define MEMO_DIFF_RPM HASH("Memory Diff RPM")
+define MEMO_DIFF_STRESS HASH("Memory Diff Stress")
+define TYPE_PROXIMITY 568800213
 # Alias Register
 alias MThr r0 # mesure Throttle
 alias MRpm r1 # mesure Rpm
@@ -67,45 +67,47 @@ mul FQTY FQTY 2
 j ra
 
 display:
-brdns DiffRPM 2
-s DiffRPM Setting DRpm
-brdns DiffStress 2
-s DiffStress Setting DStr
-brdns Reagents 3
-s Reagents Color 10
-s Reagents Setting QTY
-brdns FlowReagents 3
-s FlowReagents Color 10
-s FlowReagents Setting FQTY
-brdns Clock 4
+sbn TYPE_MEMORY MEMO_RPM Setting MRpm
+sbn TYPE_MEMORY MEMO_STRESS Setting MStr
+sbn TYPE_MEMORY MEMO_THROTTLE Setting MThr
+sbn TYPE_MEMORY MEMO_DIFF_RPM Setting DRpm
+sbn TYPE_MEMORY MEMO_DIFF_STRESS Setting DStr
+sbn TYPE_DISPLAY DISP_REAGENTS Color 10
+sbn TYPE_DISPLAY DISP_REAGENTS Setting QTY
+sbn TYPE_DISPLAY DISP_FLOW Color 10
+sbn TYPE_DISPLAY DISP_FLOW Setting FQTY
 div Temp Time 2
 trunc Temp Temp
-s Clock Color 1
-s Clock Setting Temp
+sbn TYPE_DISPLAY DISP_CLOCK Color 1
+sbn TYPE_DISPLAY DISP_CLOCK Setting Temp
+sb TYPE_PROXIMITY Setting 5
+lb Temp TYPE_PROXIMITY Activate 3 # 0:Average 1:Sum 2:Min 3:Max
+sb TYPE_DISPLAY On Temp
+sb TYPE_MONITOR On Temp
 j ra
 
 reagents:
 move QTY 0
-lr Count Self Contents Hydrocarbon
+lr Count Self Contents HASH("Hydrocarbon")
 add QTY QTY Count
-lr Count Self Contents Cobalt
+lr Count Self Contents HASH("Cobalt")
 add QTY QTY Count
-lr Count Self Contents Copper
+lr Count Self Contents HASH("Copper")
 add QTY QTY Count
-lr Count Self Contents Gold
+lr Count Self Contents HASH("Gold")
 add QTY QTY Count
-lr Count Self Contents Iron
+lr Count Self Contents HASH("Iron")
 add QTY QTY Count
-lr Count Self Contents Lead
+lr Count Self Contents HASH("Lead")
 add QTY QTY Count
-lr Count Self Contents Nickel
+lr Count Self Contents HASH("Nickel")
 add QTY QTY Count
-lr Count Self Contents Silicon
+lr Count Self Contents HASH("Silicon")
 add QTY QTY Count
-lr Count Self Contents Silver
+lr Count Self Contents HASH("Silver")
 add QTY QTY Count
-lr Count Self Contents Uranium
+lr Count Self Contents HASH("Uranium")
 add QTY QTY Count
-lr Count Self Contents Steel
+lr Count Self Contents HASH("Steel")
 add QTY QTY Count
 j ra

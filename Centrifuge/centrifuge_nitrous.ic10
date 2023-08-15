@@ -23,6 +23,7 @@ alias LStr r5 # valeur Last Stress
 alias DStr r6 # valeur Difference
 alias IStr r7 # valeur Integrale
 alias Err r8
+alias Count r8
 alias CThr r9 # commande throttle
 alias CCom r10 # commande combustion
 alias QTY r11
@@ -98,26 +99,26 @@ j ra
 
 reagents:
 move QTY 0
-lr Err Self Contents Hydrocarbon
-add QTY QTY Err
-lr Err Self Contents Cobalt
-add QTY QTY Err
-lr Err Self Contents Copper
-add QTY QTY Err
-lr Err Self Contents Gold
-add QTY QTY Err
-lr Err Self Contents Iron
-add QTY QTY Err
-lr Err Self Contents Lead
-add QTY QTY Err
-lr Err Self Contents Nickel
-add QTY QTY Err
-lr Err Self Contents Silicon
-add QTY QTY Err
-lr Err Self Contents Silver
-add QTY QTY Err
-lr Err Self Contents Uranium
-add QTY QTY Err
-bdns d0 ra
-s d0 Setting QTY
+lr Count Self Contents HASH("Hydrocarbon")
+add QTY QTY Count
+lr Count Self Contents HASH("Cobalt")
+add QTY QTY Count
+lr Count Self Contents HASH("Copper")
+add QTY QTY Count
+lr Count Self Contents HASH("Gold")
+add QTY QTY Count
+lr Count Self Contents HASH("Iron")
+add QTY QTY Count
+lr Count Self Contents HASH("Lead")
+add QTY QTY Count
+lr Count Self Contents HASH("Nickel")
+add QTY QTY Count
+lr Count Self Contents HASH("Silicon")
+add QTY QTY Count
+lr Count Self Contents HASH("Silver")
+add QTY QTY Count
+lr Count Self Contents HASH("Uranium")
+add QTY QTY Count
+lr Count Self Contents HASH("Steel")
+add QTY QTY Count
 j ra

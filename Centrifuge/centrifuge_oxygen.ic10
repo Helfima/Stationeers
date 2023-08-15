@@ -1,6 +1,5 @@
 # centrifuge_oxygen.ic10
 alias Self db
-alias Display d0 # Optionnal Display Reagents QTY
 # Constant
 define TYPE_LEVER 1220484876
 define STRESS_MAX 30
@@ -47,13 +46,13 @@ sub DRpm MRpm LRpm
 move LRpm MRpm
 sub DStr MStr LStr
 move LStr MStr
-jal reagents
-jal emptying
+jal check_reagents
+jal check_emptying
 beq IsOn 0 stop
-jal throttle
-jal combustion
+jal check_throttle
+jal check_combustion
 j start
-emptying:
+check_emptying:
 brlt QTY QTY_MAX 2
 s Self Open 1
 brgt QTY 10 2
@@ -61,7 +60,7 @@ s Self Open 0
 l IsOpen Self Open
 beq IsOpen 1 stop
 j ra
-throttle:
+check_throttle:
 move CThr 0
 sub Err STRESS_MAX MStr
 mul CThr Err Kps
@@ -72,33 +71,33 @@ mul Temp DStr Kd
 sub CThr CThr Temp
 s Self Throttle CThr
 j ra
-combustion:
+check_combustion:
 mul CCom MRpm Kpc
 s Self CombustionLimiter CCom
 j ra
 
-reagents:
+check_reagents:
 move QTY 0
-lr Count Self Contents Hydrocarbon
+lr Count Self Contents HASH("Hydrocarbon")
 add QTY QTY Count
-lr Count Self Contents Cobalt
+lr Count Self Contents HASH("Cobalt")
 add QTY QTY Count
-lr Count Self Contents Copper
+lr Count Self Contents HASH("Copper")
 add QTY QTY Count
-lr Count Self Contents Gold
+lr Count Self Contents HASH("Gold")
 add QTY QTY Count
-lr Count Self Contents Iron
+lr Count Self Contents HASH("Iron")
 add QTY QTY Count
-lr Count Self Contents Lead
+lr Count Self Contents HASH("Lead")
 add QTY QTY Count
-lr Count Self Contents Nickel
+lr Count Self Contents HASH("Nickel")
 add QTY QTY Count
-lr Count Self Contents Silicon
+lr Count Self Contents HASH("Silicon")
 add QTY QTY Count
-lr Count Self Contents Silver
+lr Count Self Contents HASH("Silver")
 add QTY QTY Count
-lr Count Self Contents Uranium
+lr Count Self Contents HASH("Uranium")
 add QTY QTY Count
-bdns d0 ra
-s d0 Setting QTY
+lr Count Self Contents HASH("Steel")
+add QTY QTY Count
 j ra

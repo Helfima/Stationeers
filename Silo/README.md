@@ -12,18 +12,43 @@ Les scripts utilisent un model de données pour réduire les nombres de lignes.
 
 Placer le model [silo_packet_model.ic10](/Silo/silo_packet_model.ic10) sur chaque IC, allumer le housing et attendre son arrêt signifiant que le model est placé dans la Stack de le IC et utilisable par les scripts qu'on met par la suite.
 
+## Nommage par Hash défini
+
+Il est possible d'avoir des noms d'éléments ayants des valeurs de hash définis très pratique pour faire de l'incrémentale sur des hashs.
+
+En gros le générateur ajoute les caractères nécessaires pour obtenir des hashs consécutifs; pour le silo SILO-00-1ljQlQ, SILO-01-9WbSsK donnant respectivement un hash de 100, 101
+
+Lien du site [StationeersHashGen](https://computererika.github.io/StationeersHashGen/)
+
+Dans les cas ou j'ai utilisé les fonctions de batch nommé (ex: sbn ou lbn) je suis parti d'un index de départ à 100 je n'ai pas voulu commencer à 0 source éventuelle de problème.
+
 ## Stockage
-Chaque ligne est composée de 6 silos car les ICs ne contrôlent que 6 appareils.
+
+Chaque ligne est composée de 6 silos car les ICs ne contrôlent via les écrous que 6 appareils, bien qu'avec les nouvelles fonctions de batch nommé cette limite n'est plus véritablement nécessaire une nouvelle limite est apparue au niveau des channels permettant des dialogues sur 8 canaux mais la division en 6 reste idéal.
 
 Les stockages seront de:
 * 2 lignes pour les minerais (ingrédients des lingots, la requête se fait via un script de contrôle du four à gaz)
 * 3 lignes pour les lingots (la requête se fait via un script de contrôle, section "Demande" ci-dessous)
 
-Attention la première Chute FlipFlop contrôle l'entrée des items dans la ligne et la dernière oriente sur les 2 derniers silos.
+Attention:
+* La première Chute FlipFlop contrôle l'entrée des items dans la ligne et la dernière oriente sur les 2 derniers silos.
+* Les noms sont définis pour avoir des hashs incrémentables, il faut strictement copier coller le nom des éléments.
 
 Composition d'une ligne:
-* 6 Silos numérotés de 0 à 5 (pour correspondre aux ecrous d0 à d5)
-* 6 Chute FlipFlop numérotés de 0 à 5 (pour correspondre aux ecrous d0 à d5)
+* 6 Silos nommés
+ * SILO-00-1ljQlQ
+ * SILO-01-9WbSsK
+ * SILO-02-2ZxUar
+ * SILO-03-1KmG1P
+ * SILO-04-2tc5TP
+ * SILO-05-04Uwsw
+* 6 Chute FlipFlop nommées
+ * FLIPFLOP-00-2nAROy
+ * FLIPFLOP-01-028LiJ
+ * FLIPFLOP-02-1XSVBZ
+ * FLIPFLOP-03-0uCZKe
+ * FLIPFLOP-04-1vH6wx
+ * FLIPFLOP-05-1GVWdJ
 * 6 Stackers (inutile de les nommés)
 * 3 Housings nommées silo_flipflop, silo_provider1 et silo_provider2
 * 3 Circuits
@@ -50,7 +75,7 @@ la constante STORAGE_LINE aura pour valeur:
 
 ## Demande
 
-le protocole de requête [ici](/Silo/silo_packet.md)
+le protocole de requête [lien protocole](/Silo/silo_packet.md)
 
 Le script de requête attend qu'au moins un provider renvois 9000000 et peut alors envoyer le hash puis la quantité voulu.
 

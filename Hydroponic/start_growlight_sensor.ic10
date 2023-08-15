@@ -1,0 +1,10 @@
+# Hydroponic\start_growlight_sensor.ic10
+define TYPE_GROWLIGHT HASH("StructureGrowLight")
+define TYPE_SENSOR HASH("StructureDaylightSensor")
+# Alias Register
+alias IsSun r0
+start:
+yield
+lb IsSun TYPE_SENSOR Activate 3 # 0:Average 1:Sum 2:Min 3:Max
+sb TYPE_GROWLIGHT On IsSun
+j start

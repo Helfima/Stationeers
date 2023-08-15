@@ -1,0 +1,117 @@
+# Silo\silo_packet_provider_named.ic10
+# SILO-00-1ljQlQ SILO-01-9WbSsK SILO-02-2ZxUar
+# SILO-03-1KmG1P SILO-04-2tc5TP SILO-05-04Uwsw
+alias MemoList d0
+alias MemoItem d1
+#Constant
+define TYPE_SILO 1155865682 # Silo Hash
+define STACK_ORE 50
+define STACK_INGOT 100
+define QUERY_LIST 9000100
+define QUERY_ITEM 9000101
+define QUERY_QUANTITY 9000102
+define QUERY_FREE 9000000
+define NONE -3
+define STORAGE_LINE 1 # 1,2:Ores 3,4,5:Ingots
+# Alias Register
+alias Memory r0
+alias Device r1
+alias Request r2
+alias Index r3
+alias Qty r4
+alias Hash r5
+alias Stack r6
+alias StartSp r13
+alias QueryList r14
+alias Temp r15
+# Settings
+sle Temp STORAGE_LINE 2
+select Stack Temp STACK_ORE STACK_INGOT
+mul QueryList STORAGE_LINE 1000
+add QueryList QueryList QUERY_LIST
+mul StartSp STORAGE_LINE 6
+sub StartSp StartSp 5 # 1,7:Ores 13,19,25:Ingots
+start:
+yield
+move r0 -1
+loop_memory:
+add r0 r0 1
+bdns dr0 start
+l Request dr0 Setting
+beq Request 0 start # Wait Request
+beq Request QUERY_FREE start # Wait Request
+beq Request QueryList query_list
+beq Request QUERY_ITEM query_item
+beq Request QUERY_QUANTITY query_quantity
+query_end:
+s dr0 Setting 0
+j loop_memory
+free:
+s dr0 Setting QUERY_FREE # Write line
+j loop_memory
+
+query_list:
+s db Setting QUERY_LIST
+lbn Qty TYPE_SILO 100 Quantity 3 # 0:Average 1:Sum 2:Min 3:Max
+mul Qty Qty Stack
+s dr0:1 Channel2 Qty
+lbn Qty TYPE_SILO 101 Quantity 3 # 0:Average 1:Sum 2:Min 3:Max
+mul Qty Qty Stack
+s dr0:1 Channel3 Qty
+lbn Qty TYPE_SILO 102 Quantity 3 # 0:Average 1:Sum 2:Min 3:Max
+mul Qty Qty Stack
+s dr0:1 Channel4 Qty
+lbn Qty TYPE_SILO 103 Quantity 3 # 0:Average 1:Sum 2:Min 3:Max
+mul Qty Qty Stack
+s dr0:1 Channel5 Qty
+lbn Qty TYPE_SILO 104 Quantity 3 # 0:Average 1:Sum 2:Min 3:Max
+mul Qty Qty Stack
+s dr0:1 Channel6 Qty
+lbn Qty TYPE_SILO 105 Quantity 3 # 0:Average 1:Sum 2:Min 3:Max
+mul Qty Qty Stack
+s dr0:1 Channel7 Qty
+j free
+
+query_item:
+l Request dr0 Setting
+beq Request QUERY_ITEM query_item
+l Request dr0:1 Channel0 # Read Hash
+l Qty dr0:1 Channel1
+jal check_hash
+beq Device NONE query_end
+jal action_silo
+sub Qty Qty Stack
+s dr0:1 Channel1 Qty
+brne Qty 0 -3
+j free
+
+query_quantity:
+l Request dr0 Setting
+beq Request QUERY_QUANTITY query_quantity
+l Request dr0:1 Channel0 # Read Hash
+jal check_hash
+beq Device NONE query_end
+add Temp r1 100
+lbn Qty TYPE_SILO Temp Quantity 3 # 0:Average 1:Sum 2:Min 3:Max
+mul Qty Qty Stack
+s dr0:1 Channel1 Qty
+j free
+
+action_silo:
+add Temp r1 100
+sbn TYPE_SILO Temp Open 1
+sleep 1
+sbn TYPE_SILO Temp Open 0
+sleep 1
+j ra
+
+check_hash: # retrieve silo
+move Device 0
+loop_hash:
+add sp Device StartSp
+peek Hash
+beqal Request Hash ra
+add Device Device 1
+ble Device 5 loop_hash
+move Device NONE
+j ra

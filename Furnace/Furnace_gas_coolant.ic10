@@ -1,0 +1,40 @@
+#Furnace\Furnace_gas_coolant.ic10
+alias Atmo db
+
+define TYPE_ACTIVE_VENT -1129453144
+define TYPE_SENSOR -1252983604
+define TYPE_TANK 272136332
+define TYPE_DISPLAY -815193061 # Small Display
+define P_X_MAX 5000 # Pollutant max pressure at 126°c
+define P_X_MIN 500
+define PMAX 10000 
+define T_EXT_MAX 403 # External temperature 130°c
+define PERCENT 0.00
+# Alias Register
+alias IsOn r1
+alias Temp r15
+
+start:
+yield
+jal check_filtration
+jal check_active_vent
+j start
+
+check_active_vent:
+lb Temp TYPE_TANK Pressure 3 # 0:Average 1:Sum 2:Min 3:Max
+sb TYPE_DISPLAY Setting Temp
+slt IsOn Temp P_X_MAX
+lb Temp TYPE_SENSOR Temperature 3 # 0:Average 1:Sum 2:Min 3:Max
+slt Temp Temp T_EXT_MAX
+and IsOn IsOn Temp
+sb TYPE_ACTIVE_VENT On IsOn
+j ra
+
+check_filtration:
+lb Temp TYPE_TANK Pressure 3 # 0:Average 1:Sum 2:Min 3:Max
+sgt IsOn Temp P_X_MIN
+l Temp Atmo PressureOutput
+slt Temp Temp PMAX
+and IsOn IsOn Temp
+s Atmo Mode IsOn #Turn On/Off 0:idle 1:active
+j ra

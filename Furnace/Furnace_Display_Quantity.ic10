@@ -1,10 +1,5 @@
 # Furnace\Furnace_Display_Quantity.ic10
 alias Furnace d0
-alias DialIngot d1
-alias DialQty d2
-alias QtyOre1 d3
-alias QtyOre2 d4
-alias QtyOre3 d5
 # Alias Register
 alias Hash r1
 alias Hash1 r2
@@ -22,18 +17,25 @@ alias Factor r14
 alias Temp r15
 # Constant
 define TYPE_LEVER 1220484876
+define TYPE_DIAL 554524804
+define DIAL_INGOT HASH("Dial Ingot")
+define DIAL_QUANTITY HASH("Dial Quantity")
+define TYPE_DISPLAY -815193061 # Small Display
+define DISP_ORE1 HASH("Display Ore 1")
+define DISP_ORE2 HASH("Display Ore 2")
+define DISP_ORE3 HASH("Display Ore 3")
 define FACTOR 200
 define CLOCK 3
 # Settings
 move Type 0
 move Timer CLOCK
-s DialIngot Mode 17
-s DialQty Mode 4
+sbn TYPE_DIAL DIAL_INGOT Mode 17
+sbn TYPE_DIAL DIAL_QUANTITY Mode 4
 start:
 yield
-l Temp DialQty Setting
+lbn Temp TYPE_DIAL DIAL_QUANTITY Setting 3 # 0:Average 1:Sum 2:Min 3:Max
 mul Factor Temp FACTOR
-l sp DialIngot Setting
+lbn sp TYPE_DIAL DIAL_INGOT Setting 3 # 0:Average 1:Sum 2:Min 3:Max
 lb Process TYPE_LEVER Setting 1 # 0:Average 1:Sum 2:Min 3:Max
 s db Setting Type
 jal loadValues
@@ -46,18 +48,18 @@ move Hash Hash1
 jal read_reagents
 select DColor Type 1 10
 select Qty Type Qty1 Qty
-s QtyOre1 Setting Qty
-s QtyOre1 Color DColor
+sbn TYPE_DISPLAY DISP_ORE1 Setting Qty
+sbn TYPE_DISPLAY DISP_ORE1 Color DColor
 move Hash Hash2
 jal read_reagents
 select Qty Type Qty2 Qty
-s QtyOre2 Setting Qty
-s QtyOre2 Color DColor
+sbn TYPE_DISPLAY DISP_ORE2 Setting Qty
+sbn TYPE_DISPLAY DISP_ORE2 Color DColor
 move Hash Hash3
 jal read_reagents
 select Qty Type Qty3 Qty
-s QtyOre3 Setting Qty
-s QtyOre3 Color DColor
+sbn TYPE_DISPLAY DISP_ORE3 Setting Qty
+sbn TYPE_DISPLAY DISP_ORE3 Color DColor
 j start
 
 loadValues:
@@ -76,35 +78,35 @@ read_reagents:
 move Qty 0
 beq Hash 0 ra # exit
 brne Hash 1758427767 3 # Iron
-lr Qty Furnace Contents Iron
+lr Qty Furnace Contents HASH("Iron")
 j ra
 brne Hash 1830218956 3 # Nickel
-lr Qty Furnace Contents Nickel
+lr Qty Furnace Contents HASH("Nickel")
 j ra
 brne Hash -983091249 3 # Cobalt
-lr Qty Furnace Contents Cobalt
+lr Qty Furnace Contents HASH("Cobalt")
 j ra
 brne Hash -707307845 3 # Copper
-lr Qty Furnace Contents Copper
+lr Qty Furnace Contents HASH("Copper")
 j ra
 brne Hash -1348105509 3 # Gold
-lr Qty Furnace Contents Gold
+lr Qty Furnace Contents HASH("Gold")
 j ra
 brne Hash -190236170 3 # Lead
-lr Qty Furnace Contents Lead
+lr Qty Furnace Contents HASH("Lead")
 j ra
 brne Hash -916518678 3 # Silver
-lr Qty Furnace Contents Silver
+lr Qty Furnace Contents HASH("Silver")
 j ra
 brne Hash 1103972403 3 # Silicon
-lr Qty Furnace Contents Silicon
+lr Qty Furnace Contents HASH("Silicon")
 j ra
 brne Hash 1724793494 3 # Coal
-lr Qty Furnace Contents Hydrocarbon
+lr Qty Furnace Contents HASH("Hydrocarbon")
 j ra
 brne Hash -654790771 3 # Steel
-lr Qty Furnace Contents Steel
+lr Qty Furnace Contents HASH("Steel")
 j ra
 brne Hash -831480639 2 # Biomass
-lr Qty Furnace Contents Biomass
+lr Qty Furnace Contents HASH("Biomass")
 j ra

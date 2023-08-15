@@ -1,0 +1,84 @@
+# Furnace\Furnace_Display_T&P.ic10
+# Alias Register
+alias Hash r1
+alias Hash1 r2
+alias Hash2 r3
+alias Hash3 r4
+alias Qty1 r5
+alias Qty2 r6
+alias Qty3 r7
+alias Tmin r8
+alias Tmax r9
+alias Pmin r10
+alias Pmax r11
+alias Tcur r12
+alias Pcur r13
+#Constant
+define TYPE_FURNACE 545937711
+define TYPE_DIAL 554524804
+define DIAL_INGOT HASH("Dial Ingot")
+define DIAL_QUANTITY HASH("Dial Quantity")
+define TYPE_DISPLAY -815193061 # Small Display
+define DISP_PMIN HASH("Display Pmin")
+define DISP_PCUR HASH("Display P")
+define DISP_PMAX HASH("Display Pmax")
+define DISP_TMIN HASH("Display Tmin")
+define DISP_TCUR HASH("Display T")
+define DISP_TMAX HASH("Display Tmax")
+define FACTOR 800
+#settings
+sb TYPE_DISPLAY On 1
+sbn TYPE_DISPLAY DISP_PMIN Color -1
+sbn TYPE_DISPLAY DISP_PMAX Color 4
+sbn TYPE_DISPLAY DISP_TMIN Color -1
+sbn TYPE_DISPLAY DISP_TMAX Color 4
+start:
+yield
+lbn sp TYPE_DIAL DIAL_INGOT Setting 3 # 0:Average 1:Sum 2:Min 3:Max
+s db Setting sp
+lb Tcur TYPE_FURNACE Temperature 1
+lb Pcur TYPE_FURNACE Pressure 1
+floor Tcur Tcur
+floor Pcur Pcur
+jal loadValues
+jal setPressureColor
+jal setTemperatureColor
+sbn TYPE_DISPLAY DISP_PMIN Setting Pmin
+sbn TYPE_DISPLAY DISP_PMAX Setting Pmax
+sbn TYPE_DISPLAY DISP_TMIN Setting Tmin
+sbn TYPE_DISPLAY DISP_TMAX Setting Tmax
+j start
+
+setPressureColor:
+sbn TYPE_DISPLAY DISP_PCUR Setting Pcur
+sgt r14 Pcur Pmin
+sgt r15 Pcur Pmax
+add r15 r15 r14
+mul r15 r15 2
+brne r15 0 2
+move r15 -1 # fix color blue
+sbn TYPE_DISPLAY DISP_PCUR Color r15 #0:Blue 2:Green 4:Red
+j ra
+
+setTemperatureColor:
+sbn TYPE_DISPLAY DISP_TCUR Setting Tcur
+sgt r14 Tcur Tmin
+sgt r15 Tcur Tmax
+add r15 r15 r14
+mul r15 r15 2
+brne r15 0 2
+move r15 -1 # fix color blue
+sbn TYPE_DISPLAY DISP_TCUR Color r15 #0:Blue 2:Green 4:Red
+j ra
+
+loadValues:
+mul sp sp 11
+move r15 11
+add sp sp r15
+pop rr15
+sub r15 r15 1
+brne r15 0 -2
+mul Qty1 Qty1 FACTOR
+mul Qty2 Qty2 FACTOR
+mul Qty3 Qty3 FACTOR
+j ra

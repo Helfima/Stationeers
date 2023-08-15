@@ -1,6 +1,4 @@
 # Furnace\Furnace_Process.ic10
-alias DialIngot d0
-alias DialQty d1
 alias PumpIn d3
 alias PumpOut d4
 # Alias Register
@@ -25,6 +23,9 @@ define TYPE_BUTTON 491845673
 define TYPE_LEVER 1220484876
 define TYPE_MIRROR 2096189278
 define TYPE_SENSOR -1252983604
+define TYPE_DIAL 554524804
+define DIAL_INGOT HASH("Dial Ingot")
+define DIAL_QUANTITY HASH("Dial Quantity")
 define FACTOR 200
 define QUERY_FREE 9000000
 define QUERY_ITEM 9000101
@@ -32,11 +33,13 @@ define QUERY_ITEM 9000101
 s db Setting 0
 move Index 0
 move Active 0
+sbn TYPE_DIAL DIAL_INGOT Mode 17
+sbn TYPE_DIAL DIAL_QUANTITY Mode 4
 start:
 yield
-l Temp DialQty Setting
+lbn Temp TYPE_DIAL DIAL_QUANTITY Setting 3 # 0:Average 1:Sum 2:Min 3:Max
 mul Factor Temp FACTOR
-l sp DialIngot Setting
+lbn sp TYPE_DIAL DIAL_INGOT Setting 3 # 0:Average 1:Sum 2:Min 3:Max
 jal loadValues
 lb Temp TYPE_LEVER Setting 1 # Read unique lever
 jal checkActive
@@ -67,7 +70,7 @@ loopIndex:
 move Value 0
 move Hash rr10
 add r8 Index 3 # Register Index
-move Qty  rr8
+move Qty rr8
 beq Qty 0 nextOre # Next si Qty=0
 lb Temp TYPE_MIRROR Setting 3 # 0:Average 1:Sum 2:Min 3:Max
 brne Temp QUERY_FREE -1 # Wait
