@@ -36,19 +36,19 @@ Attention:
 
 Composition d'une ligne:
 * 6 Silos nommés
- * SILO-00-1ljQlQ
- * SILO-01-9WbSsK
- * SILO-02-2ZxUar
- * SILO-03-1KmG1P
- * SILO-04-2tc5TP
- * SILO-05-04Uwsw
+  * SILO-00-1ljQlQ
+  * SILO-01-9WbSsK
+  * SILO-02-2ZxUar
+  * SILO-03-1KmG1P
+  * SILO-04-2tc5TP
+  * SILO-05-04Uwsw
 * 6 Chute FlipFlop nommées
- * FLIPFLOP-00-2nAROy
- * FLIPFLOP-01-028LiJ
- * FLIPFLOP-02-1XSVBZ
- * FLIPFLOP-03-0uCZKe
- * FLIPFLOP-04-1vH6wx
- * FLIPFLOP-05-1GVWdJ
+  * FLIPFLOP-00-2nAROy
+  * FLIPFLOP-01-028LiJ
+  * FLIPFLOP-02-1XSVBZ
+  * FLIPFLOP-03-0uCZKe
+  * FLIPFLOP-04-1vH6wx
+  * FLIPFLOP-05-1GVWdJ
 * 6 Stackers (inutile de les nommés)
 * 3 Housings nommées silo_flipflop, silo_provider1 et silo_provider2
 * 3 Circuits
