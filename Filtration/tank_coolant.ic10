@@ -1,0 +1,39 @@
+# Filtration\tank_coolant.ic10
+# Constant
+define TYPE_ANALYSER 435685051
+define ANA_TANK HASH("Analyzer Tank")
+define ANA_EXTERNAL HASH("Analyzer External")
+define ANA_COOLANT HASH("Analyzer Coolant")
+define TYPE_VALVE -1280984102
+define VAL_EXTERNAL HASH("Valve External")
+define VAL_COOLANT HASH("Valve Coolant")
+define TMIN 293
+# Alias Register
+alias IsOnGlobal r0
+alias IsOn r1
+alias Pcur r2
+alias Tcur r3
+alias Temp r15
+# Settings
+start:
+yield
+lbn Pcur TYPE_ANALYSER ANA_TANK Pressure 3 # 0:Average 1:Sum 2:Min 3:Max
+lbn Tcur TYPE_ANALYSER ANA_TANK Temperature 3 # 0:Average 1:Sum 2:Min 3:Max
+sgt IsOnGlobal Tcur TMIN
+jal check_external
+jal check_coolant
+j start
+
+check_external:
+lbn Temp TYPE_ANALYSER ANA_EXTERNAL Temperature 3 # 0:Average 1:Sum 2:Min 3:Max
+slt Temp Temp Tcur
+and IsOn IsOnGlobal Temp
+sbn TYPE_VALVE VAL_EXTERNAL On IsOn
+j ra
+
+check_coolant:
+lbn Temp TYPE_ANALYSER ANA_COOLANT Temperature 3 # 0:Average 1:Sum 2:Min 3:Max
+slt Temp Temp Tcur
+and IsOn IsOnGlobal Temp
+sbn TYPE_VALVE VAL_COOLANT On IsOn
+j ra

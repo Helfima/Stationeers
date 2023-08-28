@@ -1,10 +1,12 @@
-# filtration_pipe_waste.ic10
+# Filtration\filtration_pipe_waste.ic10
 alias Atmo db
 alias Analyser d0
 alias Storage d1
 # Constant
 define MOLES_MIN 1
-define PERCENT 0.00
+define P_MIN 10 # 10kPa freeze at 6.3kPa
+define T_TARGET 293 # 20°C
+define PERCENT 0.01
 define T_INPUT_MAX 200 # Degre celcius
 define T_OUTPUT_MAX 40 # Degre celcius
 define P_OUTPUT_MAX 6000 # kpa
@@ -15,13 +17,15 @@ define TYPE_PUMP -321403609
 alias IsOn r0
 alias Temp r1
 alias Moles r2
-alias Input r3
-alias Output r4
+alias RatioIn r3
+alias RatioOut r4
 alias IsRatio r5
 alias IsCoolant r6
 alias TCoolant r7
-alias TInputMax r11
-alias TOutputMax r12
+alias Pcur r8
+alias Delta r9
+alias TInputMax r12
+alias TOutputMax r13
 # Settings
 #s Atmo On 0 #Turn Off
 start:
@@ -31,8 +35,8 @@ jal check_storage
 move IsOn 0
 add TInputMax T_INPUT_MAX KELVIN # Degre kelvin
 add TOutputMax T_OUTPUT_MAX KELVIN # Degre kelvin
-l Moles Atmo TotalMolesInput
-blt Moles MOLES_MIN bypass #Turn Off
+l Pcur Atmo PressureInput
+blt Pcur P_MIN bypass #Turn Off
 l Moles Atmo TotalMolesOutput
 brgt Moles 0 3 #check if empty
 move IsOn 1
@@ -42,28 +46,32 @@ bgt Temp TInputMax bypass #Turn Off
 #check ratio
 move IsOn 0
 # check Oxygen
-l Output Atmo RatioOxygenOutput
-l Input Atmo RatioOxygenInput
+l RatioOut Atmo RatioOxygenOutput
+l RatioIn Atmo RatioOxygenInput
 jal check_ratio
 # check Pollutant
-l Output Atmo RatioPollutantOutput
-l Input Atmo RatioPollutantInput
+l RatioOut Atmo RatioPollutantOutput
+l RatioIn Atmo RatioPollutantInput
 jal check_ratio
 # check Volatiles
-l Output Atmo RatioVolatilesOutput
-l Input Atmo RatioVolatilesInput
+l RatioOut Atmo RatioVolatilesOutput
+l RatioIn Atmo RatioVolatilesInput
 jal check_ratio
 # check CarbonDioxide
-l Output Atmo RatioCarbonDioxideOutput
-l Input Atmo RatioCarbonDioxideInput
+l RatioOut Atmo RatioCarbonDioxideOutput
+l RatioIn Atmo RatioCarbonDioxideInput
 jal check_ratio
 # check Nitrogen
-l Output Atmo RatioNitrogenOutput
-l Input Atmo RatioNitrogenInput
+l RatioOut Atmo RatioNitrogenOutput
+l RatioIn Atmo RatioNitrogenInput
 jal check_ratio
 # check NitrousOxide
-l Output Atmo RatioNitrousOxideOutput
-l Input Atmo RatioNitrousOxideInput
+l RatioOut Atmo RatioNitrousOxideOutput
+l RatioIn Atmo RatioNitrousOxideInput
+jal check_ratio
+# check Steam
+l RatioOut Atmo RatioSteamOutput
+l RatioIn Atmo RatioSteamInput
 jal check_ratio
 bypass:
 #s db Setting 999
@@ -71,8 +79,8 @@ s Atmo Mode IsOn #Turn On/Off 0:idle 1:active
 j start
 
 check_ratio:
-beq Output 0 ra
-sgt IsRatio Input PERCENT
+beq RatioOut 0 ra
+sgt IsRatio RatioIn PERCENT
 or IsOn IsOn IsRatio
 j ra
 
@@ -80,7 +88,8 @@ check_coolant:
 bdns Analyser ra #device is not set
 l Temp Atmo TemperatureOutput
 l TCoolant Analyser Temperature
-sgt IsCoolant Temp TCoolant
+sap IsCoolant T_TARGET TCoolant Delta # actif si le coolant est dans la plage 20°c +/- 1 ou 2%
+select Delta IsCoolant 0.02 0.01
 sb TYPE_VALVE On IsCoolant
 j ra
 

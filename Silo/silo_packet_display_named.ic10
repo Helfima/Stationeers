@@ -35,6 +35,9 @@ start:
 yield
 lb Choose TYPE_DIAL Setting 1 # Read unique dial
 s db Setting Choose
+bneal LastChoose Choose reset_channel
+move LastChoose Choose
+jal check_occupancy
 beq Choose 0 init # Wait Request
 mul Provider Choose 1000
 add Provider Provider 9000100
@@ -42,7 +45,6 @@ sbn TYPE_MEMORY MEMO_QTY Setting Provider
 jal read_quantity
 jal change_color
 jal write_hash
-jal check_occupancy
 j start
 
 reset_device:
@@ -54,18 +56,27 @@ add Temp Device 100
 sbn TYPE_DISPLAY Temp Setting 0
 j loop_device
 
+reset_channel:
+s db:0 Channel2 ninf
+s db:0 Channel3 ninf
+s db:0 Channel4 ninf
+s db:0 Channel5 ninf
+s db:0 Channel6 ninf
+s db:0 Channel7 ninf
+j ra
+
 read_quantity:
-l Qty db:0 Channel0 
-sbn TYPE_DISPLAY 100 Setting Qty
-l Qty db:0 Channel1 
-sbn TYPE_DISPLAY 101 Setting Qty
 l Qty db:0 Channel2
-sbn TYPE_DISPLAY 102 Setting Qty
-l Qty db:0 Channel3
-sbn TYPE_DISPLAY 103 Setting Qty
+sbn TYPE_DISPLAY 100 Setting Qty
+l Qty db:0 Channel3 
+sbn TYPE_DISPLAY 101 Setting Qty
 l Qty db:0 Channel4
-sbn TYPE_DISPLAY 104 Setting Qty
+sbn TYPE_DISPLAY 102 Setting Qty
 l Qty db:0 Channel5
+sbn TYPE_DISPLAY 103 Setting Qty
+l Qty db:0 Channel6
+sbn TYPE_DISPLAY 104 Setting Qty
+l Qty db:0 Channel7
 sbn TYPE_DISPLAY 105 Setting Qty
 j ra
 

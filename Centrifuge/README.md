@@ -35,22 +35,22 @@ La machine se vidangera dans un fracas après avoir atteind 2000 minerais avec a
 
 ## Affichage complémentaire
 
-Pour les Affichages complets utilisez le script centrifuge_display.ic10 dans un Housing. les élements barrés étaient des informations lors de la mise au point, ne pas en tenir compte.
+Pour les Affichages complets utilisez le script centrifuge_display.ic10 dans un Housing. Il n'y a qu'un seul écrou à configurer sur la centrifugeuse le D0 le reste utilise des fonctions batch nommées.
 
-Il y a 2 "Memory" pour l'affichage D1 et D2
+Il faut nommer exactement les mémoires de M1 à M5 et les connecter à sa console D1 à D5 correspondante.
 
-Les 5 afficheurs du haut sont des consoles avec une carte "Graph Display", il faudra lié les consoles à un Logique Reader ou une mémoire (D1 et D2).
-Pour les 3 premiers placer 3 Logic Reader dans le réseau
-* Logic Reader RPM = input:Centrifuge var:Rpm
-* Logic Reader Throttle = input:Centrifuge var:Throttle
-* Logic Reader Stress = input:Centrifuge var:Stress
+Nom des mémoires
+* M1 = Memory Stress
+* M2 = Memory RPM
+* M3 = Memory Throttle
+* M4 = Memory Diff RPM
+* M5 = Memory Diff Stress
 
-Ecrous du Housing
-* D0: Centrifugeuse
-* D1: Memory DiffRPM
-* D2: Memory DiffStress
-* D3: Reagents = Quantité des minerais dans la centrifugeuse, ne prend en compte que ceux minables et non glace.
-* D4: FlowReagents = Quantité de minerais traités par seconde (tend vers 1)
-* D5: Clock = Temps en second depuis la dernière vidange
+Il faut nommer exactement les afficheurs LED de D1 à D3
+
+Nom des afficheurs LED
+* D1 = Display Reagents
+* D2 = Display Reagents Flow
+* D3 = Display Clock
 
 ![Tableau de bord](/Centrifuge/centrifuge.png)

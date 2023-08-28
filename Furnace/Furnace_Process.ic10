@@ -21,7 +21,8 @@ alias Value r15
 define TYPE_FURNACE 545937711
 define TYPE_BUTTON 491845673
 define TYPE_LEVER 1220484876
-define TYPE_MIRROR 2096189278
+define TYPE_MEMORY -851746783
+define MEMO_REQ HASH("Memory Request")
 define TYPE_SENSOR -1252983604
 define TYPE_DIAL 554524804
 define DIAL_INGOT HASH("Dial Ingot")
@@ -72,18 +73,12 @@ move Hash rr10
 add r8 Index 3 # Register Index
 move Qty rr8
 beq Qty 0 nextOre # Next si Qty=0
-lb Temp TYPE_MIRROR Setting 3 # 0:Average 1:Sum 2:Min 3:Max
+lbn Temp TYPE_MEMORY MEMO_REQ Setting 3 # 0:Average 1:Sum 2:Min 3:Max
 brne Temp QUERY_FREE -1 # Wait
-sb TYPE_MIRROR Setting QUERY_ITEM
-s db Setting QUERY_ITEM
-yield
-sb TYPE_MIRROR Setting Hash
-s db Setting Hash
-yield
-sb TYPE_MIRROR Setting Qty
-s db Setting Qty
-yield
-lb Temp TYPE_MIRROR Setting 3 # 0:Average 1:Sum 2:Min 3:Max
+s db:0 Channel0 Hash # Write Hash
+s db:0 Channel1 Qty # Write Quantity
+sbn TYPE_MEMORY MEMO_REQ Setting QUERY_ITEM
+lbn Temp TYPE_MEMORY MEMO_REQ Setting 3 # 0:Average 1:Sum 2:Min 3:Max
 brne Temp QUERY_FREE -1 # Wait
 nextOre:
 add Index Index 1

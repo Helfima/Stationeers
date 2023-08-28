@@ -73,9 +73,9 @@ s dr0:1 Channel7 Qty
 j free
 
 query_item:
-l Request dr0 Setting
-beq Request QUERY_ITEM query_item
+s db Setting QUERY_ITEM
 l Request dr0:1 Channel0 # Read Hash
+beq Request 0 query_item # wait
 l Qty dr0:1 Channel1
 jal check_hash
 beq Device NONE query_end
@@ -86,9 +86,9 @@ brne Qty 0 -3
 j free
 
 query_quantity:
-l Request dr0 Setting
-beq Request QUERY_QUANTITY query_quantity
+s db Setting QUERY_QUANTITY
 l Request dr0:1 Channel0 # Read Hash
+beq Request 0 query_item # wait
 jal check_hash
 beq Device NONE query_end
 add Temp r1 100
@@ -100,9 +100,9 @@ j free
 action_silo:
 add Temp r1 100
 sbn TYPE_SILO Temp Open 1
-sleep 1
+yield
 sbn TYPE_SILO Temp Open 0
-sleep 1
+yield
 j ra
 
 check_hash: # retrieve silo
