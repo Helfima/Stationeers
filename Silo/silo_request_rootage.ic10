@@ -1,0 +1,39 @@
+# Silo\silo_request_rootage.ic10
+# FLIPFLOP-00-2nAROy 100
+# FLIPFLOP-01-028LiJ 101
+# FLIPFLOP-02-1XSVBZ 102
+# FLIPFLOP-03-0uCZKe 103
+# FLIPFLOP-04-1vH6wx 104
+# FLIPFLOP-05-1GVWdJ 105
+alias MemoRootage d0
+#Constant
+define TYPE_FLIPFLOP -810874728 # Right: 163728359 Left: -810874728
+# Alias Register
+alias Way r0
+alias Request r1
+alias Hash r2
+alias Index r3
+alias Stack r6
+alias Device r7
+alias StartSp r13
+alias Temp r15
+#Settings
+s db Setting 0
+sb TYPE_FLIPFLOP On 1
+sb TYPE_FLIPFLOP Mode 0
+sb TYPE_FLIPFLOP Setting 0
+sb TYPE_FLIPFLOP SettingOutput 0
+start:
+yield
+l Way MemoRootage Setting
+beqal Way 0 way_furnace
+beqal Way 1 way_hangar
+j start
+
+way_furnace:
+sbn TYPE_FLIPFLOP 100 Mode 0
+j ra
+
+way_hangar:
+sbn TYPE_FLIPFLOP 100 Mode 1
+j ra

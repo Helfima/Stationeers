@@ -1,0 +1,59 @@
+# Trader\test.ic10
+alias Dish0 d0
+alias Value r0
+
+define TYPE_DISPLAY -815193061
+define DISP_POWER HASH("Display Power")
+define DISP_ACTIVATE HASH("Display Activate")
+define DISP_SETTING HASH("Display Setting")
+define DISP_HORIZONTAL HASH("Display Horizontal")
+define DISP_VERTICAL HASH("Display Vertical")
+define DISP_REQPOWER HASH("Display RequiredPower")
+define DISP_SIGNSTRESS HASH("Display SignalStrength")
+define DISP_SIGNALID HASH("Display SignalID")
+define DISP_PROGRESS HASH("Display InterrogationProgress")
+define DISP_PADINDEX HASH("Display TargetPadIndex")
+define DISP_SIZEX HASH("Display SizeX")
+define DISP_SIZEZ HASH("Display SizeZ")
+define DISP_WATTMIN HASH("Display MinimumWattsToContact")
+define DISP_WATTRECH HASH("Display WattsReachingContact")
+define DISP_TYPEID HASH("Display ContactTypeId")
+
+sb TYPE_DISPLAY On 1
+s Dish0 TargetPadIndex 1
+start:
+yield
+l Value Dish0 Power
+sbn TYPE_DISPLAY DISP_POWER Setting Value
+l Value Dish0 Activate
+sbn TYPE_DISPLAY DISP_ACTIVATE Setting Value
+l Value Dish0 Setting
+sbn TYPE_DISPLAY DISP_SETTING Setting Value
+l Value Dish0 Horizontal
+sbn TYPE_DISPLAY DISP_HORIZONTAL Setting Value
+l Value Dish0 Vertical
+sbn TYPE_DISPLAY DISP_VERTICAL Setting Value
+l Value Dish0 Vertical
+sbn TYPE_DISPLAY DISP_VERTICAL Setting Value
+l Value Dish0 RequiredPower
+sbn TYPE_DISPLAY DISP_REQPOWER Setting Value
+l Value Dish0 SignalStrength
+sbn TYPE_DISPLAY DISP_SIGNSTRESS Setting Value
+l Value Dish0 SignalID
+sbn TYPE_DISPLAY DISP_SIGNALID Setting Value
+l Value Dish0 InterrogationProgress
+sbn TYPE_DISPLAY DISP_PROGRESS Setting Value
+l Value Dish0 TargetPadIndex
+sbn TYPE_DISPLAY DISP_PADINDEX Setting Value
+l Value Dish0 SizeX
+sbn TYPE_DISPLAY DISP_SIZEX Setting Value
+l Value Dish0 SizeZ
+sbn TYPE_DISPLAY DISP_SIZEZ Setting Value
+l Value Dish0 MinimumWattsToContact
+sbn TYPE_DISPLAY DISP_WATTMIN Setting Value
+l Value Dish0 WattsReachingContact
+sbn TYPE_DISPLAY DISP_WATTRECH Setting Value
+l Value Dish0 ContactTypeId
+sbn TYPE_DISPLAY DISP_TYPEID Setting Value
+
+j start

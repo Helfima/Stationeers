@@ -29,10 +29,10 @@ sle Temp STORAGE_LINE 2
 select Stack Temp STACK_ORE STACK_INGOT
 mul StartSp STORAGE_LINE 6
 sub StartSp StartSp 5 # 1,7:Ores 13,19,25:Ingots
-sbn TYPE_FLIPFLOP_RIGHT Device Setting 0
-sbn TYPE_FLIPFLOP_RIGHT Device SettingOutput 0
-sbn TYPE_FLIPFLOP_LEFT Device Setting 0
-sbn TYPE_FLIPFLOP_LEFT Device SettingOutput 0
+sb TYPE_FLIPFLOP_RIGHT Setting 0
+sb TYPE_FLIPFLOP_RIGHT SettingOutput 0
+sb TYPE_FLIPFLOP_LEFT Setting 0
+sb TYPE_FLIPFLOP_LEFT SettingOutput 0
 sb TYPE_SILO On 1
 sb TYPE_STACKER1 Setting Stack
 sb TYPE_STACKER1 On 1

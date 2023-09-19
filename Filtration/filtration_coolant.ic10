@@ -1,4 +1,4 @@
-# filtration_coolant.ic10
+# Filtration\filtration_coolant.ic10
 alias Atmo db
 alias Pump d0
 # Constant
@@ -7,7 +7,7 @@ define TYPE_MEMORY -851746783
 define TYPE_SENSOR -1252983604
 define TYPE_VALVE -1280984102
 define KELVIN 273
-define P_MIN 110
+define P_MIN 2000
 define P_MAX 1000
 # Alias Register
 alias Tmin r0
@@ -45,7 +45,7 @@ s db Setting Tset
 j ra
 
 check_pressure:
-select Pmax IsMaster P_MAX P_MIN 
+select Pmax IsMaster P_MAX P_MIN
 l Pin Atmo PressureInput
 sle IsOn Pin Pmax
 s Pump On IsOn
@@ -62,5 +62,5 @@ sna Temp Tmin Tin Percent
 select IsOn IsOn 0 Temp
 select Percent IsOn 0.01 0.02
 #Turn On/Off 0:idle 1:active
-sb TYPE_ATMO Mode IsOn 
+sb TYPE_ATMO Mode IsOn
 j ra

@@ -73,6 +73,18 @@ la constante STORAGE_LINE aura pour valeur:
 
 ![Vue global des lingots](/Silo/Silos.png)
 
+## Channel
+
+* Channel0: Request Hash
+* Channel1: Request Quantity
+* Channel2: Quantity Item 1
+* Channel3: Quantity Item 2
+* Channel4: Quantity Item 3
+* Channel5: Quantity Item 4
+* Channel6: Quantity Item 5
+* Channel7: Quantity Item 6
+
+
 ## Demande
 
 le protocole de requête [lien protocole](/Silo/silo_packet.md)

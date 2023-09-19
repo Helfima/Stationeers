@@ -1,0 +1,73 @@
+# Trader\dish_large_4.ic10
+alias DialH d0
+alias DialV d1
+alias DialP d2
+alias DisplayH d3
+alias DisplayV d4
+alias Button d5
+# Alias Register
+alias H r0
+alias V r1
+alias P r2
+alias Device r3
+alias IsPresent r4
+alias HashName r5
+alias IsOn r6
+alias Temp r15
+# Constant
+define TYPE_DISH_LARGE 1913391845
+define TYPE_COMPUTER -626563514
+define TYPE_OCCUPANCY 322782515
+define TYPE_DISPLAY -815193061
+define TYPE_LANDINGPAD -2066405918
+# Settings
+move sp 0
+push HASH("Large Satellite Dish 1")
+push HASH("Large Satellite Dish 2")
+push HASH("Large Satellite Dish 3")
+push HASH("Large Satellite Dish 4")
+s DialH Mode 90
+s DialV Mode 90
+s DialP Mode 10
+start:
+yield
+lb IsPresent TYPE_OCCUPANCY Activate 3 # 0:Average 1:Sum 2:Min 3:Max
+sb TYPE_COMPUTER On IsPresent
+sb TYPE_DISPLAY On IsPresent
+sb TYPE_DISH_LARGE On IsPresent
+# move dish
+l H DialH Setting
+l V DialV Setting
+l P DialP Setting
+
+mul Temp P 4500
+sb TYPE_DISH_LARGE Setting Temp
+
+jal move_fly
+jal move_dish
+jal refresh_display
+j start
+
+refresh_display:
+lbn Temp TYPE_DISH_LARGE HashName Horizontal 3 # 0:Average 1:Sum 2:Min 3:Max
+s DisplayH Setting Temp
+lbn Temp TYPE_DISH_LARGE HashName Vertical 3 # 0:Average 1:Sum 2:Min 3:Max
+s DisplayV Setting Temp
+j ra
+
+move_fly:
+l Temp Button Setting
+beq Temp 0 ra
+sb TYPE_LANDINGPAD Activate 2
+j ra
+
+move_dish:
+move sp 4
+dish_loop:
+pop HashName
+mul Temp sp 90
+add Temp Temp H
+sbn TYPE_DISH_LARGE HashName Horizontal Temp
+sbn TYPE_DISH_LARGE HashName Vertical V
+bne sp 0 dish_loop
+j ra

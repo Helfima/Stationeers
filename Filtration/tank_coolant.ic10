@@ -7,7 +7,9 @@ define ANA_COOLANT HASH("Analyzer Coolant")
 define TYPE_VALVE -1280984102
 define VAL_EXTERNAL HASH("Valve External")
 define VAL_COOLANT HASH("Valve Coolant")
+define VAL_FILTRATION HASH("Valve Filtration")
 define TMIN 293
+define PMIN 100
 # Alias Register
 alias IsOnGlobal r0
 alias IsOn r1
@@ -22,6 +24,7 @@ lbn Tcur TYPE_ANALYSER ANA_TANK Temperature 3 # 0:Average 1:Sum 2:Min 3:Max
 sgt IsOnGlobal Tcur TMIN
 jal check_external
 jal check_coolant
+jal check_filtration
 j start
 
 check_external:
@@ -36,4 +39,11 @@ lbn Temp TYPE_ANALYSER ANA_COOLANT Temperature 3 # 0:Average 1:Sum 2:Min 3:Max
 slt Temp Temp Tcur
 and IsOn IsOnGlobal Temp
 sbn TYPE_VALVE VAL_COOLANT On IsOn
+j ra
+
+check_filtration:
+sgt Temp Pcur PMIN
+sle IsOn Tcur TMIN
+and IsOn IsOn Temp
+sbn TYPE_VALVE VAL_FILTRATION On IsOn
 j ra
