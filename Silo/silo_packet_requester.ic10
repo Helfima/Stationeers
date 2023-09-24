@@ -1,15 +1,10 @@
-# silo_packet_requester.ic10
-alias Line0 d0
-alias Line1 d1
-alias Line2 d2
-alias Line3 d3
-alias Line4 d4
-alias Line5 d5
+# Silo\silo_packet_requester.ic10
+alias Mirror d0
+alias DialItem d1
+alias DialQuantity d2
+alias Button d3
+alias Display d4
 # Constant
-define TYPE_BUTTON 491845673
-define TYPE_DIAL 554524804
-define TYPE_MIRROR 2096189278
-define TYPE_DISPLAY -815193061
 define QUERY_FREE 9000000
 define QUERY_ITEM 9000101
 define QUERY_QUANTITY 9000102
@@ -17,7 +12,7 @@ define PACKET_SIZE 12
 define QTY 100
 define QMIN 800
 define QMAX 1600
-define START_SP 13 # 1,7:Ores 13,19,25:Ingots
+define START_SP 1 # 1,7:Ores 13,19,25:Ingots
 define COLOR_1 10 # Pink
 define COLOR_2 1 # Gray
 # Alias Register
@@ -25,65 +20,72 @@ alias Device r0
 alias Action r1
 alias Choose r2
 alias LastChoose r3
-alias Index r4
+alias Qty r4
 alias Hash r5 # Ingot Hash
 alias LastHash r6 # Ingot Hash
-alias Time r7
-alias Line r9
+alias Clock r7
+alias Stage r9
 alias DColor r13
 alias Provider r14
 alias Temp r15
 # Settings
+s DialItem Mode 10
+s DialQuantity Mode 10
+move Stage 0
 start:
 yield
-sb TYPE_DISPLAY Color 2 # Green
-lb Action TYPE_BUTTON Setting 1 # Read unique button
-lb Choose TYPE_DIAL Setting 1 # Read unique dial
+s Display Color 2 # Green
+l Action Button Setting
+l Choose DialItem Setting
 jal get_hash
 s db Setting Hash
-bne Hash LastHash pre_request_qty
-beq Action 1 request_item
+bneal Hash LastHash pre_request_qty
+beqal Action 1 request_item
+jal check_stage
+jal update_quantity
 j start
+
+check_stage:
+beq Stage 0 ra
+l Temp d0:0 Channel1
+bne Temp 0 ra
+move Stage 0
+j request_qty
 
 pre_request_qty:
 breq Choose LastChoose 3
-move Time 2
+move Clock 2
 move LastChoose Choose
-beq Time 0 request_qty # launch request
-sub Time Time 1
-j start
-request_qty:
-lb Line TYPE_MIRROR Setting 3 # 0:Average 1:Sum 2:Min 3:Max
-brne Line QUERY_FREE -1 # wait response
-move LastHash Hash
-sb TYPE_DISPLAY Color COLOR_1
-sb TYPE_MIRROR Setting QUERY_QUANTITY # send quantity request
-yield
-sb TYPE_DISPLAY Color COLOR_2
-sb TYPE_MIRROR Setting Hash # send hash
-yield
-sb TYPE_DISPLAY Color COLOR_1
-lb Line TYPE_MIRROR Setting 3 # 0:Average 1:Sum 2:Min 3:Max
-breq Line Hash -1 # wait response
-sb TYPE_DISPLAY Setting Line
-yield
-sb TYPE_DISPLAY Color COLOR_2
+beq Clock 0 request_qty # launch request
+sub Clock Clock 1
 j start
 
+request_qty:
+l Temp Mirror Setting # Read Memory Provider via mirror
+brne Temp QUERY_FREE -1 # wait response
+move LastHash Hash
+s Display Color COLOR_1
+s d0:0 Channel0 Hash # Write Hash
+s d0:0 Channel1 ninf # Reset Quantity
+s Mirror Setting QUERY_QUANTITY # send quantity request
+j ra
+
+update_quantity:
+l Temp d0:0 Channel1
+s Display Setting Temp
+j ra
+
 request_item:
-lb Line TYPE_MIRROR Setting 3 # 0:Average 1:Sum 2:Min 3:Max
-brne Line QUERY_FREE -1 # wait response
-sb TYPE_DISPLAY Color COLOR_1
-sb TYPE_MIRROR Setting QUERY_ITEM # send item request
-yield
-sb TYPE_DISPLAY Color COLOR_2
-sb TYPE_MIRROR Setting Hash # send hash
-yield
-sb TYPE_DISPLAY Color COLOR_1
-sb TYPE_MIRROR Setting QTY # send qty
-yield
-sb TYPE_DISPLAY Color COLOR_2
-j request_qty
+l Qty DialQuantity Setting
+mul Qty Qty QTY
+l Temp Mirror Setting # Read Memory Provider via mirror
+brne Temp QUERY_FREE -1 # wait response
+s d0:0 Channel0 Hash # Write Hash
+s d0:0 Channel1 Qty # Write Quantity
+s d0:0 Channel2 1 # Write Rootage
+s Mirror Setting QUERY_ITEM # Write Memory Provider via mirror
+move Stage 1
+j ra
 
 get_hash:
 move sp Choose

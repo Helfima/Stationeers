@@ -1,9 +1,11 @@
 # Silo\silo_packet_display_named.ic10
+# Alias
+alias Dial d0
+alias Mirror d1
+alias Sensor d2
 # Constant
 define TYPE_DISPLAY -815193061 # Small Display
 define TYPE_MEMORY -851746783
-define MEMO_QTY HASH("Memory Quantity")
-define TYPE_DIAL 554524804
 define TYPE_MONITOR 801677497
 define TYPE_OCCUPANCY 322782515
 define QUERY_FREE 9000000
@@ -28,12 +30,12 @@ alias Color2 r13
 alias Provider r14
 alias Temp r15
 # Settings
-sb TYPE_DIAL Mode 5
+s Dial Mode 5
 init:
 jal reset_device
 start:
 yield
-lb Choose TYPE_DIAL Setting 1 # Read unique dial
+l Choose Dial Setting
 s db Setting Choose
 bneal LastChoose Choose reset_channel
 move LastChoose Choose
@@ -41,7 +43,7 @@ jal check_occupancy
 beq Choose 0 init # Wait Request
 mul Provider Choose 1000
 add Provider Provider 9000100
-sbn TYPE_MEMORY MEMO_QTY Setting Provider
+s Mirror Setting Provider
 jal read_quantity
 jal change_color
 jal write_hash
@@ -57,26 +59,26 @@ sbn TYPE_DISPLAY Temp Setting 0
 j loop_device
 
 reset_channel:
-s db:0 Channel2 ninf
-s db:0 Channel3 ninf
-s db:0 Channel4 ninf
-s db:0 Channel5 ninf
-s db:0 Channel6 ninf
-s db:0 Channel7 ninf
+s d1:0 Channel2 ninf
+s d1:0 Channel3 ninf
+s d1:0 Channel4 ninf
+s d1:0 Channel5 ninf
+s d1:0 Channel6 ninf
+s d1:0 Channel7 ninf
 j ra
 
 read_quantity:
-l Qty db:0 Channel2
+l Qty d1:0 Channel2
 sbn TYPE_DISPLAY 100 Setting Qty
-l Qty db:0 Channel3 
+l Qty d1:0 Channel3 
 sbn TYPE_DISPLAY 101 Setting Qty
-l Qty db:0 Channel4
+l Qty d1:0 Channel4
 sbn TYPE_DISPLAY 102 Setting Qty
-l Qty db:0 Channel5
+l Qty d1:0 Channel5
 sbn TYPE_DISPLAY 103 Setting Qty
-l Qty db:0 Channel6
+l Qty d1:0 Channel6
 sbn TYPE_DISPLAY 104 Setting Qty
-l Qty db:0 Channel7
+l Qty d1:0 Channel7
 sbn TYPE_DISPLAY 105 Setting Qty
 j ra
 
@@ -94,7 +96,7 @@ sbn TYPE_MEMORY Temp Setting Hash
 j loop_hash
 
 check_occupancy:
-lb Temp TYPE_OCCUPANCY Activate 3 # 0:Average 1:Sum 2:Min 3:Max
+l Temp Sensor Activate
 sb TYPE_DISPLAY On Temp
 sb TYPE_MONITOR On Temp
 j ra

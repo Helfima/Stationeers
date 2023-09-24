@@ -1,8 +1,8 @@
 # Silo\silo_packet_provider_named.ic10
 # SILO-00-1ljQlQ SILO-01-9WbSsK SILO-02-2ZxUar
 # SILO-03-1KmG1P SILO-04-2tc5TP SILO-05-04Uwsw
-alias MemoList d0
-alias MemoItem d1
+alias MirrorList d0
+alias MirrorItem d1
 #Constant
 define TYPE_SILO 1155865682 # Silo Hash
 define STACK_ORE 50
@@ -44,7 +44,6 @@ beq Request QueryList query_list
 beq Request QUERY_ITEM query_item
 beq Request QUERY_QUANTITY query_quantity
 query_end:
-s dr0 Setting 0
 j loop_memory
 free:
 s dr0 Setting QUERY_FREE # Write line
@@ -54,47 +53,47 @@ query_list:
 s db Setting QUERY_LIST
 lbn Qty TYPE_SILO 100 Quantity 3 # 0:Average 1:Sum 2:Min 3:Max
 mul Qty Qty Stack
-s dr0:1 Channel2 Qty
+s dr0:0 Channel2 Qty
 lbn Qty TYPE_SILO 101 Quantity 3 # 0:Average 1:Sum 2:Min 3:Max
 mul Qty Qty Stack
-s dr0:1 Channel3 Qty
+s dr0:0 Channel3 Qty
 lbn Qty TYPE_SILO 102 Quantity 3 # 0:Average 1:Sum 2:Min 3:Max
 mul Qty Qty Stack
-s dr0:1 Channel4 Qty
+s dr0:0 Channel4 Qty
 lbn Qty TYPE_SILO 103 Quantity 3 # 0:Average 1:Sum 2:Min 3:Max
 mul Qty Qty Stack
-s dr0:1 Channel5 Qty
+s dr0:0 Channel5 Qty
 lbn Qty TYPE_SILO 104 Quantity 3 # 0:Average 1:Sum 2:Min 3:Max
 mul Qty Qty Stack
-s dr0:1 Channel6 Qty
+s dr0:0 Channel6 Qty
 lbn Qty TYPE_SILO 105 Quantity 3 # 0:Average 1:Sum 2:Min 3:Max
 mul Qty Qty Stack
-s dr0:1 Channel7 Qty
+s dr0:0 Channel7 Qty
 j free
 
 query_item:
 s db Setting QUERY_ITEM
-l Request dr0:1 Channel0 # Read Hash
+l Request dr0:0 Channel0 # Read Hash
 beq Request 0 query_item # wait
-l Qty dr0:1 Channel1
+l Qty dr0:0 Channel1
 jal check_hash
 beq Device NONE query_end
 jal action_silo
 sub Qty Qty Stack
-s dr0:1 Channel1 Qty
+s dr0:0 Channel1 Qty
 brne Qty 0 -3
 j free
 
 query_quantity:
 s db Setting QUERY_QUANTITY
-l Request dr0:1 Channel0 # Read Hash
+l Request dr0:0 Channel0 # Read Hash
 beq Request 0 query_item # wait
 jal check_hash
 beq Device NONE query_end
 add Temp r1 100
 lbn Qty TYPE_SILO Temp Quantity 3 # 0:Average 1:Sum 2:Min 3:Max
 mul Qty Qty Stack
-s dr0:1 Channel1 Qty
+s dr0:0 Channel1 Qty
 j free
 
 action_silo:

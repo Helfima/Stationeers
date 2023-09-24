@@ -1,13 +1,17 @@
 # Silo\silo_request_rootage.ic10
-# FLIPFLOP-00-2nAROy 100
-# FLIPFLOP-01-028LiJ 101
-# FLIPFLOP-02-1XSVBZ 102
-# FLIPFLOP-03-0uCZKe 103
-# FLIPFLOP-04-1vH6wx 104
-# FLIPFLOP-05-1GVWdJ 105
-alias MemoRootage d0
+# FLIPFLOP-00-2nAROy
+# FLIPFLOP-01-028LiJ
+# FLIPFLOP-02-1XSVBZ
+# FLIPFLOP-03-0uCZKe
+# FLIPFLOP-04-1vH6wx
+# FLIPFLOP-05-1GVWdJ
+alias Mirror d0
 #Constant
 define TYPE_FLIPFLOP -810874728 # Right: 163728359 Left: -810874728
+define QUERY_LIST 9000100
+define QUERY_ITEM 9000101
+define QUERY_QUANTITY 9000102
+define QUERY_FREE 9000000
 # Alias Register
 alias Way r0
 alias Request r1
@@ -25,7 +29,9 @@ sb TYPE_FLIPFLOP Setting 0
 sb TYPE_FLIPFLOP SettingOutput 0
 start:
 yield
-l Way MemoRootage Setting
+l Request Mirror Setting
+bne Request QUERY_ITEM start
+l Way d0:0 Channel2 # Read Rootage
 beqal Way 0 way_furnace
 beqal Way 1 way_hangar
 j start

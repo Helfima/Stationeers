@@ -1,15 +1,13 @@
-# room_dial_air.ic10
-alias self db
+# Hydroponic\room_dial_air.ic10
 alias Pump_CO2 d0
 alias Pump_N2 d1
 alias Pump_O2 d2
 alias Pump_Waste d3
-alias Emetter d5
+alias Atmo d5
 # Constant
 define TYPE_SENSOR -1252983604
 define TYPE_CLIM -2087593337
 define KELVIN 273
-define FREE 9000000
 define Kp 10
 # Alias Register
 alias T r0
@@ -29,28 +27,22 @@ move r4 20
 sb TYPE_CLIM On 1
 sb TYPE_CLIM Mode 1
 start:
-s self Setting FREE
 yield
 jal read_emetter
 jal write_air
 j start
 
 read_emetter:
-l Temp Emetter Setting
-bne Temp FREE ra
-move Device 0
-loop_emetter:
-yield
-l Temp Emetter Setting
-s self Setting Temp
-move rr9 Temp
-add Device Device 1
-ble Device 4 loop_emetter
+l T db:0 Channel0
+l P db:0 Channel1
+l CO2 db:0 Channel3
+l N2 db:0 Channel4
+l O2 db:0 Channel5
 j ra
 
 write_air:
 # Temperature
-sb TYPE_CLIM Setting T
+s Atmo Setting T
 # Waste Pressure
 lb Temp TYPE_SENSOR Pressure 3 # 0:Average 1:Sum 2:Min 3:Max
 sub Err Temp P

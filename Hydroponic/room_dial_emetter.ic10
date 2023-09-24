@@ -1,5 +1,4 @@
-# room_dial_emetter.ic10
-alias self db
+# Hydroponic\room_dial_emetter.ic10
 alias dial_t d0
 alias dial_p d1
 alias dial_co2 d2
@@ -7,36 +6,34 @@ alias dial_n2 d3
 alias dial_o2 d4
 # Constant
 define KELVIN 273
-define FREE 9000000
 # Alias Register
-alias T r0
-alias P r1
-alias CO2 r2
-alias N2 r3
-alias O2 r4
-alias Device r9
 alias Temp r15
 # Settings
 s dial_t Mode 50
+s dial_t Setting 20
 s dial_p Mode 110
+s dial_p Setting 50
 s dial_co2 Mode 100
+s dial_co2 Setting 10
 s dial_n2 Mode 100
+s dial_n2 Setting 70
 s dial_o2 Mode 100
+s dial_o2 Setting 20
 start:
-s self Setting FREE
 yield
-jal read_dials
-j start
-
-read_dials:
-move Device 0
-loop_device:
-l Temp dr9 Setting
-brne r9 0 2
+l Temp dial_t Setting
 add Temp Temp KELVIN
-s self Setting Temp
-yield
-move rr9 Temp
-add Device Device 1
-ble Device 4 loop_device
-j ra
+s db:0 Channel0 Temp
+
+l Temp dial_p Setting
+s db:0 Channel1 Temp
+
+l Temp dial_co2 Setting
+s db:0 Channel3 Temp
+
+l Temp dial_n2 Setting
+s db:0 Channel4 Temp
+
+l Temp dial_o2 Setting
+s db:0 Channel5 Temp
+j start
