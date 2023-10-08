@@ -30,7 +30,38 @@ La gestion se fait dans 2 réseaux séparés, la partie gestion de la plantation
 La gestion plantation est la partie semence, récolte et éclairage en automatique
 Il faut placer dans le même réseau:
 * les harvies
+    * Harvie-00-0oszXe
+    * Harvie-01-1BcvQZ
+    * Harvie-02-61NcKx
+    * Harvie-03-1ikMw1
+    * Harvie-04-2ktszi
+    * Harvie-05-b8JOnB
+    * Harvie-06-45Ijit
+    * Harvie-07-1p7Jel
+    * Harvie-08-9vXlxx
+    * Harvie-09-1MPngb
 * les fliflop
+    * FlipFlop-00-15MO27
+    * FlipFlop-01-6L6qg2
+    * FlipFlop-02-1ShIyT
+    * FlipFlop-03-dhyhsA
+    * FlipFlop-04-dk35TE
+    * FlipFlop-05-6Ujvuo
+    * FlipFlop-06-e0FNlg
+    * FlipFlop-07-4c9CcU
+    * FlipFlop-08-2jIUBO
+    * FlipFlop-09-3GYYKp
+* Les tray
+    * Tray-00-3jD4Am
+    * Tray-01-2GT8HR
+    * Tray-02-211OyO
+    * Tray-03-3pRnt4
+    * Tray-04-0rMPyl
+    * Tray-05-47rAnm
+    * Tray-06-2XQ9nB
+    * Tray-07-1tUgV8
+    * Tray-08-2yyAmX
+    * Tray-09-1I2CT6
 * les lights
 * le levier d'activation
 * les affichages des états (optionnel)

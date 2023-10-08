@@ -8,42 +8,55 @@ define TYPE_VALVE -1280984102
 define VAL_EXTERNAL HASH("Valve External")
 define VAL_COOLANT HASH("Valve Coolant")
 define VAL_FILTRATION HASH("Valve Filtration")
-define TMIN 293
+define TYPE_PUMP 1310794736
+define TMAX 293
+define TMIN 283
+define PMAX 1000
 define PMIN 100
 # Alias Register
-alias IsOnGlobal r0
-alias IsOn r1
+alias IsCooling r0
+alias IsPumping r1
 alias Pcur r2
 alias Tcur r3
+alias TCooling r4
+alias PPumping r5
+alias IsOn r14
 alias Temp r15
 # Settings
 start:
 yield
+s db Setting PPumping
 lbn Pcur TYPE_ANALYSER ANA_TANK Pressure 3 # 0:Average 1:Sum 2:Min 3:Max
 lbn Tcur TYPE_ANALYSER ANA_TANK Temperature 3 # 0:Average 1:Sum 2:Min 3:Max
-sgt IsOnGlobal Tcur TMIN
+sgt IsCooling Tcur TCooling
+select TCooling IsCooling TMIN TMAX
 jal check_external
 jal check_coolant
 jal check_filtration
+jal check_pump
 j start
 
 check_external:
 lbn Temp TYPE_ANALYSER ANA_EXTERNAL Temperature 3 # 0:Average 1:Sum 2:Min 3:Max
 slt Temp Temp Tcur
-and IsOn IsOnGlobal Temp
+and IsOn IsCooling Temp
 sbn TYPE_VALVE VAL_EXTERNAL On IsOn
 j ra
 
 check_coolant:
 lbn Temp TYPE_ANALYSER ANA_COOLANT Temperature 3 # 0:Average 1:Sum 2:Min 3:Max
 slt Temp Temp Tcur
-and IsOn IsOnGlobal Temp
+and IsOn IsCooling Temp
 sbn TYPE_VALVE VAL_COOLANT On IsOn
 j ra
 
 check_filtration:
-sgt Temp Pcur PMIN
-sle IsOn Tcur TMIN
-and IsOn IsOn Temp
+sle IsOn Tcur TMAX
 sbn TYPE_VALVE VAL_FILTRATION On IsOn
+j ra
+
+check_pump:
+slt IsPumping Pcur PPumping
+select PPumping IsPumping PMAX PMIN
+sb TYPE_PUMP On IsPumping
 j ra

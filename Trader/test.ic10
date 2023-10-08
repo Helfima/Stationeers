@@ -3,21 +3,23 @@ alias Dish0 d0
 alias Value r0
 
 define TYPE_DISPLAY -815193061
-define DISP_POWER HASH("Display Power")
-define DISP_ACTIVATE HASH("Display Activate")
-define DISP_SETTING HASH("Display Setting")
 define DISP_HORIZONTAL HASH("Display Horizontal")
 define DISP_VERTICAL HASH("Display Vertical")
-define DISP_REQPOWER HASH("Display RequiredPower")
 define DISP_SIGNSTRESS HASH("Display SignalStrength")
 define DISP_SIGNALID HASH("Display SignalID")
 define DISP_PROGRESS HASH("Display InterrogationProgress")
 define DISP_PADINDEX HASH("Display TargetPadIndex")
-define DISP_SIZEX HASH("Display SizeX")
-define DISP_SIZEZ HASH("Display SizeZ")
+define DISP_TYPEID HASH("Display ContactTypeId")
+
+define DISP_POWER HASH("Display Power")
+define DISP_REQPOWER HASH("Display RequiredPower")
 define DISP_WATTMIN HASH("Display MinimumWattsToContact")
 define DISP_WATTRECH HASH("Display WattsReachingContact")
-define DISP_TYPEID HASH("Display ContactTypeId")
+define DISP_SETTING HASH("Display Setting")
+define DISP_ACTIVATE HASH("Display Activate")
+define DISP_SIZEX HASH("Display SizeX")
+define DISP_SIZEZ HASH("Display SizeZ")
+
 
 sb TYPE_DISPLAY On 1
 s Dish0 TargetPadIndex 1

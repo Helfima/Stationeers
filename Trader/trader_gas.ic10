@@ -1,0 +1,118 @@
+# Trader\trader_gas.ic10
+alias Lever d0
+alias Button d1
+alias DialGaz d2
+alias Display d3
+# Constant
+define KELVIN 273
+define TYPE_LAND_INPUT 817945707
+define TYPE_LAND_OUTPUT -1100218307
+define TYPE_ANA 435685051
+define ANA_INPUT HASH("Analyzer SettingInputput")
+define ANA_OUTPUT HASH("Analyzer Output")
+define TYPE_PUMP 1310794736
+# Alias Register
+alias Switch r0
+alias Action r1
+alias Choose r2
+alias Tcur r3
+alias Pcur r4
+alias IsOn r10
+alias Hash r11
+alias HashOut r12
+alias HashIn r13
+alias Err r14
+alias Temp r15
+# Settings
+move sp 0
+push 0
+push HASH("Pump Output")
+push HASH("Pump Input")
+push -633723719 # Pure Ice Volatiles
+push HASH("Pump Output H2")
+push HASH("Pump Input H2")
+push -1755356 # Pure Ice Polutant
+push HASH("Pump Output")
+push HASH("Pump Input")
+push -1150448260 # Pure Ice Oxygen
+push HASH("Pump Output O2")
+push HASH("Pump Input O2")
+push 386754635 # Pure Ice NitrousOxide
+push HASH("Pump Output N2O")
+push HASH("Pump Input N2O")
+push -1708395413 # Pure Ice Nitrogen
+push HASH("Pump Output N2")
+push HASH("Pump Input N2")
+push -1251009404 # Pure Ice Carbon Dioxide
+push HASH("Pump Output CO2")
+push HASH("Pump Input CO2")
+push -1616308158 # Pure Ice Water
+push HASH("Pump Output")
+push HASH("Pump Input")
+#push -874791066 # Pure Ice Steam
+s DialGaz Mode 7
+start:
+yield
+s db Setting Hash
+sb TYPE_PUMP On 0
+l Switch Lever Setting
+l Action Button Setting
+beq Switch 1 sent
+move Choose 0
+jal read_land_gas
+jal read_ana_gas
+jal read_data
+lb Temp TYPE_LAND_OUTPUT TotalMoles 3 # 0:Average 1:Sum 2:Min 3:Max
+sgt IsOn Temp 0
+sb TYPE_LAND_OUTPUT On IsOn
+lbn Temp TYPE_ANA ANA_OUTPUT TotalMoles 3 # 0:Average 1:Sum 2:Min 3:Max
+sgt Temp Temp 0
+or IsOn IsOn Temp
+sbn TYPE_PUMP HashOut On IsOn
+j start
+sent:
+l Choose DialGaz Setting
+jal read_data
+j start
+
+read_land_gas:
+lb Temp TYPE_LAND_OUTPUT RatioVolatiles 3 # 0:Average 1:Sum 2:Min 3:Max
+select Choose Temp 1 Choose
+lb Temp TYPE_LAND_OUTPUT RatioPollutant 3 # 0:Average 1:Sum 2:Min 3:Max
+select Choose Temp 2 Choose
+lb Temp TYPE_LAND_OUTPUT RatioOxygen 3 # 0:Average 1:Sum 2:Min 3:Max
+select Choose Temp 3 Choose
+lb Temp TYPE_LAND_OUTPUT RatioNitrousOxide 3 # 0:Average 1:Sum 2:Min 3:Max
+select Choose Temp 4 Choose
+lb Temp TYPE_LAND_OUTPUT RatioNitrogen 3 # 0:Average 1:Sum 2:Min 3:Max
+select Choose Temp 5 Choose
+lb Temp TYPE_LAND_OUTPUT RatioCarbonDioxide 3 # 0:Average 1:Sum 2:Min 3:Max
+select Choose Temp 6 Choose
+lb Temp TYPE_LAND_OUTPUT RatioWater 3 # 0:Average 1:Sum 2:Min 3:Max
+select Choose Temp 7 Choose
+j ra
+
+read_ana_gas:
+lbn Temp TYPE_ANA ANA_OUTPUT RatioVolatiles 3 # 0:Average 1:Sum 2:Min 3:Max
+select Choose Temp 1 Choose
+lbn Temp TYPE_ANA ANA_OUTPUT RatioPollutant 3 # 0:Average 1:Sum 2:Min 3:Max
+select Choose Temp 2 Choose
+lbn Temp TYPE_ANA ANA_OUTPUT RatioOxygen 3 # 0:Average 1:Sum 2:Min 3:Max
+select Choose Temp 3 Choose
+lbn Temp TYPE_ANA ANA_OUTPUT RatioNitrousOxide 3 # 0:Average 1:Sum 2:Min 3:Max
+select Choose Temp 4 Choose
+lbn Temp TYPE_ANA ANA_OUTPUT RatioNitrogen 3 # 0:Average 1:Sum 2:Min 3:Max
+select Choose Temp 5 Choose
+lbn Temp TYPE_ANA ANA_OUTPUT RatioCarbonDioxide 3 # 0:Average 1:Sum 2:Min 3:Max
+select Choose Temp 6 Choose
+lbn Temp TYPE_ANA ANA_OUTPUT RatioWater 3 # 0:Average 1:Sum 2:Min 3:Max
+select Choose Temp 7 Choose
+j ra
+
+read_data:
+add sp Choose 1
+mul sp sp 3
+pop HashIn
+pop HashOut
+pop Hash
+j ra

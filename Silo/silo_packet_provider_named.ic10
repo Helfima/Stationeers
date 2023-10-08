@@ -33,13 +33,14 @@ mul StartSp STORAGE_LINE 6
 sub StartSp StartSp 5 # 1,7:Ores 13,19,25:Ingots
 start:
 yield
+s db Setting 0
 move r0 -1
 loop_memory:
 add r0 r0 1
 bdns dr0 start
 l Request dr0 Setting
-beq Request 0 start # Wait Request
-beq Request QUERY_FREE start # Wait Request
+beq Request 0 loop_memory # Wait Request
+beq Request QUERY_FREE loop_memory # Wait Request
 beq Request QueryList query_list
 beq Request QUERY_ITEM query_item
 beq Request QUERY_QUANTITY query_quantity
@@ -87,7 +88,7 @@ j free
 query_quantity:
 s db Setting QUERY_QUANTITY
 l Request dr0:0 Channel0 # Read Hash
-beq Request 0 query_item # wait
+beq Request 0 query_quantity # wait
 jal check_hash
 beq Device NONE query_end
 add Temp r1 100

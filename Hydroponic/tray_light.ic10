@@ -1,4 +1,4 @@
-# tray_light.ic10
+# Hydroponic\tray_light.ic10
 alias Tray0 d0
 alias DisplayMin d1
 alias DisplaySec d2

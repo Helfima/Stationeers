@@ -1,0 +1,39 @@
+# SAS\SAS_bypass.ic10
+alias Lever d0
+alias Console d1
+alias Door_Int d3
+alias Door_Ext d4
+# Constant
+# Alias Register
+alias Action r0
+alias IsOn r1
+alias IsOpen r2
+alias Stage r3
+alias Temp r15
+# Settings
+start:
+yield
+l Action Lever Setting
+l IsOn Console On
+l Stage Console Setting
+beqal Action 0 close_door
+beqal Action 1 open_door
+j start
+
+close_door:
+beq IsOn 1 ra # if console on do nothing
+s Door_Int Open 0
+s Door_Ext Open 0
+s Door_Int On 1
+s Door_Ext On 1
+s Console On 1
+j ra
+
+open_door:
+beq IsOn 0 ra # if console off do nothing
+s Door_Int Open 1
+s Door_Ext Open 1
+s Door_Int On 0
+s Door_Ext On 0
+s Console On 0
+j ra

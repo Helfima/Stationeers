@@ -1,0 +1,114 @@
+# Hydroponic\harvie_flipflop_named.ic10
+# Constant
+define TYPE_LEVER 1220484876
+define TYPE_HARVIE 958056199
+define TYPE_TRAY -1841632400
+define TYPE_FLIPFLOP 163728359 # FlipFlop Hash right:163728359 left:-810874728
+# Alias Register
+alias State r0 # 0:free 1:import 2:plant 3:model 4:seed 5:harvest
+alias Device r1
+alias HasSeed r2
+alias HashName r3
+alias IsMature r6
+alias IsSeeding r7
+alias IsOccupied r8
+alias IsOn r9
+alias Temp r10
+alias Timer r11
+alias Hash r14
+# Settings
+move Device 9
+loop_init:
+add sp Device 100
+lbns State TYPE_TRAY HashName 0 Occupied 3
+mul State State 2
+push State
+sub Device Device 1
+bgt Device 0 loop_init
+sb TYPE_FLIPFLOP On 0
+sb TYPE_FLIPFLOP Setting 0
+sb TYPE_FLIPFLOP SettingOutput 0
+start:
+yield
+move Device 0
+s db Setting IsOn
+lb IsOn TYPE_LEVER Setting 3 # 0:Average 1:Sum 2:Min 3:Max
+sb TYPE_HARVIE On IsOn
+beq IsOn 0 start
+next:
+s db Setting Device
+bgt Device 10 start
+add HashName Device 100
+add sp Device 200
+pop State
+jal functionSorter
+jal functionPlant
+jal read_model
+jal functionSeeding
+jal functionHarvest
+jal functionFinish
+push State
+add Device Device 1
+j next
+functionSorter:
+sbn TYPE_FLIPFLOP HashName On 0
+lbns IsOccupied TYPE_FLIPFLOP HashName 0 Occupied 3 # 0:Average 1:Sum 2:Min 3:Max
+beq IsOccupied 0 ra # Do Nothing
+bgt State 0 normalWay # State > 0 => Already Plant
+harvieWay:
+move State 1 # Update state import
+sbn TYPE_FLIPFLOP HashName Mode 1 # FlipFlop Way:Harvie
+j activeWay
+normalWay:
+sbn TYPE_FLIPFLOP HashName Mode 0 # FlipFlop Way:Normal
+activeWay:
+sbn TYPE_FLIPFLOP HashName On 1
+j ra
+functionPlant:
+lbns IsOccupied TYPE_TRAY HashName 0 Occupied 3 # Tray Occupied
+beq IsOccupied 1 ra # Already Plant
+lbns IsOccupied TYPE_HARVIE HashName 0 Occupied 3 # Harvie 0:Import 1:Export 2:Hand
+beq IsOccupied 0 ra # Empty
+sbn TYPE_HARVIE HashName Plant 1 # Harvie Plant
+move State 2 # Update state plant
+move Timer 60
+j ra
+functionSeeding:
+blt State 3 ra # wait model
+lbns IsSeeding TYPE_TRAY HashName 0 Seeding 3 # Tray Seeding
+blt IsSeeding 0 ra # Not Seeding
+sbn TYPE_HARVIE HashName Harvest 1 # Harvie Harvest
+move State 4 # Update state seed
+j ra
+functionHarvest:
+breq HasSeed 0 2 # bypass wait seeding
+blt State 4 ra # wait seeding
+lbns IsMature TYPE_TRAY HashName 0 Mature 3 # Tray Mature
+ble IsMature 0 ra # Not Mature
+sbn TYPE_HARVIE HashName Harvest 1 # Harvie Harvest
+move State 5 # Update state harvest
+j ra
+functionFinish:
+blt State 3 ra # Not Planted
+lbns IsOccupied TYPE_TRAY HashName 0 Occupied 3 # Tray Occupied
+beq IsOccupied 1 ra # Not Finish
+move State 0
+move HasSeed 0
+j ra
+read_model:
+lbns IsOccupied TYPE_TRAY HashName 0 Occupied 3 # Tray Occupied
+beq IsOccupied 0 ra # Empty
+bne State 2 ra # wait plant
+brle Timer 0 3
+sub Timer Timer 1
+j ra
+lbns Hash TYPE_TRAY HashName 0 PrefabHash 3 # Tray Hash
+move sp -4
+add sp sp 5 # decale index
+peek Temp
+brgt sp 120 4 # exit
+brne Temp Hash -3
+add sp sp 1
+pop HasSeed
+move State 3
+j ra

@@ -15,7 +15,7 @@ alias P r1
 alias CO2 r2
 alias N2 r3
 alias O2 r4
-alias Device r9
+alias More r5
 alias Err r14
 alias Temp r15
 # Settings
@@ -26,6 +26,10 @@ move r3 70
 move r4 20
 sb TYPE_CLIM On 1
 sb TYPE_CLIM Mode 1
+s Pump_CO2 On 1
+s Pump_N2 On 1
+s Pump_O2 On 1
+s Pump_Waste On 1
 start:
 yield
 jal read_emetter
@@ -46,21 +50,30 @@ s Atmo Setting T
 # Waste Pressure
 lb Temp TYPE_SENSOR Pressure 3 # 0:Average 1:Sum 2:Min 3:Max
 sub Err Temp P
+slt More Err -5
 mul Err Err Kp
 s Pump_Waste Setting Err
+
+mul More More 0.1
 # Ratio CO2
 lb Temp TYPE_SENSOR RatioCarbonDioxide 3 # 0:Average 1:Sum 2:Min 3:Max
 mul Temp Temp 100
 sub Err CO2 Temp
+mul Temp CO2 More # Reglage en fonction manque pression et ratio
+add Err Err Temp
 s Pump_CO2 Setting Err
 # Ratio N2
 lb Temp TYPE_SENSOR RatioNitrogen 3 # 0:Average 1:Sum 2:Min 3:Max
 mul Temp Temp 100
 sub Err N2 Temp
+mul Temp N2 More # Reglage en fonction manque pression et ratio
+add Err Err Temp
 s Pump_N2 Setting Err
 # Ratio O2
 lb Temp TYPE_SENSOR RatioOxygen 3 # 0:Average 1:Sum 2:Min 3:Max
 mul Temp Temp 100
 sub Err O2 Temp
+mul Temp O2 More # Reglage en fonction manque pression et ratio
+add Err Err Temp
 s Pump_O2 Setting Err
 j ra

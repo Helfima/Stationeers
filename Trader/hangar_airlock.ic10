@@ -1,5 +1,4 @@
 # Trader\hangar_airlock.ic10
-# Constant
 define TYPE_LEVER 1220484876
 define TYPE_SENSOR -1252983604
 define TYPE_LED 1944485013
@@ -15,9 +14,9 @@ define TYPE_TANK 1280378227
 define TANK_INT HASH("Tank Internal")
 define TANK_EXT HASH("Tank External")
 define PMIN 0
+define PEXT 10
 define PTANK_INT 10
 define PTANK_EXT 500
-# Alias Register
 alias Request r0
 alias Pcur r1
 alias Tcur r2
@@ -30,7 +29,6 @@ alias PTExt r8
 alias Closed r13
 alias Sequence r14
 alias Temp r15
-# Settings
 sb TYPE_VENT On 0
 lb IsOpen TYPE_GATE_MEDIUM Open 3 # 0:Average 1:Sum 2:Min 3:Max
 lb Temp TYPE_GATE_LARGE Open 3 # 0:Average 1:Sum 2:Min 3:Max
@@ -44,7 +42,6 @@ lb Pcur TYPE_SENSOR Pressure 3 # 0:Average 1:Sum 2:Min 3:Max
 lb Tcur TYPE_SENSOR Temperature 3 # 0:Average 1:Sum 2:Min 3:Max
 lbn PTExt TYPE_TANK TANK_EXT Pressure 3 # 0:Average 1:Sum 2:Min 3:Max
 lbn PTInt TYPE_TANK TANK_INT Pressure 3 # 0:Average 1:Sum 2:Min 3:Max
-#sb TYPE_DISPLAY Setting Pcur
 jal check_state
 jal check_display
 beqal Sequence 1 close_request
@@ -55,8 +52,8 @@ beqal Sequence 5 open_request
 beqal Sequence 6 depressure_int
 beqal Sequence 7 pressure_ext
 beqal Sequence 8 open_door
+beqal Sequence 9 tank_ext
 j start
-
 close_request:
 bne Request 0 ra
 move Sequence 2
@@ -75,7 +72,7 @@ open_door:
 sb TYPE_GATE_MEDIUM Open 1
 sb TYPE_GATE_LARGE Open 1
 beq Closed 1 ra
-move Sequence 1
+move Sequence 9
 j ra
 depressure_ext:
 sbn TYPE_VENT VENT_EXTERNAL Mode 1
@@ -87,9 +84,13 @@ j ra
 pressure_ext:
 sbn TYPE_VENT VENT_EXTERNAL Mode 0
 sbn TYPE_VENT VENT_EXTERNAL On 1
+ble Pcur PEXT ra
+move Sequence 8
+j ra
+tank_ext:
 bge PTExt PTANK_EXT ra
 sbn TYPE_VENT VENT_EXTERNAL On 0
-move Sequence 8
+move Sequence 1
 j ra
 depressure_int:
 sbn TYPE_VENT VENT_INTERNAL Mode 1
@@ -119,7 +120,6 @@ sb TYPE_LED Color Temp
 lb IsOxygen TYPE_SENSOR RatioOxygen 3 # 0:Average 1:Sum 2:Min 3:Max
 sgt IsOxygen IsOxygen 0
 j ra
-
 check_display:
 sbn TYPE_DISPLAY DISP_1 Setting PTInt
 sbn TYPE_DISPLAY DISP_2 Setting PTExt

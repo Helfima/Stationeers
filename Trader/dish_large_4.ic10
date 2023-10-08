@@ -4,7 +4,7 @@ alias DialV d1
 alias DialP d2
 alias DisplayH d3
 alias DisplayV d4
-alias Button d5
+alias DisplayP d5
 # Alias Register
 alias H r0
 alias V r1
@@ -13,6 +13,7 @@ alias Device r3
 alias IsPresent r4
 alias HashName r5
 alias IsOn r6
+alias Clock r7
 alias Temp r15
 # Constant
 define TYPE_DISH_LARGE 1913391845
@@ -20,8 +21,14 @@ define TYPE_COMPUTER -626563514
 define TYPE_OCCUPANCY 322782515
 define TYPE_DISPLAY -815193061
 define TYPE_LANDINGPAD -2066405918
+define TYPE_BUTTON 491845673
+define BUTTON_ACTIVATE HASH("Button Activate")
+define BUTTON_LIGHT HASH("Button Light")
+define TYPE_LIGHT 1592905386
+define DELAY 5
 # Settings
 move sp 0
+move Clock 0
 push HASH("Large Satellite Dish 1")
 push HASH("Large Satellite Dish 2")
 push HASH("Large Satellite Dish 3")
@@ -35,30 +42,56 @@ lb IsPresent TYPE_OCCUPANCY Activate 3 # 0:Average 1:Sum 2:Min 3:Max
 sb TYPE_COMPUTER On IsPresent
 sb TYPE_DISPLAY On IsPresent
 sb TYPE_DISH_LARGE On IsPresent
+breq IsPresent 1 2
+s DialP Setting 0
 # move dish
 l H DialH Setting
 l V DialV Setting
 l P DialP Setting
 
-mul Temp P 4500
+mul Temp P 5000
 sb TYPE_DISH_LARGE Setting Temp
 
 jal move_fly
+jal check_light
 jal move_dish
-jal refresh_display
+bgtal Clock DELAY display_settings
+bleal Clock DELAY display_mesure
+sub Clock Clock 1
+bge Clock 0 start # wait timer
+mul Clock DELAY 2 # reset timer in second
 j start
 
-refresh_display:
+display_settings:
+sb TYPE_DISPLAY Color 1
+s DisplayH Setting H
+s DisplayV Setting V
+lbn Temp TYPE_DISH_LARGE HashName Setting 3 # 0:Average 1:Sum 2:Min 3:Max
+s DisplayP Setting Temp
+j ra
+
+display_mesure:
+sb TYPE_DISPLAY Color 11
 lbn Temp TYPE_DISH_LARGE HashName Horizontal 3 # 0:Average 1:Sum 2:Min 3:Max
 s DisplayH Setting Temp
 lbn Temp TYPE_DISH_LARGE HashName Vertical 3 # 0:Average 1:Sum 2:Min 3:Max
 s DisplayV Setting Temp
+lb Temp TYPE_DISH_LARGE RequiredPower 1 # 0:Average 1:Sum 2:Min 3:Max
+s DisplayP Setting Temp
 j ra
 
 move_fly:
-l Temp Button Setting
+lbn Temp TYPE_BUTTON BUTTON_ACTIVATE Setting 3 # 0:Average 1:Sum 2:Min 3:Max
 beq Temp 0 ra
 sb TYPE_LANDINGPAD Activate 2
+j ra
+
+check_light:
+lbn Temp TYPE_BUTTON BUTTON_LIGHT Setting 3 # 0:Average 1:Sum 2:Min 3:Max
+beq Temp 0 ra
+lb Temp TYPE_LIGHT On 3 # 0:Average 1:Sum 2:Min 3:Max
+select Temp Temp 0 1
+sb TYPE_LIGHT On Temp
 j ra
 
 move_dish:

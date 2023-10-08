@@ -1,0 +1,49 @@
+# Silo\silo_debug_channel.ic10
+alias Mirror0 d0
+alias Mirror1 d1
+alias Lever d2
+# Constant
+define QUERY_FREE 9000000
+define QUERY_ITEM 9000101
+define QUERY_QUANTITY 9000102
+define TYPE_DISPLAY -815193061
+define DISP_REQ HASH("Display Request")
+define DISP_CHAN1 HASH("Display Channel 1")
+define DISP_CHAN2 HASH("Display Channel 2")
+define DISP_CHAN3 HASH("Display Channel 3")
+define DISP_CHAN4 HASH("Display Channel 4")
+define DISP_CHAN5 HASH("Display Channel 5")
+define DISP_CHAN6 HASH("Display Channel 6")
+define DISP_CHAN7 HASH("Display Channel 7")
+# Alias Register
+alias Action r1
+alias Hash r5
+alias Temp r15
+# Settings
+sb TYPE_DISPLAY On 1
+start:
+yield
+l r0 Lever Setting
+jal update_display
+j start
+
+update_display:
+l Temp dr0 Setting
+sbn TYPE_DISPLAY DISP_REQ Setting Temp
+l Temp dr0:0 Channel0
+s db Setting Temp
+l Temp dr0:0 Channel1
+sbn TYPE_DISPLAY DISP_CHAN1 Setting Temp
+l Temp dr0:0 Channel2
+sbn TYPE_DISPLAY DISP_CHAN2 Setting Temp
+l Temp dr0:0 Channel3
+sbn TYPE_DISPLAY DISP_CHAN3 Setting Temp
+l Temp dr0:0 Channel4
+sbn TYPE_DISPLAY DISP_CHAN4 Setting Temp
+l Temp dr0:0 Channel5
+sbn TYPE_DISPLAY DISP_CHAN5 Setting Temp
+l Temp dr0:0 Channel6
+sbn TYPE_DISPLAY DISP_CHAN6 Setting Temp
+l Temp dr0:0 Channel7
+sbn TYPE_DISPLAY DISP_CHAN7 Setting Temp
+j ra

@@ -1,0 +1,45 @@
+# Trader\dish_tracker.ic10
+alias Dish0 d0
+alias DisplayClock d1
+# Constant
+define MAX_STRENGTH 5
+define DELAY 20
+define Kp 2
+# Alias Register
+alias TargetH r0
+alias TargetV r1
+alias Strength r2
+alias Stage r12
+alias Clock r13
+alias Err r14
+alias Temp r15
+# Settings
+move Stage 1
+move TargetH 0
+move TargetV 0
+s Dish0 Horizontal TargetH
+start:
+yield
+s db Setting TargetH
+s DisplayClock Setting Clock
+l Strength Dish0 SignalStrength
+jal check_delay
+beqal Stage 1 track_horizontal
+j start
+
+check_delay:
+ble Clock 0 ra
+sub Clock Clock 1
+j ra
+
+track_horizontal:
+l Temp Dish0 Horizontal
+sap Temp TargetH Temp 0.1
+bne Temp 1 ra
+bgt Clock 0 ra
+move Clock DELAY
+sub Err MAX_STRENGTH Strength
+mul Temp Err Kp
+add TargetH TargetH Temp
+s Dish0 Horizontal TargetH
+j ra
