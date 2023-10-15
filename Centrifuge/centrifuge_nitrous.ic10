@@ -1,4 +1,4 @@
-# centrifuge_nitrous.ic10
+# Centrifuge\centrifuge_nitrous.ic10
 alias Self db
 alias DisplayQty d0 # Optionnal Display Reagents QTY
 alias DisplayThr d1 # Optionnal Display Throttle value

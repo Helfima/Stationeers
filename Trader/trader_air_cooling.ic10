@@ -1,0 +1,19 @@
+# Filtration\filtration_coolant.ic10
+alias Atmo db
+# Constant
+define TYPE_ATMO -2087593337
+define TYPE_SENSOR -1252983604
+define KELVIN 273
+define P_MIN 2000
+define P_MAX 1000
+# Alias Register
+alias IsOn r5
+alias Oxygen r14
+alias Temp r15
+# Settings
+start:
+yield
+lb Oxygen TYPE_SENSOR RatioOxygen 3 # 0:Average 1:Sum 2:Min 3:Max
+sgt IsOn Oxygen 0
+sb TYPE_ATMO Mode IsOn #Turn On/Off 0:idle 1:active
+j start

@@ -5,8 +5,10 @@ alias DialGaz d2
 alias Display d3
 # Constant
 define KELVIN 273
-define TYPE_LAND_INPUT 817945707
-define TYPE_LAND_OUTPUT -1100218307
+define TYPE_GAS_INPUT 817945707
+define TYPE_GAS_OUTPUT -1100218307
+define TYPE_LIQUID_INPUT -1216167727
+define TYPE_LIQUID_OUTPUT -1788929869
 define TYPE_ANA 435685051
 define ANA_INPUT HASH("Analyzer SettingInputput")
 define ANA_OUTPUT HASH("Analyzer Output")
@@ -17,6 +19,7 @@ alias Action r1
 alias Choose r2
 alias Tcur r3
 alias Pcur r4
+alias IsLiquid r5
 alias IsOn r10
 alias Hash r11
 alias HashOut r12
@@ -49,7 +52,6 @@ push HASH("Pump Input CO2")
 push -1616308158 # Pure Ice Water
 push HASH("Pump Output")
 push HASH("Pump Input")
-#push -874791066 # Pure Ice Steam
 s DialGaz Mode 7
 start:
 yield
@@ -60,38 +62,43 @@ l Action Button Setting
 beq Switch 1 sent
 move Choose 0
 jal read_land_gas
+sb TYPE_LIQUID_OUTPUT On IsLiquid
+beq IsLiquid 1 update_hash
 jal read_ana_gas
-jal read_data
-lb Temp TYPE_LAND_OUTPUT TotalMoles 3 # 0:Average 1:Sum 2:Min 3:Max
+lb Temp TYPE_GAS_OUTPUT TotalMoles 3 # 0:Average 1:Sum 2:Min 3:Max
 sgt IsOn Temp 0
-sb TYPE_LAND_OUTPUT On IsOn
+sb TYPE_GAS_OUTPUT On IsOn
 lbn Temp TYPE_ANA ANA_OUTPUT TotalMoles 3 # 0:Average 1:Sum 2:Min 3:Max
 sgt Temp Temp 0
 or IsOn IsOn Temp
 sbn TYPE_PUMP HashOut On IsOn
-j start
+j update_hash
 sent:
 l Choose DialGaz Setting
+update_hash:
 jal read_data
 j start
-
 read_land_gas:
-lb Temp TYPE_LAND_OUTPUT RatioVolatiles 3 # 0:Average 1:Sum 2:Min 3:Max
+lb Temp TYPE_GAS_OUTPUT RatioVolatiles 3 # 0:Average 1:Sum 2:Min 3:Max
 select Choose Temp 1 Choose
-lb Temp TYPE_LAND_OUTPUT RatioPollutant 3 # 0:Average 1:Sum 2:Min 3:Max
+lb Temp TYPE_GAS_OUTPUT RatioPollutant 3 # 0:Average 1:Sum 2:Min 3:Max
 select Choose Temp 2 Choose
-lb Temp TYPE_LAND_OUTPUT RatioOxygen 3 # 0:Average 1:Sum 2:Min 3:Max
+lb Temp TYPE_GAS_OUTPUT RatioOxygen 3 # 0:Average 1:Sum 2:Min 3:Max
 select Choose Temp 3 Choose
-lb Temp TYPE_LAND_OUTPUT RatioNitrousOxide 3 # 0:Average 1:Sum 2:Min 3:Max
+lb Temp TYPE_GAS_OUTPUT RatioNitrousOxide 3 # 0:Average 1:Sum 2:Min 3:Max
 select Choose Temp 4 Choose
-lb Temp TYPE_LAND_OUTPUT RatioNitrogen 3 # 0:Average 1:Sum 2:Min 3:Max
+lb Temp TYPE_GAS_OUTPUT RatioNitrogen 3 # 0:Average 1:Sum 2:Min 3:Max
 select Choose Temp 5 Choose
-lb Temp TYPE_LAND_OUTPUT RatioCarbonDioxide 3 # 0:Average 1:Sum 2:Min 3:Max
+lb Temp TYPE_GAS_OUTPUT RatioCarbonDioxide 3 # 0:Average 1:Sum 2:Min 3:Max
 select Choose Temp 6 Choose
-lb Temp TYPE_LAND_OUTPUT RatioWater 3 # 0:Average 1:Sum 2:Min 3:Max
+lb Temp TYPE_GAS_OUTPUT RatioWater 3 # 0:Average 1:Sum 2:Min 3:Max
 select Choose Temp 7 Choose
+lb Tcur TYPE_GAS_OUTPUT Temperature 3 # 0:Average 1:Sum 2:Min 3:Max
+lb Pcur TYPE_GAS_OUTPUT Pressure 3 # 0:Average 1:Sum 2:Min 3:Max
+seq IsLiquid Choose 7 # is water
+slt Temp Tcur 393 # < 100°c
+and IsLiquid IsLiquid Temp # liquid water < 100°c
 j ra
-
 read_ana_gas:
 lbn Temp TYPE_ANA ANA_OUTPUT RatioVolatiles 3 # 0:Average 1:Sum 2:Min 3:Max
 select Choose Temp 1 Choose
@@ -108,7 +115,6 @@ select Choose Temp 6 Choose
 lbn Temp TYPE_ANA ANA_OUTPUT RatioWater 3 # 0:Average 1:Sum 2:Min 3:Max
 select Choose Temp 7 Choose
 j ra
-
 read_data:
 add sp Choose 1
 mul sp sp 3

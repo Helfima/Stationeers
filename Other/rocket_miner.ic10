@@ -1,4 +1,4 @@
-# Rocket Controller
+# Other\rocket_miner.ic10
 alias DisplayState d0
 alias DisplayFuel d1
 alias DisplayCollectable d2

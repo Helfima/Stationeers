@@ -1,5 +1,6 @@
 move sp 400
 push 176446172   # Alien Mushroom
+push -532672323 # Switch Grass
 push -1057658015 # Wheat
 push 258339687   # Corn
 push 266654416   # Darga Fern
@@ -26,6 +27,7 @@ push -1414203269 # Winterspawn (Beta variant)
 
 move sp 450
 push 0100503600 # Alien Mushroom
+push 1100504001 # Switch Grass
 push 1100503600 # Wheat
 push 1100507200 # Corn
 push 0100504800 # Darga Fern

@@ -48,6 +48,7 @@ query_end:
 j loop_memory
 free:
 s dr0 Setting QUERY_FREE # Write line
+yield
 j loop_memory
 
 query_list:

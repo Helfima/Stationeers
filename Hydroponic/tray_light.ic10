@@ -1,5 +1,4 @@
 # Hydroponic\tray_light.ic10
-alias Tray0 d0
 alias DisplayMin d1
 alias DisplaySec d2
 alias DisplayEff d3
@@ -7,6 +6,7 @@ alias DisplayMat d4
 alias DisplayTim d5
 # Constant
 define TYPE_LIGHT -1758710260
+define TYPE_TRAY -1841632400
 define DAY 20 # 20 min
 define DELAY 300
 # Alias Register
@@ -14,8 +14,7 @@ alias IsOn r0
 alias IsOccupied r1
 alias DarkTime r2
 alias LastEfficiency r3
-alias Err r4
-alias Time r5
+alias Clock r5
 alias IsModel r6
 alias Seed r7
 alias Light r8
@@ -24,25 +23,25 @@ alias TimeGrowth r10
 alias Hash r11
 alias Min r12
 alias Sec r13
-alias Clock r14
+alias Timer r14
 alias Temp r15
 # Settings
 move LastEfficiency 0
-move Time 0
+move Timer 0
 move IsModel 0
 start:
 yield
 #s db Setting Darkness
-ls IsOccupied Tray0 0 Occupied
+lbs IsOccupied TYPE_TRAY 0 Occupied 3 # 0:Average 1:Sum 2:Min 3:Max
 jal read_model
 bdseal DisplayMin check_clock
 bdseal DisplayMat check_maturity
 bdseal DisplayEff check_efficiency
 bdseal DisplayTim check_timer
 jal check_light
-sub Time Time 1
-bge Time 0 start # wait timer
-mul Time DELAY 2 # reset timer in second
+sub Timer Timer 1
+bge Timer 0 start # wait timer
+mul Timer DELAY 2 # reset timer in second
 j start
 
 check_light:
@@ -51,7 +50,7 @@ mul DarkTime Darkness DELAY
 div DarkTime DarkTime DAY
 s db Setting DarkTime
 mul DarkTime DarkTime 2
-sgt IsOn Time DarkTime # on if not darkness
+sgt IsOn Timer DarkTime # on if not darkness
 sgt Temp Light 0
 select IsOn Temp IsOn 0 # only dark
 sgt Temp Darkness 0
@@ -81,14 +80,14 @@ j ra
 
 check_maturity:
 s DisplayMat On IsOccupied
-ls Temp Tray0 0 Growth
+lbs Temp TYPE_TRAY 0 Growth 3 # 0:Average 1:Sum 2:Min 3:Max
 s DisplayMat Setting Temp
 s DisplayMat Color 5
 j ra
 
 check_efficiency:
 s DisplayEff On IsOccupied
-ls Temp Tray0 0 Efficiency
+lbs Temp TYPE_TRAY 0 Efficiency 3 # 0:Average 1:Sum 2:Min 3:Max
 s DisplayEff Setting Temp
 slt Temp LastEfficiency Temp
 select Temp Temp 4 2
@@ -98,17 +97,16 @@ j ra
 
 check_timer:
 s DisplayTim On IsOccupied
-div Temp Time 2
+div Temp Timer 2
 trunc Temp Temp
 s DisplayTim Setting Temp
 s DisplayTim Color 1
 j ra
 
 read_model:
-ls IsOccupied Tray0 0 Occupied # Tray Occupied
 beq IsOccupied 0 reset_model # Empty
 beq IsModel 1 ra # already
-ls Hash Tray0 0 PrefabHash # Tray Hash
+lbs Hash TYPE_TRAY 0 PrefabHash 3 # 0:Average 1:Sum 2:Min 3:Max
 move sp -4
 loop_model:
 add sp sp 5 # decale index

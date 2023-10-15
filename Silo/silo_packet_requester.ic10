@@ -76,6 +76,7 @@ s Display Setting Temp
 j ra
 
 request_item:
+beq Stage 1 ra
 l Qty DialQuantity Setting
 mul Qty Qty QTY
 l Temp Mirror Setting # Read Memory Provider via mirror
