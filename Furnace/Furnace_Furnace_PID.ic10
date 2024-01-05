@@ -22,9 +22,8 @@ define TYPE_PUMP -321403609
 define TYPE_MIXER 2104106366
 define TYPE_LEVER 1220484876
 define TYPE_BUTTON 491845673
-define TYPE_DIAL 554524804
-define DIAL_INGOT HASH("Dial Ingot")
-define DIAL_QUANTITY HASH("Dial Quantity")
+define DIAL_INGOT_ID $19DA8
+define DIAL_QUANTITY_ID $19DAA
 define FACTOR 200
 define Kp 0.5
 define Ki 0.001
@@ -46,7 +45,7 @@ lb Temp TYPE_BUTTON Setting 3 # 0:Average 1:Sum 2:Min 3:Max
 brne Temp 1 3
 sb TYPE_FURNACE Open 1
 yield
-lbn sp TYPE_DIAL DIAL_INGOT Setting 3 # 0:Average 1:Sum 2:Min 3:Max
+ld sp DIAL_INGOT_ID Setting
 mul sp sp 11
 move r15 11
 add sp sp r15
@@ -81,7 +80,6 @@ add Temp Temp 50
 sb TYPE_MIXER Setting Temp #Mixer
 #Check Furnace
 lb Pcur TYPE_FURNACE Pressure 3 # 0:Average 1:Sum 2:Min 3:Max
-lb Tcur TYPE_FURNACE Temperature 3 # 0:Average 1:Sum 2:Min 3:Max
 move r8 6
 move r10 -1
 jal regulation
@@ -92,7 +90,7 @@ jal regulation
 sb TYPE_FURNACE SettingInput Temp
 j start
 finally:
-lbn Temp TYPE_DIAL DIAL_QUANTITY Setting 3 # 0:Average 1:Sum 2:Min 3:Max
+ld Temp DIAL_QUANTITY_ID Setting
 mul Temp1 Temp FACTOR
 lb Temp TYPE_FURNACE Reagents 3 # 0:Average 1:Sum 2:Min 3:Max
 blt Temp Temp1 ra
@@ -102,6 +100,7 @@ lb Temp TYPE_FURNACE Mode 3 # 0:Average 1:Sum 2:Min 3:Max
 sb TYPE_FURNACE Open Temp
 breq Temp 1 -2
 sb TYPE_LEVER Open 0
+sb TYPE_FURNACE Open 0
 j closeAll
 regulation:
 add r9 r8 1 #Registre suivant

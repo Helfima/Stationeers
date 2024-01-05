@@ -23,9 +23,8 @@ define TYPE_FURNACE 545937711
 define TYPE_BUTTON 491845673
 define TYPE_LEVER 1220484876
 define TYPE_SENSOR -1252983604
-define TYPE_DIAL 554524804
-define DIAL_INGOT HASH("Dial Ingot")
-define DIAL_QUANTITY HASH("Dial Quantity")
+define DIAL_INGOT_ID $19DA8
+define DIAL_QUANTITY_ID $19DAA
 define FACTOR 200
 define QUERY_FREE 9000000
 define QUERY_ITEM 9000101
@@ -33,13 +32,13 @@ define QUERY_ITEM 9000101
 s db Setting 0
 move Index 0
 move Active 0
-sbn TYPE_DIAL DIAL_INGOT Mode 17
-sbn TYPE_DIAL DIAL_QUANTITY Mode 4
+sd DIAL_INGOT_ID Mode 17
+sd DIAL_QUANTITY_ID Mode 4
 start:
 yield
-lbn Temp TYPE_DIAL DIAL_QUANTITY Setting 3 # 0:Average 1:Sum 2:Min 3:Max
+ld Temp DIAL_QUANTITY_ID Setting
 mul Factor Temp FACTOR
-lbn sp TYPE_DIAL DIAL_INGOT Setting 3 # 0:Average 1:Sum 2:Min 3:Max
+ld sp DIAL_INGOT_ID Setting
 jal loadValues
 lb Temp TYPE_LEVER Setting 1 # Read unique lever
 jal checkActive
@@ -88,6 +87,7 @@ blt Index 5 loopIndex
 move Active 2
 j ra
 checkRoom:
+bdns d3 ra
 lb Temp TYPE_SENSOR Temperature 1 # Device Sensor
 sub Temp 450 Temp # Temperature
 mul Temp Temp 50 # Velocity
@@ -95,6 +95,7 @@ min Temp Temp 10 # Maximum
 s PumpIn Setting Temp
 sgt Temp Temp 0
 s PumpIn On Temp
+bdns d4 ra
 lb Temp TYPE_SENSOR Pressure 1 # Device Sensor
 sub Temp Temp 10 # Room Pressure
 mul Temp Temp 50 # Velocity

@@ -17,25 +17,23 @@ alias Factor r14
 alias Temp r15
 # Constant
 define TYPE_LEVER 1220484876
-define TYPE_DIAL 554524804
-define DIAL_INGOT HASH("Dial Ingot")
-define DIAL_QUANTITY HASH("Dial Quantity")
-define TYPE_DISPLAY -815193061 # Small Display
-define DISP_ORE1 HASH("Display Ore 1")
-define DISP_ORE2 HASH("Display Ore 2")
-define DISP_ORE3 HASH("Display Ore 3")
+define DIAL_INGOT_ID $19DA8
+define DIAL_QUANTITY_ID $19DAA
+define DISP_ORE1_ID $19DB0
+define DISP_ORE2_ID $19DAF
+define DISP_ORE3_ID $19DAE
 define FACTOR 200
 define CLOCK 3
 # Settings
 move Type 0
 move Timer CLOCK
-sbn TYPE_DIAL DIAL_INGOT Mode 17
-sbn TYPE_DIAL DIAL_QUANTITY Mode 4
+sd DIAL_INGOT_ID Mode 17
+sd DIAL_QUANTITY_ID Mode 4
 start:
 yield
-lbn Temp TYPE_DIAL DIAL_QUANTITY Setting 3 # 0:Average 1:Sum 2:Min 3:Max
+ld Temp DIAL_QUANTITY_ID Setting
 mul Factor Temp FACTOR
-lbn sp TYPE_DIAL DIAL_INGOT Setting 3 # 0:Average 1:Sum 2:Min 3:Max
+ld sp DIAL_INGOT_ID Setting
 lb Process TYPE_LEVER Setting 1 # 0:Average 1:Sum 2:Min 3:Max
 s db Setting Type
 jal loadValues
@@ -48,18 +46,18 @@ move Hash Hash1
 jal read_reagents
 select DColor Type 1 10
 select Qty Type Qty1 Qty
-sbn TYPE_DISPLAY DISP_ORE1 Setting Qty
-sbn TYPE_DISPLAY DISP_ORE1 Color DColor
+sd DISP_ORE1_ID Setting Qty
+sd DISP_ORE1_ID Color DColor
 move Hash Hash2
 jal read_reagents
 select Qty Type Qty2 Qty
-sbn TYPE_DISPLAY DISP_ORE2 Setting Qty
-sbn TYPE_DISPLAY DISP_ORE2 Color DColor
+sd DISP_ORE2_ID Setting Qty
+sd DISP_ORE2_ID Color DColor
 move Hash Hash3
 jal read_reagents
 select Qty Type Qty3 Qty
-sbn TYPE_DISPLAY DISP_ORE3 Setting Qty
-sbn TYPE_DISPLAY DISP_ORE3 Color DColor
+sd DISP_ORE3_ID Setting Qty
+sd DISP_ORE3_ID Color DColor
 j start
 
 loadValues:

@@ -15,26 +15,25 @@ alias Tcur r12
 alias Pcur r13
 #Constant
 define TYPE_FURNACE 545937711
-define TYPE_DIAL 554524804
-define DIAL_INGOT HASH("Dial Ingot")
-define DIAL_QUANTITY HASH("Dial Quantity")
 define TYPE_DISPLAY -815193061 # Small Display
-define DISP_PMIN HASH("Display Pmin")
-define DISP_PCUR HASH("Display P")
-define DISP_PMAX HASH("Display Pmax")
-define DISP_TMIN HASH("Display Tmin")
-define DISP_TCUR HASH("Display T")
-define DISP_TMAX HASH("Display Tmax")
+define DIAL_INGOT_ID $19DA8
+define DIAL_QUANTITY_ID $19DAA
+define DISP_PMIN_ID $19C54
+define DISP_PCUR_ID $19C55
+define DISP_PMAX_ID $19C56
+define DISP_TMIN_ID $19C51
+define DISP_TCUR_ID $19C52
+define DISP_TMAX_ID $19C53
 define FACTOR 800
 #settings
 sb TYPE_DISPLAY On 1
-sbn TYPE_DISPLAY DISP_PMIN Color -1
-sbn TYPE_DISPLAY DISP_PMAX Color 4
-sbn TYPE_DISPLAY DISP_TMIN Color -1
-sbn TYPE_DISPLAY DISP_TMAX Color 4
+sd DISP_PMIN_ID Color -1
+sd DISP_PMAX_ID Color 4
+sd DISP_TMIN_ID Color -1
+sd DISP_TMAX_ID Color 4
 start:
 yield
-lbn sp TYPE_DIAL DIAL_INGOT Setting 3 # 0:Average 1:Sum 2:Min 3:Max
+ld sp DIAL_INGOT_ID Setting
 s db Setting sp
 lb Tcur TYPE_FURNACE Temperature 1
 lb Pcur TYPE_FURNACE Pressure 1
@@ -43,32 +42,32 @@ floor Pcur Pcur
 jal loadValues
 jal setPressureColor
 jal setTemperatureColor
-sbn TYPE_DISPLAY DISP_PMIN Setting Pmin
-sbn TYPE_DISPLAY DISP_PMAX Setting Pmax
-sbn TYPE_DISPLAY DISP_TMIN Setting Tmin
-sbn TYPE_DISPLAY DISP_TMAX Setting Tmax
+sd DISP_PMIN_ID Setting Pmin
+sd DISP_PMAX_ID Setting Pmax
+sd DISP_TMIN_ID Setting Tmin
+sd DISP_TMAX_ID Setting Tmax
 j start
 
 setPressureColor:
-sbn TYPE_DISPLAY DISP_PCUR Setting Pcur
+sd DISP_PCUR_ID Setting Pcur
 sgt r14 Pcur Pmin
 sgt r15 Pcur Pmax
 add r15 r15 r14
 mul r15 r15 2
 brne r15 0 2
 move r15 -1 # fix color blue
-sbn TYPE_DISPLAY DISP_PCUR Color r15 #0:Blue 2:Green 4:Red
+sd DISP_PCUR_ID Color r15 #0:Blue 2:Green 4:Red
 j ra
 
 setTemperatureColor:
-sbn TYPE_DISPLAY DISP_TCUR Setting Tcur
+sd DISP_TCUR_ID Setting Tcur
 sgt r14 Tcur Tmin
 sgt r15 Tcur Tmax
 add r15 r15 r14
 mul r15 r15 2
 brne r15 0 2
 move r15 -1 # fix color blue
-sbn TYPE_DISPLAY DISP_TCUR Color r15 #0:Blue 2:Green 4:Red
+sd DISP_TCUR_ID Color r15 #0:Blue 2:Green 4:Red
 j ra
 
 loadValues:

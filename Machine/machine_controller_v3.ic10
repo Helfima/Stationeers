@@ -17,19 +17,18 @@ define TYPE_DIAL 554524804
 define TYPE_LIGHT -1535893860
 define TYPE_STACKER 1585641623 # StructureStackerReverse
 define TYPE_DISPLAY -815193061 # StructureConsoleLED5
-define DISP_MACHINE HASH("Display Machine")
-define DISP_STACKER HASH("Display Stacker")
-define TYPE_MEMORY -851746783 # StructureLogicMemory
-define MEMO_MACHINE HASH("Memory Machine")
-define MEMO_STACKER HASH("Memory Stacker")
+define DISP_MACHINE_ID $1B764
+define DISP_STACKER_ID $1B765
+define MEMO_MACHINE_ID $1B76E
+define MEMO_STACKER_ID $1B76D
 define TYPE_TRIGGER 1269458680 # Medium:1269458680 large:-2008706143
 define TYPE_MIRROR 2096189278 # Mirror link Transformer
 define DELAY 30
 #Settings
 sb TYPE_DIAL Mode 5
 sb TYPE_DISPLAY On 1
-sbn TYPE_DISPLAY DISP_MACHINE Color 5
-sbn TYPE_DISPLAY DISP_STACKER Color 10
+sd DISP_MACHINE_ID Color 5
+sd DISP_STACKER_ID Color 10
 sb TYPE_STACKER On 1
 sb TYPE_STACKER Setting 50
 move IsRunning 0
@@ -49,19 +48,19 @@ lb Dial TYPE_DIAL Setting 1 # Read unique dial
 # Light
 sb TYPE_LIGHT On IsActivate
 # Display Machine
-sbn TYPE_DISPLAY DISP_MACHINE Mode IsActivate
-sbn TYPE_DISPLAY DISP_MACHINE Setting Completion
-sbn TYPE_MEMORY MEMO_MACHINE Setting HashMachine
+sd DISP_MACHINE_ID Mode IsActivate
+sd DISP_MACHINE_ID Setting Completion
+sd MEMO_MACHINE_ID Setting HashMachine
 # Display Stacker
-sbn TYPE_DISPLAY DISP_STACKER Setting Qty
-sbn TYPE_MEMORY MEMO_STACKER Setting HashStacker
+sd DISP_STACKER_ID Setting Qty
+sd MEMO_STACKER_ID Setting HashStacker
 jal timerOff
 jal checkStack
 j start
 
 timerOff:
 beq IsActivate 1 ra
-sbn TYPE_DISPLAY DISP_MACHINE Setting Timer
+sd DISP_MACHINE_ID Setting Timer
 blt Timer 0 ra
 sub Timer Timer 1
 bge Timer 0 ra

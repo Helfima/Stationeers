@@ -1,20 +1,69 @@
 # Generators\generator_fuel.ic10
 # Constant
-define TYPE_LEVER 1220484876
-define TYPE_DIAL 554524804
-define TYPE_PUMP -321403609
-define TYPE_GENERATOR 1165997963
+define GENERATOR_ID $23804
+define PUMP_ID $23959
+define LEVER_ID $23B45
+define SENSOR_ID $2411A
+define ANA_ID $23E45
+define PUMP_OUT_ID $247CC
+define PUMP_IN_ID $24788
+define TMAX 40
+define PMAX 100
+define P_ROOM_MAX 100
+define KELVIN 273
+define Kp 1
+define Kd 0
+define Ki 0
 # Alias Register
 alias IsOn r0
 alias Choose r1
+alias Tcur r2
+alias Pcur r3
+alias Err r4
+alias LastErr r5
+alias IErr r6
+alias Tmax r13
+alias Cmd r14
 alias Temp r15
 # Settings
-sb TYPE_DIAL Mode 100
+add Tmax TMAX KELVIN
+sd PUMP_ID Setting 0.1
 start:
 yield
-lb IsOn TYPE_LEVER Open 3 # 0:Average 1:Sum 2:Min 3:Max
-lb Choose TYPE_DIAL Setting 3 # 0:Average 1:Sum 2:Min 3:Max
-sb TYPE_GENERATOR On IsOn
-sb TYPE_PUMP On IsOn
-sb TYPE_PUMP Setting Choose
+ld IsOn LEVER_ID Open
+sd GENERATOR_ID On IsOn
+sd PUMP_ID On IsOn
+jal check_generator
+jal check_vent
 j start
+
+check_generator:
+ld Pcur ANA_ID Pressure
+sub Err PMAX Pcur
+mul Cmd Err Kp
+sd PUMP_ID Setting Cmd
+j ra
+
+check_room:
+ld Tcur SENSOR_ID Temperature
+ld Pcur SENSOR_ID Pressure
+sub Err Pcur P_ROOM_MAX
+mul Cmd Err Kp
+sd PUMP_OUT_ID On 1
+sd PUMP_OUT_ID Setting Cmd
+sub Err Tcur Tmax
+mul Cmd Err Kp
+sd PUMP_IN_ID On 1
+sd PUMP_IN_ID Setting Cmd
+j ra
+
+check_vent:
+ld Tcur SENSOR_ID Temperature
+ld Pcur SENSOR_ID Pressure
+sub Err Pcur P_ROOM_MAX
+sgt Cmd Err 0
+sd PUMP_OUT_ID On Cmd
+sub Err Tcur Tmax
+sgt Cmd Err 0
+sd PUMP_IN_ID On Cmd
+j ra

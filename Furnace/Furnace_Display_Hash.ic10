@@ -9,30 +9,28 @@ alias Count r5
 alias IsOn r6
 # Constant
 define TYPE_FURNACE 545937711
-define TYPE_DIAL 554524804
-define DIAL_INGOT HASH("Dial Ingot")
-define DIAL_QUANTITY HASH("Dial Quantity")
 define TYPE_DISPLAY -815193061 # Small Display
-define DISP_REAGENTS HASH("Display Reagents")
 define TYPE_MONITOR 801677497
 define TYPE_OCCUPANCY 322782515
-define TYPE_MEMORY -851746783
-define MEMO_ORE1 HASH("Memory Ore 1")
-define MEMO_ORE2 HASH("Memory Ore 2")
-define MEMO_ORE3 HASH("Memory Ore 3")
+define DIAL_INGOT_ID $19DA8
+define DIAL_QUANTITY_ID $19DAA
+define DISP_REAGENTS_ID $19DB1
+define MEMO_ORE1_ID $19DB6
+define MEMO_ORE2_ID $19DB7
+define MEMO_ORE3_ID $19DB8
 # Settings
-sbn TYPE_DISPLAY DISP_REAGENTS Color 10
+sd DISP_REAGENTS_ID Color 10
 start:
 yield
 jal check_occupancy
-lbn sp TYPE_DIAL DIAL_INGOT Setting 3 # 0:Average 1:Sum 2:Min 3:Max
+ld sp DIAL_INGOT_ID Setting
 jal loadValues
 s db Setting Hash
 lb Count TYPE_FURNACE Reagents 1 # 0:Average 1:Sum 2:Min 3:Max
-sbn TYPE_DISPLAY DISP_REAGENTS Setting Count
-sbn TYPE_MEMORY MEMO_ORE1 Setting Hash1
-sbn TYPE_MEMORY MEMO_ORE2 Setting Hash2
-sbn TYPE_MEMORY MEMO_ORE3 Setting Hash3
+sd DISP_REAGENTS_ID Setting Count
+sd MEMO_ORE1_ID Setting Hash1
+sd MEMO_ORE2_ID Setting Hash2
+sd MEMO_ORE3_ID Setting Hash3
 j start
 
 loadValues:
