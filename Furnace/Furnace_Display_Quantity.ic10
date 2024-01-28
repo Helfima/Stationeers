@@ -17,11 +17,11 @@ alias Factor r14
 alias Temp r15
 # Constant
 define TYPE_LEVER 1220484876
-define DIAL_INGOT_ID $19DA8
-define DIAL_QUANTITY_ID $19DAA
-define DISP_ORE1_ID $19DB0
-define DISP_ORE2_ID $19DAF
-define DISP_ORE3_ID $19DAE
+define DIAL_INGOT_ID $10E60
+define DIAL_QUANTITY_ID $10E61
+define DISP_ORE1_ID $C34D
+define DISP_ORE2_ID $C342
+define DISP_ORE3_ID $C343
 define FACTOR 200
 define CLOCK 3
 # Settings
@@ -41,7 +41,6 @@ sub Timer Timer 1
 brgt Timer 0 3
 select Type Type 0 1
 move Timer CLOCK
-select Type Process Type 1 # bypass type
 move Hash Hash1
 jal read_reagents
 select DColor Type 1 10

@@ -3,8 +3,7 @@ alias Atmo db
 alias Analyser d0
 alias Storage d1
 # Constant
-define MOLES_MIN 1
-define P_MIN 10 # 10kPa freeze at 6.3kPa
+define P_MIN 0 # freeze at 6.3kPa
 define T_TARGET 293 # 20°C
 define PERCENT 0.01
 define T_INPUT_MAX 200 # Degre celcius
@@ -13,19 +12,23 @@ define P_OUTPUT_MAX 6000 # kpa
 define KELVIN 273
 define TYPE_VALVE -1280984102
 define TYPE_PUMP -321403609
+define TYPE_REGULATOR -321403609
 # Alias Register
 alias IsOn r0
-alias Temp r1
-alias Moles r2
-alias RatioIn r3
-alias RatioOut r4
-alias IsRatio r5
-alias IsCoolant r6
-alias TCoolant r7
-alias Pcur r8
-alias Delta r9
-alias TInputMax r12
-alias TOutputMax r13
+alias Moles r1
+alias RatioIn r2
+alias IsRatio r4
+alias IsCoolant r5
+alias TCoolant r6
+alias Pcur r7
+alias Delta r8
+alias Filter1 r9
+alias HashFilter r10
+alias HashFilterM r11
+alias HashFilterL r12
+alias TInputMax r13
+alias TOutputMax r14
+alias Temp r15
 # Settings
 #s Atmo On 0 #Turn Off
 start:
@@ -37,49 +40,64 @@ add TInputMax T_INPUT_MAX KELVIN # Degre kelvin
 add TOutputMax T_OUTPUT_MAX KELVIN # Degre kelvin
 l Pcur Atmo PressureInput
 blt Pcur P_MIN bypass #Turn Off
-l Moles Atmo TotalMolesOutput
-brgt Moles 0 3 #check if empty
-move IsOn 1
-j bypass
 l Temp Atmo TemperatureInput
 bgt Temp TInputMax bypass #Turn Off
 #check ratio
+ls Filter1 Atmo 0 PrefabHash
 move IsOn 0
 # check Oxygen
-l RatioOut Atmo RatioOxygenOutput
+move HashFilter HASH("ItemGasFilterOxygen")
+move HashFilterM HASH("ItemGasFilterOxygenM")
+move HashFilterL HASH("ItemGasFilterOxygenL")
 l RatioIn Atmo RatioOxygenInput
 jal check_ratio
 # check Pollutant
-l RatioOut Atmo RatioPollutantOutput
+move HashFilter HASH("ItemGasFilterPollutants")
+move HashFilterM HASH("ItemGasFilterPollutantsM")
+move HashFilterL HASH("ItemGasFilterPollutantsL")
 l RatioIn Atmo RatioPollutantInput
 jal check_ratio
 # check Volatiles
-l RatioOut Atmo RatioVolatilesOutput
+move HashFilter HASH("ItemGasFilterVolatiles")
+move HashFilterM HASH("ItemGasFilterVolatilesM")
+move HashFilterL HASH("ItemGasFilterVolatilesL")
 l RatioIn Atmo RatioVolatilesInput
 jal check_ratio
 # check CarbonDioxide
-l RatioOut Atmo RatioCarbonDioxideOutput
+move HashFilter HASH("ItemGasFilterCarbonDioxide")
+move HashFilterM HASH("ItemGasFilterCarbonDioxideM")
+move HashFilterL HASH("ItemGasFilterCarbonDioxideL")
 l RatioIn Atmo RatioCarbonDioxideInput
 jal check_ratio
 # check Nitrogen
-l RatioOut Atmo RatioNitrogenOutput
+move HashFilter HASH("ItemGasFilterNitrogen")
+move HashFilterM HASH("ItemGasFilterNitrogenM")
+move HashFilterL HASH("ItemGasFilterNitrogenL")
 l RatioIn Atmo RatioNitrogenInput
 jal check_ratio
 # check NitrousOxide
-l RatioOut Atmo RatioNitrousOxideOutput
+move HashFilter HASH("ItemGasFilterNitrousOxide")
+move HashFilterM HASH("ItemGasFilterNitrousOxideM")
+move HashFilterL HASH("ItemGasFilterNitrousOxideL")
 l RatioIn Atmo RatioNitrousOxideInput
 jal check_ratio
-# check Steam
-l RatioOut Atmo RatioSteamOutput
-l RatioIn Atmo RatioSteamInput
+# check Water
+move HashFilter HASH("ItemGasFilterWater")
+move HashFilterM HASH("ItemGasFilterWaterM")
+move HashFilterL HASH("ItemGasFilterWaterL")
+l RatioIn Atmo RatioWaterInput
 jal check_ratio
 bypass:
 #s db Setting 999
 s Atmo Mode IsOn #Turn On/Off 0:idle 1:active
+sb TYPE_PUMP On IsOn
 j start
 
 check_ratio:
-beq RatioOut 0 ra
+breq Filter1 HashFilter 4
+breq Filter1 HashFilterM 3
+breq Filter1 HashFilterL 2
+j ra
 sgt IsRatio RatioIn PERCENT
 or IsOn IsOn IsRatio
 j ra
@@ -101,7 +119,22 @@ l Temp Atmo TemperatureOutput
 brgt Temp TOutputMax 3
 l Temp Storage Pressure
 brlt Temp P_OUTPUT_MAX 3
-sb TYPE_PUMP On 0 # pump turn off
+sb TYPE_REGULATOR On 0 # pump turn off
 j ra
-sb TYPE_PUMP On 1 # pump turn on
+sb TYPE_REGULATOR On 1 # pump turn on
 j ra
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

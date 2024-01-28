@@ -21,63 +21,74 @@ alias Stack r10
 define TYPE_DIAL 554524804
 define TYPE_LIGHT -1535893860
 define TYPE_TRIGGER 1269458680 # Medium:1269458680 large:-2008706143
-define TYPE_TRANSFO1 -890946730 # Transformer:-890946730 reverted:1054059374
-define TYPE_TRANSFO2 1054059374 # Transformer:-890946730 reverted:1054059374
+define TYPE_MIRROR 2096189278 # Mirror link Transformer
+define DELAY 30 # init timer
 #Settings
+s Dial TYPE_DIAL Mode 4
+brdns DisplayMachine 3
 s DisplayMachine On 1
 s DisplayMachine Color 5
+brdns DisplayStacker 3
 s DisplayStacker On 1
 s DisplayStacker Color 10
+brdns Stacker 3
 s Stacker On 1
 s Stacker Setting 50
 move IsRunning 0
 move Stack 0
 start:
 yield
-s db Setting Stack
-jal checkTriggerPlate
+s db Setting Timer
+jal check_trigger_plate
 beq IsRunning 0 start
-l Completion Machine CompletionRatio
-l HashMachine Machine RecipeHash
-l IsActivate Machine Activate
-ls Qty Stacker 2 Quantity
-ls HashStacker Stacker 2 OccupantHash
-ls IsOccupied Stacker 1 Occupied
 lb Dial TYPE_DIAL Setting 1 # Read unique dial
+jal check_machine
+jal timer_off
+jal check_stacker
 # Light
 sb TYPE_LIGHT On IsActivate
-# Display Machine
-s DisplayMachine Mode IsActivate
-s DisplayMachine Setting Completion
-s MemoryMachine Setting HashMachine
-# Display Stacker
-s DisplayStacker Setting Qty
-s MemoryStacker Setting HashStacker
-jal timerOff
-jal checkStack
 j start
 
-timerOff:
+timer_off:
 beq IsActivate 1 ra
+brdns DisplayMachine 2
 s DisplayMachine Setting Timer
 blt Timer 0 ra
 sub Timer Timer 1
 bge Timer 0 ra
+sb TYPE_MIRROR On 0
+bdns Stacker ra
 s Stacker Activate 1 # Clear stacker
-sb TYPE_TRANSFO1 On 0
-sb TYPE_TRANSFO2 On 0
 j ra
 
-checkTriggerPlate:
+check_trigger_plate:
 lb IsTrigger TYPE_TRIGGER Setting 3 # 0:Average 1:Sum 2:Min 3:Max
 bne IsTrigger 1 ra
-sb TYPE_TRANSFO1 On 1
-sb TYPE_TRANSFO2 On 1
+sb TYPE_MIRROR On 1
 move IsRunning 1
-move Timer 60
+move Timer DELAY
 j ra
 
-checkStack:
+check_machine:
+l Completion Machine CompletionRatio
+l HashMachine Machine RecipeHash
+l IsActivate Machine Activate
+brdns DisplayMachine 3
+s DisplayMachine Mode IsActivate
+s DisplayMachine Setting Completion
+brdns MemoryMachine 2
+s MemoryMachine Setting HashMachine
+j ra
+
+check_stacker:
+bdns Stacker ra
+ls Qty Stacker 2 Quantity
+ls HashStacker Stacker 2 OccupantHash
+ls IsOccupied Stacker 1 Occupied
+brdns DisplayStacker 2
+s DisplayStacker Setting Qty
+brdns MemoryStacker 2
+s MemoryStacker Setting HashStacker
 brne IsActivate 0 2
 s Stacker ClearMemory 1
 beq Dial 0 ra # Continious Mode

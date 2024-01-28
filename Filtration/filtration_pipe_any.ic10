@@ -1,0 +1,17 @@
+# Filtration\filtration_pipe_any.ic10
+# Filtration pipe if something in the input
+alias Atmo db
+# Constant
+define TYPE_PUMP -321403609
+# Alias Register
+alias IsOn r0
+alias Moles r1
+alias Temp r15
+# Settings
+start:
+yield
+l Temp Atmo TotalMolesInput
+sgt IsOn Temp 0
+s Atmo Mode IsOn #Turn On/Off 0:idle 1:active
+sb TYPE_PUMP On IsOn
+j start

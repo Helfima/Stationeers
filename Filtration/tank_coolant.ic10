@@ -1,14 +1,13 @@
 # Filtration\tank_coolant.ic10
 # Constant
-define TYPE_ANALYSER 435685051
-define ANA_TANK HASH("Analyzer Tank")
-define ANA_EXTERNAL HASH("Analyzer External")
-define ANA_COOLANT HASH("Analyzer Coolant")
-define TYPE_VALVE -1280984102
-define VAL_EXTERNAL HASH("Valve External")
-define VAL_COOLANT HASH("Valve Coolant")
-define VAL_FILTRATION HASH("Valve Filtration")
-define TYPE_PUMP 1310794736
+define TANK_SOURCE_ID $C482
+define TANK_TARGET_ID $C482
+define ANA_EXTERNAL_ID $C4EC
+define VAL_EXTERNAL_ID $C4F5
+define ANA_COOLANT_ID $C4EE
+define VAL_COOLANT_ID $C4F3
+define VAL_FILTRATION_ID $CA6A
+define PUMP_ID $C51C
 define TMAX 293
 define TMIN 283
 define PMAX 1000
@@ -16,18 +15,21 @@ define PMIN 100
 # Alias Register
 alias IsCooling r0
 alias IsPumping r1
-alias Pcur r2
-alias Tcur r3
-alias TCooling r4
-alias PPumping r5
+alias PScur r2
+alias Pcur r3
+alias Tcur r4
+alias TCooling r5
+alias PPumping r6
+alias HasSource r13
 alias IsOn r14
 alias Temp r15
 # Settings
 start:
 yield
-s db Setting PPumping
-lbn Pcur TYPE_ANALYSER ANA_TANK Pressure 3 # 0:Average 1:Sum 2:Min 3:Max
-lbn Tcur TYPE_ANALYSER ANA_TANK Temperature 3 # 0:Average 1:Sum 2:Min 3:Max
+s db Setting TCooling
+ld PScur TANK_SOURCE_ID Pressure
+ld Pcur TANK_TARGET_ID Pressure
+ld Tcur TANK_TARGET_ID Temperature
 sgt IsCooling Tcur TCooling
 select TCooling IsCooling TMIN TMAX
 jal check_external
@@ -37,26 +39,28 @@ jal check_pump
 j start
 
 check_external:
-lbn Temp TYPE_ANALYSER ANA_EXTERNAL Temperature 3 # 0:Average 1:Sum 2:Min 3:Max
+ld Temp ANA_EXTERNAL_ID Temperature
 slt Temp Temp Tcur
 and IsOn IsCooling Temp
-sbn TYPE_VALVE VAL_EXTERNAL On IsOn
+sd VAL_EXTERNAL_ID On IsOn
 j ra
 
 check_coolant:
-lbn Temp TYPE_ANALYSER ANA_COOLANT Temperature 3 # 0:Average 1:Sum 2:Min 3:Max
+ld Temp ANA_COOLANT_ID Temperature
 slt Temp Temp Tcur
 and IsOn IsCooling Temp
-sbn TYPE_VALVE VAL_COOLANT On IsOn
+sd VAL_COOLANT_ID On IsOn
 j ra
 
 check_filtration:
 sle IsOn Tcur TMAX
-sbn TYPE_VALVE VAL_FILTRATION On IsOn
+sd VAL_FILTRATION_ID On IsOn
 j ra
 
 check_pump:
+sgt HasSource PScur 50
 slt IsPumping Pcur PPumping
+and IsPumping IsPumping HasSource
 select PPumping IsPumping PMAX PMIN
-sb TYPE_PUMP On IsPumping
+sd PUMP_ID On IsPumping
 j ra

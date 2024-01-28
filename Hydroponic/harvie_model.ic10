@@ -29,7 +29,7 @@ move sp 450
 push 0100503600 # Alien Mushroom
 push 1100504001 # Switch Grass
 push 1100503600 # Wheat
-push 1100507200 # Corn
+push 1080307200 # Corn
 push 0100504800 # Darga Fern
 push 0100500720 # Endothermic Plant Creative
 push 1080502400 # Fern
@@ -40,10 +40,10 @@ push 0100500480 # Flower (Red)
 push 0100500480 # Flower (Yellow)
 push 0100503600 # Hades Flower (Alpha strain)
 push 0100506000 # Hades Flower (Beta strain)
-push 1002803600 # Mushroom
+push 1001803600 # Mushroom
 push 0100504800 # Peace Lily
-push 1100302400 # Potato
-push 1100514400 # Pumpkin
+push 1050303000 # Potato
+push 1080214400 # Pumpkin
 push 1100503600 # Rize
 push 1100503600 # Soybean
 push 0100500960 # Thermogenic Plant Creative

@@ -1,0 +1,77 @@
+# Filtration\filtration_room_air.ic10
+# Air conditioner, Atmosphere for main room
+define ID_PUMP_O2 $1731D
+define ID_PUMP_N2 $1731F
+define ID_PUMP_CO2 $1731C
+define ID_PUMP_WASTE $17318
+define ID_SENSOR $17DE8
+# Constant
+define TYPE_SENSOR -1252983604
+define KELVIN 273
+define T_MIN 20
+define T_MAX 30
+define P_MAX 100
+define O2 0.20
+define N2 0.75
+define CO2 0.05
+define Kp 10
+# register
+alias IsOn r0
+alias Ratio r1
+alias Pcur r2
+alias Tcur r3
+alias Tmin r4
+alias Tmax r5
+alias Cmd r6
+alias Target r8
+alias Err r14
+alias Temp r15
+# settings
+add Tmin T_MIN KELVIN
+add Tmax T_MAX KELVIN
+start:
+yield
+ld Ratio ID_SENSOR RatioOxygen
+move Target O2
+slt IsOn Ratio Target
+sd ID_PUMP_O2 On IsOn
+jal cmd_input
+sd ID_PUMP_O2 Setting Cmd
+
+ld Ratio ID_SENSOR RatioNitrogen
+move Target N2
+slt IsOn Ratio Target
+sd ID_PUMP_N2 On IsOn
+jal cmd_input
+sd ID_PUMP_N2 Setting Cmd
+
+ld Ratio ID_SENSOR RatioCarbonDioxide
+move Target CO2
+slt IsOn Ratio Target
+sd ID_PUMP_CO2 On IsOn
+jal cmd_input
+sd ID_PUMP_CO2 Setting Cmd
+
+ld Pcur ID_SENSOR Pressure
+sgt IsOn Pcur P_MAX
+sd ID_PUMP_WASTE On IsOn
+sub Err Pcur P_MAX
+mul Cmd Err Kp
+max Cmd Cmd 5
+min Cmd Cmd 100
+sd ID_PUMP_WASTE Setting Cmd
+
+ld Tcur ID_SENSOR Pressure
+sgt IsOn Tcur Tmax
+slt Temp Tcur Tmin
+or IsOn IsOn Temp
+s db On IsOn
+j start
+
+cmd_input:
+sub Err Target Ratio
+mul Cmd Err 100
+mul Cmd Cmd Kp
+max Cmd Cmd 5
+min Cmd Cmd 100
+j ra
