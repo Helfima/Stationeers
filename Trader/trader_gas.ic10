@@ -5,120 +5,97 @@ alias DialGaz d2
 alias Display d3
 # Constant
 define KELVIN 273
-define TYPE_GAS_INPUT 817945707
-define TYPE_GAS_OUTPUT -1100218307
-define TYPE_LIQUID_INPUT -1216167727
-define TYPE_LIQUID_OUTPUT -1788929869
-define TYPE_ANA 435685051
-define ANA_INPUT HASH("Analyzer SettingInputput")
-define ANA_OUTPUT HASH("Analyzer Output")
-define TYPE_PUMP 1310794736
+define ID_GAS_INPUT $864F
+define ID_GAS_OUTPUT $864D
+define ID_LIQUID_INPUT $8A2C
+define ID_LIQUID_OUTPUT $8A34
+define ID_ANA_GAS_INPUT $1B3CE
+define ID_ANA_GAS_OUTPUT $1B3DB
+define ID_ANA_LIQUID_INPUT $1B3FD
+define ID_ANA_LIQUID_OUTPUT $1B3FC
+define TYPE_PUMP_GAS 1310794736
+define TYPE_PUMP_LIQUID -1051805505
 # Alias Register
 alias Switch r0
-alias Action r1
-alias Choose r2
-alias Tcur r3
-alias Pcur r4
+alias IdDevice r1
+alias Action r2
+alias Choose r3
+alias Tcur r4
 alias IsLiquid r5
-alias IsOn r10
-alias Hash r11
-alias HashOut r12
-alias HashIn r13
+alias IsFuel r6
+alias IsOn r8
+alias Hash r9
+alias IdGasOut r10
+alias IdGasIn r11
+alias IdLiquidOut r12
+alias IdLiquidIn r13
 alias Err r14
 alias Temp r15
 # Settings
-move sp 0
-push 0
-push HASH("Pump Output")
-push HASH("Pump Input")
-push -633723719 # Pure Ice Volatiles
-push HASH("Pump Output H2")
-push HASH("Pump Input H2")
-push -1755356 # Pure Ice Polutant
-push HASH("Pump Output")
-push HASH("Pump Input")
-push -1150448260 # Pure Ice Oxygen
-push HASH("Pump Output O2")
-push HASH("Pump Input O2")
-push 386754635 # Pure Ice NitrousOxide
-push HASH("Pump Output N2O")
-push HASH("Pump Input N2O")
-push -1708395413 # Pure Ice Nitrogen
-push HASH("Pump Output N2")
-push HASH("Pump Input N2")
-push -1251009404 # Pure Ice Carbon Dioxide
-push HASH("Pump Output CO2")
-push HASH("Pump Input CO2")
-push -1616308158 # Pure Ice Water
-push HASH("Pump Output")
-push HASH("Pump Input")
 s DialGaz Mode 7
 start:
 yield
-s db Setting Hash
-sb TYPE_PUMP On 0
+sb TYPE_PUMP_GAS On 0
+sb TYPE_PUMP_LIQUID On 0
+ld Tcur ID_GAS_OUTPUT Temperature
 l Switch Lever Setting
-l Action Button Setting
+#l Action Button Setting
 beq Switch 1 sent
 move Choose 0
-jal read_land_gas
-sb TYPE_LIQUID_OUTPUT On IsLiquid
-beq IsLiquid 1 update_hash
-jal read_ana_gas
-lb Temp TYPE_GAS_OUTPUT TotalMoles 3 # 0:Average 1:Sum 2:Min 3:Max
+ld Temp ID_GAS_OUTPUT TotalMoles # Read land gas
 sgt IsOn Temp 0
-sb TYPE_GAS_OUTPUT On IsOn
-lbn Temp TYPE_ANA ANA_OUTPUT TotalMoles 3 # 0:Average 1:Sum 2:Min 3:Max
-sgt Temp Temp 0
-or IsOn IsOn Temp
-sbn TYPE_PUMP HashOut On IsOn
-j update_hash
+sd ID_GAS_OUTPUT On IsOn
+sd ID_LIQUID_OUTPUT On IsOn
+# treatment output gas
+move IdDevice ID_ANA_GAS_OUTPUT
+jal find_gas
+ld Temp ID_ANA_GAS_OUTPUT TotalMoles
+sgt IsOn Temp 0
+breq IdGasOut 0 2
+sd IdGasOut On IsOn # Active Gas Output Pump
+# treatment output liquid
+move IdDevice ID_ANA_LIQUID_OUTPUT
+jal find_gas
+ld Temp ID_ANA_LIQUID_OUTPUT TotalMoles
+sgt IsOn Temp 0
+breq IdLiquidOut 0 2
+sd IdLiquidOut On IsOn # Active liquid Output Pump
+j start
 sent:
 l Choose DialGaz Setting
 update_hash:
-jal read_data
 j start
-read_land_gas:
-lb Temp TYPE_GAS_OUTPUT RatioVolatiles 3 # 0:Average 1:Sum 2:Min 3:Max
-select Choose Temp 1 Choose
-lb Temp TYPE_GAS_OUTPUT RatioPollutant 3 # 0:Average 1:Sum 2:Min 3:Max
-select Choose Temp 2 Choose
-lb Temp TYPE_GAS_OUTPUT RatioOxygen 3 # 0:Average 1:Sum 2:Min 3:Max
-select Choose Temp 3 Choose
-lb Temp TYPE_GAS_OUTPUT RatioNitrousOxide 3 # 0:Average 1:Sum 2:Min 3:Max
-select Choose Temp 4 Choose
-lb Temp TYPE_GAS_OUTPUT RatioNitrogen 3 # 0:Average 1:Sum 2:Min 3:Max
-select Choose Temp 5 Choose
-lb Temp TYPE_GAS_OUTPUT RatioCarbonDioxide 3 # 0:Average 1:Sum 2:Min 3:Max
-select Choose Temp 6 Choose
-lb Temp TYPE_GAS_OUTPUT RatioWater 3 # 0:Average 1:Sum 2:Min 3:Max
-select Choose Temp 7 Choose
-lb Tcur TYPE_GAS_OUTPUT Temperature 3 # 0:Average 1:Sum 2:Min 3:Max
-lb Pcur TYPE_GAS_OUTPUT Pressure 3 # 0:Average 1:Sum 2:Min 3:Max
-seq IsLiquid Choose 7 # is water
-slt Temp Tcur 393 # < 100°c
-and IsLiquid IsLiquid Temp # liquid water < 100°c
+
+check_is_liquid:
+slt IsLiquid Tcur 273 # all is liquid
+brne Choose 7 2 # is water
+slt IsLiquid Tcur 393 # liquid water < 100°c
 j ra
-read_ana_gas:
-lbn Temp TYPE_ANA ANA_OUTPUT RatioVolatiles 3 # 0:Average 1:Sum 2:Min 3:Max
+
+find_gas:
+ld Temp IdDevice RatioVolatiles
 select Choose Temp 1 Choose
-lbn Temp TYPE_ANA ANA_OUTPUT RatioPollutant 3 # 0:Average 1:Sum 2:Min 3:Max
+ld Temp IdDevice RatioPollutant
 select Choose Temp 2 Choose
-lbn Temp TYPE_ANA ANA_OUTPUT RatioOxygen 3 # 0:Average 1:Sum 2:Min 3:Max
-select Choose Temp 3 Choose
-lbn Temp TYPE_ANA ANA_OUTPUT RatioNitrousOxide 3 # 0:Average 1:Sum 2:Min 3:Max
+ld Temp IdDevice RatioNitrousOxide
 select Choose Temp 4 Choose
-lbn Temp TYPE_ANA ANA_OUTPUT RatioNitrogen 3 # 0:Average 1:Sum 2:Min 3:Max
+ld Temp IdDevice RatioNitrogen
 select Choose Temp 5 Choose
-lbn Temp TYPE_ANA ANA_OUTPUT RatioCarbonDioxide 3 # 0:Average 1:Sum 2:Min 3:Max
+ld Temp IdDevice RatioCarbonDioxide
 select Choose Temp 6 Choose
-lbn Temp TYPE_ANA ANA_OUTPUT RatioWater 3 # 0:Average 1:Sum 2:Min 3:Max
+ld Temp IdDevice RatioWater
 select Choose Temp 7 Choose
-j ra
-read_data:
+ld Temp IdDevice RatioOxygen
+select Choose Temp 3 Choose
+move IsFuel 0
+brne Choose 3 2
+sne IsFuel Temp 1
 add sp Choose 1
-mul sp sp 3
-pop HashIn
-pop HashOut
+mul sp sp 5
+pop IdLiquidIn
+pop IdLiquidOut
+pop IdGasIn
+pop IdGasOut
 pop Hash
+s db Setting Hash
 j ra

@@ -1,19 +1,18 @@
 # centrifuge_display.ic10
 alias Self d0
 # Constant
-define TYPE_LEVER 1220484876
 define TYPE_MONITOR 801677497
 define TYPE_DISPLAY -815193061 # Small Display
-define DISP_REAGENTS HASH("Display Reagents")
-define DISP_FLOW HASH("Display Reagents Flow")
-define DISP_CLOCK HASH("Display Clock")
-define TYPE_MEMORY -851746783
-define MEMO_STRESS HASH("Memory Stress")
-define MEMO_RPM HASH("Memory RPM")
-define MEMO_THROTTLE HASH("Memory Throttle")
-define MEMO_DIFF_RPM HASH("Memory Diff RPM")
-define MEMO_DIFF_STRESS HASH("Memory Diff Stress")
-define TYPE_PROXIMITY 568800213
+define ID_LEVER $19E9C
+define ID_DISP_REAGENTS $19E45
+define ID_DISP_FLOW $19E46
+define ID_DISP_CLOCK $19E48
+define ID_MEMO_STRESS $19E80
+define ID_MEMO_RPM $19E81
+define ID_MEMO_THROTTLE $19E82
+define ID_MEMO_DIFF_RPM $19E83
+define ID_MEMO_DIFF_STRESS $19E84
+define ID_PROXIMITY $1A80F
 # Alias Register
 alias MThr r0 # mesure Throttle
 alias MRpm r1 # mesure Rpm
@@ -28,7 +27,7 @@ alias Count r10
 alias QTY r11
 alias IsOn r12
 alias IsOpen r13
-alias Time r14
+alias Clock r14
 alias Temp r15
 # Settings
 stop:
@@ -37,19 +36,19 @@ move FQTY 0
 move LRpm 0
 move LStr 0
 move Tick 0
-move Time 0
+move Clock 0
 start:
 yield
 s db Setting 0
-lb IsOn TYPE_LEVER Setting 3 # 0:Average 1:Sum 2:Min 3:Max
+ld IsOn ID_LEVER Setting
 l MRpm Self Rpm
 l MThr Self Throttle
 l MStr Self Stress
 l IsOpen Self Open
 select Tick IsOpen 0 Tick
-select Time IsOpen 0 Time
+select Clock IsOpen 0 Clock
 add Tick Tick 1
-add Time Time 1
+add Clock Clock 1
 s db Setting Tick
 sub DRpm MRpm LRpm
 move LRpm MRpm
@@ -67,21 +66,21 @@ mul FQTY FQTY 2
 j ra
 
 display:
-sbn TYPE_MEMORY MEMO_RPM Setting MRpm
-sbn TYPE_MEMORY MEMO_STRESS Setting MStr
-sbn TYPE_MEMORY MEMO_THROTTLE Setting MThr
-sbn TYPE_MEMORY MEMO_DIFF_RPM Setting DRpm
-sbn TYPE_MEMORY MEMO_DIFF_STRESS Setting DStr
-sbn TYPE_DISPLAY DISP_REAGENTS Color 10
-sbn TYPE_DISPLAY DISP_REAGENTS Setting QTY
-sbn TYPE_DISPLAY DISP_FLOW Color 10
-sbn TYPE_DISPLAY DISP_FLOW Setting FQTY
-div Temp Time 2
+sd ID_MEMO_RPM Setting MRpm
+sd ID_MEMO_STRESS Setting MStr
+sd ID_MEMO_THROTTLE Setting MThr
+sd ID_MEMO_DIFF_RPM Setting DRpm
+sd ID_MEMO_DIFF_STRESS Setting DStr
+sd ID_DISP_REAGENTS Color 10
+sd ID_DISP_REAGENTS Setting QTY
+sd ID_DISP_FLOW Color 10
+sd ID_DISP_FLOW Setting FQTY
+div Temp Clock 2
 trunc Temp Temp
-sbn TYPE_DISPLAY DISP_CLOCK Color 1
-sbn TYPE_DISPLAY DISP_CLOCK Setting Temp
-sb TYPE_PROXIMITY Setting 5
-lb Temp TYPE_PROXIMITY Activate 3 # 0:Average 1:Sum 2:Min 3:Max
+sd ID_DISP_CLOCK Color 1
+sd ID_DISP_CLOCK Setting Temp
+sd ID_PROXIMITY Setting 5
+ld Temp ID_PROXIMITY Activate
 sb TYPE_DISPLAY On Temp
 sb TYPE_MONITOR On Temp
 j ra
