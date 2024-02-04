@@ -1,0 +1,24 @@
+# Silo\silo_rootage_ic10
+alias flipflop_ores d0
+alias flipflop_ingots d1
+# Constant
+define TYPE_FLIPFLOP -810874728 # Right: 163728359 Left: -810874728
+define QUERY_FREE 000
+define QUERY_ITEM 100
+# Alias Register
+alias Way r0
+alias Temp r15
+#Settings
+s db Setting 0
+sb TYPE_FLIPFLOP On 1
+sb TYPE_FLIPFLOP Mode 0
+sb TYPE_FLIPFLOP Setting 0
+sb TYPE_FLIPFLOP SettingOutput 0
+start:
+yield
+get Way db 101
+seq Temp Way 3
+s flipflop_ingots Mode Temp
+seq Temp Way 2
+s flipflop_ores Mode Temp
+j start

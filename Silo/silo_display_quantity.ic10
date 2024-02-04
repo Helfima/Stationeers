@@ -1,0 +1,110 @@
+# Silo\silo_display_quantity.ic10
+# Alias
+alias Dial d0
+alias Mirror d1
+alias Sensor d2
+# Constant
+define TYPE_DISPLAY -815193061 # Small Display
+define TYPE_MEMORY -851746783
+define TYPE_MONITOR 801677497
+define TYPE_OCCUPANCY 322782515
+define DEVICE_BEGIN 0
+define QMIN 800
+define QMAX 1600
+# Alias Register
+alias Device r0
+alias DeviceId r1
+alias StartSp r2
+alias Choose r3
+alias LastChoose r4
+alias Qty r5
+alias Hash r6
+alias Color1 r12
+alias Color2 r13
+alias Provider r14
+alias Temp r15
+# Settings
+s Dial Mode 5
+# Ids of memories
+move sp 0
+push $1D2AF
+push $1D2B0
+push $1D2B2
+push $1D2B3
+push $1D2B4
+push $1D2B5
+# Ids of small display
+move sp 10
+push $1CF03
+push $1CF05
+push $1CF06
+push $1CF07
+push $1CF08
+push $1CF8C
+init:
+jal reset_device
+start:
+yield
+l Choose Dial Setting
+s db Setting Choose
+move LastChoose Choose
+jal check_occupancy
+jal write_hash
+jal change_color
+j start
+
+reset_device:
+move Device -1 # Reset Index
+loop_device:
+add Device Device 1
+bgt Device 5 ra # exit
+add Temp Device 10
+get DeviceId db Temp
+sd DeviceId Setting ninf
+j loop_device
+
+write_hash:
+mul StartSp Choose 6 # 1,7:Ores 13,19,25:Ingots
+move Device -1 # Reset Index
+loop_hash:
+add Device Device 1
+bgt Device 5 ra # exit
+# read hash
+add sp StartSp Device
+s db Setting sp
+get Hash Mirror sp # read hash from rooter
+# write hash
+add sp Device 0
+get DeviceId db sp # memory id
+sd DeviceId Setting Hash
+# read quantity
+add sp StartSp 30
+get Qty Mirror sp # quantity hash from rooter
+# write quantity
+add sp Device 10
+get DeviceId db sp # display id
+sd DeviceId Setting Qty
+j loop_hash
+
+check_occupancy:
+l Temp Sensor Activate
+sb TYPE_DISPLAY On Temp
+sb TYPE_MONITOR On Temp
+j ra
+
+change_color:
+move Device -1 # Reset Index
+loop_color:
+add Device Device 1
+bgt Device 5 ra # exit
+add sp Device 10
+get DeviceId db sp # display id
+ld Qty DeviceId Setting
+brgt Qty QMAX 6
+brgt Qty QMIN 3
+sd DeviceId Color 4 # Red
+j loop_color
+sd DeviceIdp Color 5 # Yellow
+j loop_color
+sd DeviceId Color 2 # Green
+j loop_color
