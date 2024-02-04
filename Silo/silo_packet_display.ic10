@@ -1,0 +1,122 @@
+# Silo\silo_packet_display.ic10
+# Alias
+alias Dial d0
+alias Mirror d1
+alias Sensor d2
+# Constant
+define TYPE_DISPLAY -815193061 # Small Display
+define TYPE_MEMORY -851746783
+define TYPE_MONITOR 801677497
+define TYPE_OCCUPANCY 322782515
+define QUERY_FREE 9000000
+define QUERY_LIST 9000100
+define PACKET_SIZE 12
+define DEVICE_BEGIN 0
+define QMIN 800
+define QMAX 1600
+# Alias Register
+alias Device r0
+alias DeviceId r1
+alias StartSp r2
+alias Choose r3
+alias LastChoose r4
+alias Qty r5
+alias Hash r6
+alias Provider r14
+alias Temp r15
+# Settings
+s Dial Mode 5
+init:
+jal reset_device
+start:
+yield
+l Choose Dial Setting
+s db Setting Choose
+bneal LastChoose Choose reset_channel
+move LastChoose Choose
+jal check_occupancy
+beq Choose 0 init # Wait Request
+mul Provider Choose 1000
+add Provider Provider 9000100
+s Mirror Setting Provider
+jal read_quantity
+jal change_color
+jal write_hash
+j start
+
+reset_device:
+move Device -1 # Reset Index
+loop_device:
+add Device Device 1
+bgt Device 5 ra # exit
+add Temp Device 110
+get DeviceId db Temp
+sd DeviceId Setting 0
+j loop_device
+
+reset_channel:
+s d1:0 Channel2 ninf
+s d1:0 Channel3 ninf
+s d1:0 Channel4 ninf
+s d1:0 Channel5 ninf
+s d1:0 Channel6 ninf
+s d1:0 Channel7 ninf
+j ra
+
+read_quantity:
+l Qty d1:0 Channel2
+get DeviceId db 110
+sd DeviceId Setting Qty
+l Qty d1:0 Channel3 
+get DeviceId db 111
+sd DeviceId Setting Qty
+l Qty d1:0 Channel4
+get DeviceId db 112
+sd DeviceId Setting Qty
+l Qty d1:0 Channel5
+get DeviceId db 113
+sd DeviceId Setting Qty
+l Qty d1:0 Channel6
+get DeviceId db 114
+sd DeviceId Setting Qty
+l Qty d1:0 Channel7
+get DeviceId db 115
+sd DeviceId Setting Qty
+j ra
+
+write_hash:
+mul StartSp Choose 6
+sub StartSp StartSp 5 # 1,7:Ores 13,19,25:Ingots
+move Device -1 # Reset Index
+loop_hash:
+add Device Device 1
+add sp StartSp Device
+pop Hash
+bgt Device 5 ra # exit
+add Temp Device 100
+get DeviceId db Temp
+sd DeviceId Setting Hash
+j loop_hash
+
+check_occupancy:
+l Temp Sensor Activate
+sb TYPE_DISPLAY On Temp
+sb TYPE_MONITOR On Temp
+j ra
+
+change_color:
+move Device -1 # Reset Index
+loop_color:
+add Device Device 1
+bgt Device 5 ra # exit
+add Temp Device 110
+get DeviceId db Temp
+ld Qty DeviceId Setting
+brgt Qty QMAX 6
+brgt Qty QMIN 3
+sd DeviceId Color 4 # Red
+j loop_color
+sd DeviceId Color 5 # Yellow
+j loop_color
+sd DeviceId Color 2 # Green
+j loop_color

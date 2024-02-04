@@ -1,0 +1,47 @@
+# Silo\silo_packet_rootage.ic10
+alias Memory d0
+alias FlipFlop1 d1
+alias FlipFlop2 d2
+alias Button d3
+alias Display d4
+#Constant
+define TYPE_FLIPFLOP -810874728 # Right: 163728359 Left: -810874728
+define QUERY_LIST 9000100
+define QUERY_ITEM 9000101
+define QUERY_QUANTITY 9000102
+define QUERY_FREE 9000000
+# Alias Register
+alias Way r0
+alias Request r1
+alias Action r2
+alias Temp r15
+#Settings
+s db Setting 0
+sb TYPE_FLIPFLOP On 1
+sb TYPE_FLIPFLOP Mode 0
+sb TYPE_FLIPFLOP Setting 0
+sb TYPE_FLIPFLOP SettingOutput 0
+start:
+yield
+l Request Memory Setting
+jal reset_memory
+jal update_display
+bne Request QUERY_ITEM start
+l Way d0:0 Channel2 # Read Rootage
+seq Temp Way 1 # 0:furnace 1:hangar
+s FlipFlop1 Mode Temp
+seq Temp Way 2 # 2:magasin
+s FlipFlop2 Mode Temp
+j start
+
+reset_memory:
+bdns Button ra
+l Action Button Setting
+beq Action 0 ra
+s Memory Setting QUERY_FREE
+j ra
+
+update_display:
+bdns Display ra
+s Display Setting Request
+j ra

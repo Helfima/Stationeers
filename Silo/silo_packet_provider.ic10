@@ -1,0 +1,120 @@
+# Silo\silo_packet_provider_named.ic10
+alias MirrorList d0
+alias MirrorItem d1
+#Constant
+define TYPE_SILO 1155865682 # Silo Hash
+define STACK_ORE 50
+define STACK_INGOT 100
+define QUERY_LIST 9000100
+define QUERY_ITEM 9000101
+define QUERY_QUANTITY 9000102
+define QUERY_FREE 9000000
+define NONE -3
+define STORAGE_LINE 1 # 1,2:Ores 3,4,5:Ingots
+# Alias Register r0  r5 Id silos
+alias Request r7
+alias Qty r8
+alias Hash r9
+alias Stack r10
+alias Memory r11
+alias Device r12
+alias StartSp r13
+alias QueryList r14
+alias Temp r15
+# Settings
+move r0 $1A2B0 # Id silo 0
+move r1 $1A2B3 # Id silo 1
+move r2 $1A2B6 # Id silo 2
+move r3 $1A2B8 # Id silo 3
+move r4 $1A2BA # Id silo 4
+move r5 $1A2C1 # Id silo 5
+
+sle Temp STORAGE_LINE 2
+select Stack Temp STACK_ORE STACK_INGOT
+mul QueryList STORAGE_LINE 1000
+add QueryList QueryList QUERY_LIST
+mul StartSp STORAGE_LINE 6
+sub StartSp StartSp 5 # 1,7:Ores 13,19,25:Ingots
+start:
+yield
+s db Setting 0
+move Memory -1
+loop_memory:
+add Memory Memory 1
+bdns dr11 start
+l Request dr11 Setting
+beq Request 0 loop_memory # Wait Request
+beq Request QUERY_FREE loop_memory # Wait Request
+beq Request QUERY_ITEM query_item
+beq Request QUERY_QUANTITY query_quantity
+beq Request QueryList query_list
+query_end:
+j loop_memory
+free:
+s dr11 Setting QUERY_FREE # Write line
+yield
+j loop_memory
+
+query_list:
+s db Setting QUERY_LIST
+ld Qty r0 Quantity
+mul Qty Qty Stack
+s dr11:0 Channel2 Qty
+ld Qty r1 Quantity
+mul Qty Qty Stack
+s dr11:0 Channel3 Qty
+ld Qty r2 Quantity
+mul Qty Qty Stack
+s dr11:0 Channel4 Qty
+ld Qty r3 Quantity
+mul Qty Qty Stack
+s dr11:0 Channel5 Qty
+ld Qty r4 Quantity
+mul Qty Qty Stack
+s dr11:0 Channel6 Qty
+ld Qty r5 Quantity
+mul Qty Qty Stack
+s dr11:0 Channel7 Qty
+j free
+
+query_item:
+s db Setting QUERY_ITEM
+l Request dr11:0 Channel0 # Read Hash
+beq Request 0 query_item # wait
+l Qty dr11:0 Channel1
+jal check_hash
+beq Device NONE query_end
+jal action_silo
+sub Qty Qty Stack
+s dr11:0 Channel1 Qty
+brne Qty 0 -3
+j free
+
+query_quantity:
+s db Setting QUERY_QUANTITY
+l Request dr11:0 Channel0 # Read Hash
+beq Request 0 query_quantity # wait
+jal check_hash
+beq Device NONE query_end
+ld Qty rr12 Quantity
+mul Qty Qty Stack
+s dr11:0 Channel1 Qty
+j free
+
+action_silo:
+sd rr12 Open 1 # Open silo
+yield
+sd rr12 Open 0 # Close silo
+yield
+j ra
+
+check_hash:
+move Device 0
+loop_hash:
+add sp Device StartSp
+peek Hash
+beqal Request Hash ra
+add Device Device 1
+ble Device 5 loop_hash
+move Device NONE
+j ra

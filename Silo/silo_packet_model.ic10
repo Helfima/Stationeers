@@ -32,4 +32,22 @@ push 156348098   # 28:Waspaloy Ingot
 push 1579842814  # 29:Hastelloy Ingot
 push -1897868623 # 30:Stellite Ingot
 
+# For Display Quantity
+# Ids of memories
+move sp 100
+push $1D2AF
+push $1D2B0
+push $1D2B2
+push $1D2B3
+push $1D2B4
+push $1D2B5
+# Ids of small display
+move sp 110
+push $1CF03
+push $1CF05
+push $1CF06
+push $1CF07
+push $1CF08
+push $1CF8C
+
 s db On 0

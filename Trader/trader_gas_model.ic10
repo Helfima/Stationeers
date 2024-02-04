@@ -1,44 +1,44 @@
 # Trader\trader_gas_model.ic10
 move sp 0
-push 0 # Hash Nothing
+push -857713709 # Hash Nothing
 push $1B5B6 # Gas Pump Output Waste
 push 0 # Gas Pump Input Waste
 push 0 # Liquid Pump Output Waste
 push 0 # Liquid Pump Input Waste
-push -633723719 # Pure Ice Volatiles
+push 15011598 # Filter Volatiles
 push $AA1C # Gas Pump Output H2
 push $AA1D # Gas Pump Input H2
 push 0 # Liquid Pump Outpu H2
 push 0 # Liquid Pump Input H2
-push -1755356 # Pure Ice Polutant
+push 1915566057 # Filter Polutant
 push $1B5B6 # Gas Pump Output X
 push 0 # Gas Pump Input X
 push 0 # Liquid Pump Outpu X
 push 0 # Liquid Pump Input X
-push -1150448260 # Pure Ice Oxygen
+push -721824748 # Filter Oxygen
 push $AA1B # Gas Pump Output O2
 push $AA1E # Gas Pump Input O2
 push 0 # Liquid Pump Outpu O2
 push 0 # Liquid Pump Input O2
-push 386754635 # Pure Ice NitrousOxide
+push -1247674305 # Filter NitrousOxide
 push $8CE5 # Gas Pump Output N2O
 push $8CE4 # Gas Pump Input N2O
 push $16DF9 # Liquid Pump Outpu N2O
 push $16DF8 # Liquid Pump Input N2O
-push -1708395413 # Pure Ice Nitrogen
+push 632853248 # Filter Nitrogen
 push $8CE6 # Gas Pump Output N2
 push $8CE7 # Gas Pump Input N2
 push 0 # Liquid Pump Outpu N2
 push 0 # Liquid Pump Input N2
-push -1251009404 # Pure Ice Carbon Dioxide
+push 1635000764 # Filter Carbon Dioxide
 push $8CEA # Gas Pump Output CO2
 push $8CE9 # Gas Pump Input CO2
 push 0 # Liquid Pump Outpu CO2
 push 0 # Liquid Pump Input CO2
-push -1616308158 # Pure Ice Water
+push -1993197973 # Filter Water
 push $1B5B6 # Gas Pump Output H2O
 push 0 # Gas Pump Input H2O
-push $8D1C # Liquid Pump Outpu H2O
+push $8D1C # Liquid Pump Output H2O
 push $8D1D # Liquid Pump Input H2O
 push -1014695176 # Canister (Fuel)
 push $8CEC # Gas Pump Output H2O
