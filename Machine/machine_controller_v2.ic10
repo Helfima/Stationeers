@@ -24,7 +24,7 @@ define TYPE_TRIGGER 1269458680 # Medium:1269458680 large:-2008706143
 define TYPE_MIRROR 2096189278 # Mirror link Transformer
 define DELAY 30 # init timer
 #Settings
-s Dial TYPE_DIAL Mode 4
+sb Dial TYPE_DIAL Mode 4
 brdns DisplayMachine 3
 s DisplayMachine On 1
 s DisplayMachine Color 5
