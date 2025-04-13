@@ -6,28 +6,35 @@ alias Console3 d3
 alias Console4 d4
 alias Console5 d5
 # Alias Register
-alias code r0
-alias code1 r1
-alias code2 r2
-alias code3 r3
-alias code4 r4
-alias item r5
-alias device r6
-alias IsPresent r8
-alias IsChild r9
-alias page r12
-alias index r13
-alias cmd r14
+alias cmd r0
+alias index r1
+alias page r2
+alias code r3
+alias code1 r4
+alias code2 r5
+alias code3 r6
+alias code4 r7
+alias item r8
+alias device r9
+alias IsPresent r10
+alias isSell r11
+alias color r12
 alias temp r15
 # Constant
 define TYPE_MONITOR 801677497
 define TYPE_DISPLAY -815193061
 define DIAL_PAGE $274C4
+define DISPLAY_PAGE $27543
 define MEMORY_PAGE $2763E
 define LEVER_ON $274A9
+define LEVER_BUY $27788
 define PROVIDER $27805
+define COLOR_SELL Color.Green
+define COLOR_BUY Color.Red
+define COLOR_CHILD Color.Gray
 # Settings
-sd DIAL_PAGE Mode 3
+sd DIAL_PAGE Mode 5
+sd DISPLAY_PAGE Color Color.White
 move sp 9
 push $2742C # Quantity 1
 push $2742B # Quantity 2
@@ -48,8 +55,9 @@ ld IsPresent LEVER_ON Setting
 sb TYPE_MONITOR On IsPresent
 sb TYPE_DISPLAY On IsPresent
 ld page DIAL_PAGE Setting
+ld isSell LEVER_BUY Setting
 sd MEMORY_PAGE Setting page
-
+sd DISPLAY_PAGE Setting page
 # decode
 move item 0
 loop:
@@ -63,12 +71,6 @@ decode:
 s db Setting index
 getd code PROVIDER index
 and code1 code 255 #%1111 1111
-# hash
-sra code3 code 16 # offset -16b
-and code3 code3 -1
-add sp item 20
-peek device
-sd device Setting code3
 # quantity
 srl code2 code 8 # offset -8b
 and temp code2 255 #%1111 1111
@@ -76,6 +78,18 @@ add sp item 10
 peek device
 s db Setting device
 sd device Setting temp
+select color isSell COLOR_SELL COLOR_BUY
+seq temp code1 TraderInstruction.TraderBuyThingChildData
+select color temp COLOR_CHILD color
+seq temp code1 TraderInstruction.TraderSellThingChildData
+select color temp COLOR_CHILD color
+sd device Color color
+# hash
+sra code3 code 16 # offset -16b
+and code3 code3 -1
+add sp item 20
+peek device
+sd device Setting code3
 # mode
 beq code1 TraderInstruction.TraderBuyThingData decodeitem
 beq code1 TraderInstruction.TraderBuyThingChildData decodeitem
@@ -84,8 +98,8 @@ beq code1 TraderInstruction.TraderSellThingData decodeitem
 beq code1 TraderInstruction.TraderSellThingChildData decodeitem
 beq code1 TraderInstruction.TraderSellGasData decodegas
 decodeitem:
-ss dr5 0 Mode 0
+ss dr8 0 Mode 0
 j ra
 decodegas:
-ss dr5 0 Mode 1
+ss dr8 0 Mode 1
 j ra

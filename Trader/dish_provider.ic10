@@ -48,7 +48,7 @@ add index item 30
 get device db index
 ld isActive device Setting
 beq isActive 0 ra
-bne lastHash 0
+bne lastHash 0 clear_hash
 add index item 20
 get device db index
 ld lastHash device Setting
@@ -62,8 +62,8 @@ move filter 0
 j ra
 
 write_buy_data:
-sll cmd 10 8 # offset +8b
-sll temp 16 16 # offset +8b+8b
+sll cmd 2 8 # offset +8b
+sll temp 30 16 # offset +8b+8b
 or cmd cmd temp
 breq isSell 0 3
 or cmd cmd TraderInstruction.WriteTraderSellData

@@ -25,7 +25,7 @@ push $264A2 # Dish 3
 push $264A0 # Dish 4
 start:
 yield
-#s db Setting lastFilter
+s db Setting lastFilter
 l page memoryPage Setting
 jal select_dish
 jal read_channel
@@ -39,7 +39,7 @@ move sp 100
 move item 0
 loop:
 mul index page 6
-add index index 10
+add index index 2
 add index index item
 getd code Dish index
 push code
@@ -76,7 +76,6 @@ peek Dish
 j ra
 
 clear:
-s db Setting 666
 clrd Dish
 move lastDish Dish
 move lastCmd cmd
