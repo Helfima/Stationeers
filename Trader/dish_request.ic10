@@ -1,0 +1,84 @@
+# Trader\dish_request.ic10
+alias memoryPage d0
+# Alias Register
+alias temp r15
+alias cmd r0
+alias index r1
+alias page r2
+alias code r3
+alias item r4
+alias device r5
+alias filter r6
+alias Dish r7
+alias lastCmd r8
+alias lastFilter r9
+alias lastDish r10
+# Constant
+define DIAL_DISH $27783
+define DISPLAY_DISH $27785
+# Settings
+sd DIAL_DISH Mode 4
+move sp 9
+push $26511 # Dish 1
+push $264A5 # Dish 2
+push $264A2 # Dish 3
+push $264A0 # Dish 4
+start:
+yield
+#s db Setting lastFilter
+l page memoryPage Setting
+jal select_dish
+jal read_channel
+bne lastDish Dish clear
+bne lastCmd cmd clear
+bne lastFilter filter clear
+putd Dish 1 filter
+putd Dish 0 cmd
+# write_stack
+move sp 100
+move item 0
+loop:
+mul index page 6
+add index index 10
+add index index item
+getd code Dish index
+push code
+add item item 1
+blt item 6 loop
+jal write_channel
+j start
+
+read_channel:
+l cmd d0:0 Channel0
+l filter d0:0 Channel1
+j ra
+
+write_channel:
+get temp db 100
+s d0:0 Channel2 temp
+get temp db 101
+s d0:0 Channel3 temp
+get temp db 102
+s d0:0 Channel4 temp
+get temp db 103
+s d0:0 Channel5 temp
+get temp db 104
+s d0:0 Channel6 temp
+get temp db 105
+s d0:0 Channel7 temp
+j ra
+
+select_dish:
+ld temp DIAL_DISH Setting
+sd DISPLAY_DISH Setting temp
+add sp temp 10
+peek Dish
+j ra
+
+clear:
+s db Setting 666
+clrd Dish
+move lastDish Dish
+move lastCmd cmd
+move lastFilter filter
+j ra

@@ -1,6 +1,7 @@
 # Filtration\filtration_coolant.ic10
 alias Atmo db
 alias Pump d0
+alias Display d1
 # Constant
 define TYPE_ATMO -2087593337
 define TYPE_MEMORY -851746783
@@ -11,19 +12,24 @@ define P_MIN 2000
 define P_MAX 1000
 # Alias Register
 alias Tmin r0
-alias Tset r1
-alias Delta r2
-alias Pmax r3
-alias Pin r4
-alias IsOn r5
-alias Tin r6
-alias Tout r7
-alias Twaste r8
+alias Tmax r1
+alias Tset r2
+alias Delta r3
+alias Pmax r4
+alias Pin r5
+alias IsOn r6
+alias Tin r7
+alias Tout r8
+alias Twaste r9
+alias Count r10
 alias Percent r12
 alias IsOpen r13
 alias IsMaster r14
 alias Temp r15
 # Settings
+lbs Count TYPE_ATMO 0 Occupied 1 # 0:Average 1:Sum 2:Min 3:Max
+mul Tmax Count 100
+add Tmax Tmax KELVIN
 start:
 yield
 l IsOpen Atmo Open
@@ -33,6 +39,7 @@ add Tmin Tmin KELVIN
 jal check_setting
 beqal IsMaster 1 check_temperature
 bdseal Pump check_pressure
+bdseal Display display
 j start
 
 check_setting:
@@ -58,9 +65,17 @@ add Tout Tout 100
 l Tin Atmo TemperatureInput
 sgt IsOn Tin Tout
 sb TYPE_VALVE On IsOn
+
 sna Temp Tmin Tin Percent
 select IsOn IsOn 0 Temp
 select Percent IsOn 0.01 0.02
+#Limit max machine capacity
+slt Temp Tout Tmax
+and IsOn IsOn Temp
 #Turn On/Off 0:idle 1:active
 sb TYPE_ATMO Mode IsOn
+j ra
+
+display:
+s Display Setting Tmax
 j ra

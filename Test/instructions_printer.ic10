@@ -1,0 +1,30 @@
+# Test\instructions_printer.ic10
+# clear all memory on device
+clr d0
+
+# lock the device
+sll r0 1 8 # TRUE offset by 8b
+or r0 r0 PrinterInstruction.DeviceSetLock
+put d0 0 r0
+
+# make sure next recipe is waited for
+or r0 0 PrinterInstruction.WaitUntilNextValid
+put d0 1 r0
+
+# create the execution
+define quantity 4 #quantity setting
+define prefabHash HASH("ItemSteelSheets")
+sll r0 quantity 8 #offset 8b
+sll r1 prefabHash 16 #offset 16b
+or r0 r0 r1
+or r0 r0 PrinterInstruction.ExecuteRecipe
+put d0 2 r0
+
+# eject reagents after
+or r0 0 PrinterInstruction.EjectAllReagents
+put d0 3 r0
+
+# unlock the device
+sll r0 0 8 # FALSE offset by 8b
+or r0 r0 PrinterInstruction.DeviceSetLock
+put d0 4 r0

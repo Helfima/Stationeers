@@ -75,6 +75,14 @@ la constante STORAGE_LINE aura pour valeur:
 
 ## Channel
 
+## Pour Query Item
+
+* Channel0: Request Hash
+* Channel1: Request Quantity
+* Channel2: Rootage Way
+
+## Pour Query List
+
 * Channel0: Request Hash
 * Channel1: Request Quantity
 * Channel2: Quantity Item 1

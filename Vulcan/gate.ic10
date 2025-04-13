@@ -1,0 +1,18 @@
+# Vulcan\gate.ic10
+# Alias Register
+alias IsOn r0
+alias Tcur r1
+alias Tmax r2
+# Constant
+define TMAX 130
+define KELVIN 273
+define SENSOR -1252983604
+define GATE_SMALL 1736080881
+# Settings
+add Tmax TMAX KELVIN
+start:
+yield
+lb Tcur SENSOR Temperature 3 # 0:Average 1:Sum 2:Min 3:Max
+slt IsOn Tcur Tmax
+sb GATE_SMALL Open IsOn
+j start

@@ -1,0 +1,74 @@
+# Silo\silo_Sorter.ic10
+alias Sorter0 d0
+alias Sorter1 d1
+alias Sorter2 d2
+alias Sorter3 d3
+alias Sorter4 d4
+alias Sorter5 d5
+#Constant
+define TYPE_SILO 1155865682 # Silo Hash
+define TYPE_SORTER 873418029 # Sorter Hash
+define TYPE_STACKER1 -2020231820 # Stacker Hash
+define TYPE_STACKER2 1585641623 # Stacker Hash
+define STACK_ORE 50
+define STACK_INGOT 100
+define STORAGE_LINE 1 # 1,2:Ores 3,4,5:Ingots
+# Alias Register
+alias Sorter r0
+alias Request r1
+alias Hash r2
+alias Code r3
+alias Item r4
+alias Stack r6
+alias StartSp r13
+alias Temp r15
+#Settings
+sle Temp STORAGE_LINE 2
+select Stack Temp STACK_ORE STACK_INGOT
+mul StartSp STORAGE_LINE 6
+sub StartSp StartSp 5 # 1,7:Ores 13,19,25:Ingots
+sb TYPE_SORTER On 1
+sb TYPE_SORTER Mode 0 # 0:All 1:Any 2:None
+sb TYPE_SILO On 1
+sb TYPE_STACKER1 Setting Stack
+sb TYPE_STACKER1 On 1
+sb TYPE_STACKER2 Setting Stack
+sb TYPE_STACKER2 On 1
+
+start:
+yield
+move Sorter 0
+loop_device:
+clr dr0
+beqal r0 0 sorter_row
+bneal r0 0 sorter_silo
+add Sorter Sorter 1
+ble Sorter 5 loop_device
+j end
+
+sorter_silo:
+sub sp Sorter 1
+add sp sp StartSp
+peek Hash
+sll Code Hash 8 #offset 8b
+or Code Code SorterInstruction.FilterPrefabHashEquals
+put dr0 0 Code
+s dr0 Mode 0 # 0:All 1:Any 2:None
+j ra
+
+sorter_row:
+move Item 0
+loop_hash:
+add sp Item StartSp
+peek Hash
+sll Code Hash 8 #offset 8b
+or Code Code SorterInstruction.FilterPrefabHashEquals
+s db Setting Item
+put dr0 Item Code
+s dr0 Mode 1 # 0:All 1:Any 2:None
+add Item Item 1
+ble Item 5 loop_hash
+j ra
+
+end:
+s db On 0

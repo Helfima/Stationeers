@@ -1,0 +1,37 @@
+# Test\instructions_dish.ic10
+alias Self d0
+# Alias Register
+alias Choose r0
+alias Value r1
+# Constant
+define TYPE_DIAL 554524804
+define TYPE_BUTTON 491845673
+# Settings
+start:
+yield
+lb Choose TYPE_BUTTON Setting 1
+beq Choose 0 start
+clr d0
+sll r0 10 8 #offset 8b
+or r0 r0 TraderInstruction.WriteTraderData
+put d0 0 r0
+j start
+# hash
+#define prefabHash HASH("OreTrader") #-1374574351
+#define prefabHash HASH("AlloyTrader") #54412100
+#define prefabHash HASH("FoodTrader") #-82964957
+#define prefabHash HASH("HydroponicsTrader") #-1077922067
+#define prefabHash HASH("GasTrader") #-470575659
+#define prefabHash HASH("Construction Trader") #175935584
+define prefabHash HASH("LiquidTrader") #135244511
+#define prefabHash HASH("HardwareTrader") #132514661
+#define prefabHash HASH("ConsumablesTrader") #-1650376125
+#define prefabHash HASH("ApplianceTrader") #-1590718013
+s db Setting prefabHash
+# create the execution
+move r0 0
+sll r0 prefabHash 8 #offset 8b
+or r0 r0 TraderInstruction.StrongestContactIdHash
+put d0 0 r0
+
+j start

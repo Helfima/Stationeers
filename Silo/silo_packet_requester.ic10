@@ -4,7 +4,10 @@ alias DialItem d1
 alias DialQuantity d2
 alias Button d3
 alias Display d4
+alias Sensor d5
 # Constant
+define TYPE_MONITOR 801677497
+define TYPE_DISPLAY -815193061 # Small Display
 define QUERY_FREE 9000000
 define QUERY_ITEM 9000101
 define QUERY_QUANTITY 9000102
@@ -34,6 +37,7 @@ s DialQuantity Mode 10
 move Stage 0
 start:
 yield
+jal check_occupancy
 s Display Color 2 # Green
 l Action Button Setting
 l Choose DialItem Setting
@@ -92,4 +96,10 @@ get_hash:
 move sp Choose
 add sp sp START_SP
 pop Hash
+j ra
+
+check_occupancy:
+l Temp Sensor Activate
+sb TYPE_DISPLAY On Temp
+sb TYPE_MONITOR On Temp
 j ra

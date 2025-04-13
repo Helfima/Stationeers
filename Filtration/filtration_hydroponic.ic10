@@ -1,0 +1,22 @@
+# Filtration\filtration_hydroponic.ic10
+alias Atmo db
+# Constant
+define TMIN 150
+define KELVIN 273
+# Alias Register
+alias Tmin r0
+alias IsOn r3
+alias Temp r15
+# Settings
+add Tmin TMIN KELVIN
+start:
+yield
+l Temp Atmo TemperatureOutput2
+slt IsOn Temp Tmin
+jal ckeck_atmo
+j start
+
+ckeck_atmo:
+#Turn On/Off 0:idle 1:active
+s Atmo Mode IsOn
+j ra

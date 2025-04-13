@@ -1,0 +1,51 @@
+# Test\instructions_dish.ic10
+alias Dish d0
+# Alias Register
+alias cmd r15
+alias index r14
+alias temp r13
+alias code r0
+alias code1 r1
+alias code2 r2
+alias code3 r3
+alias code4 r4
+# Constant
+define START_INDEX 10
+define TYPE_DIAL 554524804
+define TYPE_BUTTON 491845673
+# Settings
+sb TYPE_DIAL Mode 31
+start:
+yield
+lb index TYPE_DIAL Setting 1
+sd $6E6 Setting index
+sll cmd START_INDEX 8 # offset +8b
+#or cmd cmd TraderInstruction.WriteTraderData
+or cmd cmd TraderInstruction.WriteTraderBuyData
+put Dish 0 cmd
+# filter
+s Dish BestContactFilter -1 # Filter use SignalID
+# decode
+get code Dish index
+and code1 code 255 #%1111 1111
+sd $6E1 Setting code1 # OpCode
+srl code2 code 8 # offset -8b
+and temp code2 255 #%1111 1111
+sd $6E0 Setting temp
+srl code3 code2 8 # offset -8b
+and temp code2 255 #%1111 1111
+sd $6DF Setting temp
+srl code4 code3 8 # offset -8b
+sd $6DE Setting code4
+
+j start
+
+decode:
+get OpCode dish Choose
+and code1 OpCode 255 #%1111 1111
+sd $6E1 Setting code1 # OpCode
+srl code2 OpCode 8 # offset -8b
+sd $6E0 Setting code2
+sd $6DF Setting 0
+sd $6DE Setting 0
+j ra

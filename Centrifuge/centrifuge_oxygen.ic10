@@ -1,5 +1,6 @@
 # centrifuge_oxygen.ic10
 alias Self db
+alias DisplayQty d0 # Optionnal Display Reagents QTY
 # Constant
 define TYPE_LEVER 1220484876
 define STRESS_MAX 30
@@ -100,4 +101,6 @@ lr Count Self Contents HASH("Uranium")
 add QTY QTY Count
 lr Count Self Contents HASH("Steel")
 add QTY QTY Count
+bdns DisplayQty ra
+s DisplayQty Setting QTY
 j ra

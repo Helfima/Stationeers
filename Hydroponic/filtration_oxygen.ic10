@@ -4,9 +4,11 @@ alias Atmo db
 define TYPE_SENSOR -1252983604
 define TYPE_DISPLAY -815193061 # Small Display
 define TYPE_PUMP -321403609
-define PIMP_CO2 HASH("Pump CO2")
+define PUMP_CO2 HASH("Pump CO2")
+define PUMP_N2 HASH("Pump N2")
 define PERCENT_O2 0.4
 define PERCENT_CO2 0.1
+define PERCENT_N2 0.5
 define PMIN 60
 define PMAX 110
 # Alias Register
@@ -22,6 +24,7 @@ lb Tcur TYPE_SENSOR Temperature 3 # 0:Average 1:Sum 2:Min 3:Max
 sb TYPE_DISPLAY Setting Pcur
 jal check_oxygen
 jal check_dioxide
+jal check_nitrogen
 j start
 
 check_oxygen:
@@ -37,5 +40,13 @@ lb Temp TYPE_SENSOR RatioCarbonDioxide 3 # 0:Average 1:Sum 2:Min 3:Max
 slt IsOn Temp PERCENT_CO2
 slt Temp Pcur PMAX
 and IsOn IsOn Temp
-sbn TYPE_PUMP PIMP_CO2 On IsOn
+sbn TYPE_PUMP PUMP_CO2 On IsOn
+j ra
+
+check_nitrogen:
+lb Temp TYPE_SENSOR RatioCarbonDioxide 3 # 0:Average 1:Sum 2:Min 3:Max
+slt IsOn Temp PERCENT_CO2
+slt Temp Pcur PMAX
+and IsOn IsOn Temp
+sbn TYPE_PUMP PUMP_N2 On IsOn
 j ra

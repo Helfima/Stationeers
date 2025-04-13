@@ -1,0 +1,88 @@
+# Trader\dish_provider.ic10
+alias memoryPage d0
+# Alias Register
+alias temp r15
+alias cmd r14
+alias isSell r13
+alias filter r12
+alias item r11
+alias isActive r10
+alias lastHash r9
+alias device r8
+alias index r7
+# Constant
+define LEVER_BUY $27788
+# Settings
+move sp 20
+push $27435 # Memory 1
+push $27436 # Memory 2
+push $27437 # Memory 3
+push $27439 # Memory 4
+push $2743A # Memory 5
+push $2743B # Memory 6
+move sp 30
+push $27420 # Button 1
+push $2741F # Button 2
+push $2741E # Button 3
+push $2741B # Button 4
+push $2741C # Button 5
+push $2741D # Button 6
+start:
+yield
+s db Setting filter
+ld isSell LEVER_BUY Setting
+jal write_buy_data
+jal read_channel
+# check buttons
+move item 0
+loop:
+jal check_button
+add item item 1
+blt item 6 loop
+s d0:0 Channel1 filter
+s d0:0 Channel0 cmd
+j start
+
+check_button:
+add index item 30
+get device db index
+ld isActive device Setting
+beq isActive 0 ra
+bne lastHash 0
+add index item 20
+get device db index
+ld lastHash device Setting
+# build filter
+sll filter lastHash 8 # offset +8b
+or filter filter TraderInstruction.FilterPrefabHashEquals
+j ra
+clear_hash:
+move lastHash 0
+move filter 0
+j ra
+
+write_buy_data:
+sll cmd 10 8 # offset +8b
+sll temp 16 16 # offset +8b+8b
+or cmd cmd temp
+breq isSell 0 3
+or cmd cmd TraderInstruction.WriteTraderSellData
+jr 2
+or cmd cmd TraderInstruction.WriteTraderBuyData
+j ra
+
+read_channel:
+move sp 100
+l temp d0:0 Channel2
+push temp
+l temp d0:0 Channel3
+push temp
+l temp d0:0 Channel4
+push temp
+l temp d0:0 Channel5
+push temp
+l temp d0:0 Channel6
+push temp
+l temp d0:0 Channel7
+push temp
+j ra

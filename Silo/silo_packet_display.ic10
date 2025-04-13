@@ -7,7 +7,6 @@ alias Sensor d2
 define TYPE_DISPLAY -815193061 # Small Display
 define TYPE_MEMORY -851746783
 define TYPE_MONITOR 801677497
-define TYPE_OCCUPANCY 322782515
 define QUERY_FREE 9000000
 define QUERY_LIST 9000100
 define PACKET_SIZE 12
@@ -67,7 +66,7 @@ read_quantity:
 l Qty d1:0 Channel2
 get DeviceId db 110
 sd DeviceId Setting Qty
-l Qty d1:0 Channel3 
+l Qty d1:0 Channel3
 get DeviceId db 111
 sd DeviceId Setting Qty
 l Qty d1:0 Channel4

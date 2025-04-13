@@ -1,0 +1,126 @@
+# SAS\SAS_express.ic10
+alias Door_Int d0
+alias Vent_Int d1
+alias Door_Ext d3
+alias Vent_Ext d4
+# Alias Register
+alias Seq r0
+alias Pcur r1
+alias Tcur r2
+alias Tmin r3
+alias Tmax r4
+alias IsIdle r5
+alias CallInt r6
+alias IsCloseInt r7
+alias CallExt r8
+alias IsCloseExt r10
+alias Timer r11
+alias IsActivate r13
+alias IsPresent r14
+alias Temp r15
+# Constant
+define DELAY 5
+define TMIN 130
+define TMAX 132
+define KELVIN 273
+define TYPE_SENSOR_GAS HASH("StructureGasSensor")
+define TYPE_OCCUPACY HASH("StructureOccupancySensor")
+define TYPE_BUTTON HASH("StructureLogicButton")
+# Settings
+move Seq 0
+s Door_Int Mode 1
+s Door_Int Setting 0
+s Door_Ext Mode 1
+s Door_Ext Setting 0
+s Vent_Int Mode 1
+s Vent_Ext Mode 1
+add Tmin TMIN KELVIN
+add Tmax TMAX KELVIN
+start:
+yield
+s db Setting Seq
+lb Pcur TYPE_SENSOR_GAS Pressure 3 # 0:Average 1:Sum 2:Min 3:Max
+lb Tcur TYPE_SENSOR_GAS Temperature 3 # 0:Average 1:Sum 2:Min 3:Max
+lb IsPresent TYPE_OCCUPACY Activate 3 # 0:Average 1:Sum 2:Min 3:Max
+lb IsActivate TYPE_BUTTON Activate 3 # 0:Average 1:Sum 2:Min 3:Max
+l CallInt Door_Int Setting
+l IsCloseInt Door_Int Open
+not IsCloseInt IsCloseInt
+l IsIdle Door_Int Idle
+and IsCloseInt IsCloseInt IsIdle
+l CallExt Door_Ext Setting
+l IsCloseExt Door_Ext Open
+not IsCloseExt IsCloseExt
+l IsIdle Door_Ext Idle
+and IsCloseExt IsCloseExt IsIdle
+beqal Seq -4 final_int
+beqal Seq -3 depressure_int
+beqal Seq -2 close_int
+beqal Seq -1 open_int
+beqal Seq 0 closeAll
+beqal Seq 1 open_ext
+beqal Seq 2 close_ext
+beqal Seq 3 depressure_ext
+beqal Seq 4 final_ext
+j start
+
+closeAll:
+s Door_Int Open 0
+s Vent_Int On 0
+s Door_Ext Open 0
+s Vent_Ext On 0
+beq IsCloseInt 0 ra
+beq IsCloseExt 0 ra
+breq CallInt 0 2
+move Seq -1
+breq CallExt 0 2
+move Seq 1
+j ra
+
+open_int:
+s Door_Int Open 1
+beq IsPresent 0 ra
+move Seq -2
+j ra
+close_int:
+s Door_Int Open 0
+beq IsCloseInt 0 ra
+move Seq -3
+j ra
+depressure_int:
+s Vent_Int On 1
+bne Pcur 0 ra
+move Seq -4
+mul Timer DELAY 2
+j ra
+final_int:
+s Vent_Int On 0
+s Door_Ext Open 1
+sub Timer Timer 1
+bne Timer 0 ra
+move Seq 0
+j ra
+
+open_ext:
+s Door_Ext Open 1
+beq IsPresent 0 ra
+move Seq 2
+j ra
+close_ext:
+s Door_Ext Open 0
+beq IsCloseExt 0 ra
+move Seq 3
+j ra
+depressure_ext:
+s Vent_Ext On 1
+bne Pcur 0 ra
+move Seq 4
+mul Timer DELAY 2
+j ra
+final_ext:
+s Vent_Ext On 0
+s Door_Int Open 1
+sub Timer Timer 1
+bne Timer 0 ra
+move Seq 0
+j ra

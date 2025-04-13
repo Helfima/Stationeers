@@ -1,4 +1,4 @@
-# Trader\dish_large_4.ic10
+# Trader\dish_medium_4.ic10
 alias DialH d0
 alias DialV d1
 alias DialP d2
@@ -16,9 +16,9 @@ alias IsOn r6
 alias Clock r7
 alias Temp r15
 # Constant
-define TYPE_DISH 1913391845
-define TYPE_COMPUTER -626563514
-define TYPE_OCCUPANCY 322782515
+define TYPE_DISH 439026183 # medium:439026183 large:1913391845
+define TYPE_COMPUTER -405593895 # retro:-405593895 new:-626563514
+define TYPE_OCCUPANCY 568800213 # proxy:568800213 occupacy:322782515
 define TYPE_DISPLAY -815193061
 define TYPE_LANDINGPAD -2066405918
 define TYPE_BUTTON 491845673
@@ -29,10 +29,10 @@ define DELAY 5
 # Settings
 move sp 0
 move Clock 0
-push HASH("Large Satellite Dish 1")
-push HASH("Large Satellite Dish 2")
-push HASH("Large Satellite Dish 3")
-push HASH("Large Satellite Dish 4")
+push HASH("Medium Satellite Dish 1")
+push HASH("Medium Satellite Dish 2")
+push HASH("Medium Satellite Dish 3")
+push HASH("Medium Satellite Dish 4")
 s DialH Mode 90
 s DialV Mode 90
 s DialP Mode 10

@@ -13,7 +13,7 @@ alias Temp r10
 s Self Mode 0
 start:
 yield
-l Temp Self TemperatureOutput2
+l Temp Self TemperatureOutput
 slt IsActive Temp T_MAX
 l Temp Self TotalMolesInput
 sgt IsMoles Temp MOLES

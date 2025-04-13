@@ -1,0 +1,51 @@
+# Trader\trader_gas.ic10
+alias Lever d0
+alias Button d1
+alias DialGaz d2
+alias Display d3
+# Constant
+define KELVIN 273
+define ID_GAS_INPUT $2323C
+define ID_GAS_OUTPUT $DA7D
+define ID_LIQUID_INPUT $8A2C
+define ID_LIQUID_OUTPUT $8A34
+define ID_ANA_GAS_INPUT $1B3CE
+define ID_ANA_GAS_OUTPUT $1B3DB
+define ID_ANA_LIQUID_INPUT $1B3FD
+define ID_ANA_LIQUID_OUTPUT $1B3FC
+define TYPE_PUMP_GAS 1310794736
+define TYPE_PUMP_LIQUID -1051805505
+# Alias Register
+alias Switch r0
+alias IdDevice r1
+alias Action r2
+alias Choose r3
+alias Tcur r4
+alias IsLiquid r5
+alias IsFuel r6
+alias IsOn r8
+alias Hash r9
+alias IdGasOut r10
+alias IdGasIn r11
+alias IdLiquidOut r12
+alias IdLiquidIn r13
+alias Err r14
+alias Temp r15
+# Settings
+s DialGaz Mode 7
+start:
+yield
+l Switch Lever Setting
+beqal Lever 0 gas_buy
+beqal Lever 1 gas_sell
+j start
+
+gas_buy:
+sd ID_GAS_INPUT On 0
+sd ID_GAS_OUTPUT On 1
+j ra
+
+gas_sell:
+sd ID_GAS_INPUT On 1
+sd ID_GAS_OUTPUT On 0
+j ra

@@ -22,12 +22,12 @@ alias StartSp r13
 alias QueryList r14
 alias Temp r15
 # Settings
-move r0 $1A2B0 # Id silo 0
-move r1 $1A2B3 # Id silo 1
-move r2 $1A2B6 # Id silo 2
-move r3 $1A2B8 # Id silo 3
-move r4 $1A2BA # Id silo 4
-move r5 $1A2C1 # Id silo 5
+move r0 $1B509 # Id silo 0
+move r1 $1B50B # Id silo 1
+move r2 $1B50D # Id silo 2
+move r3 $1B50F # Id silo 3
+move r4 $1B511 # Id silo 4
+move r5 $1B513 # Id silo 5
 
 sle Temp STORAGE_LINE 2
 select Stack Temp STACK_ORE STACK_INGOT
