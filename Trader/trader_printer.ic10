@@ -1,0 +1,56 @@
+# Trader\trader_printer.ic10
+alias Autolath d0
+alias Printer d1
+alias Piper d2
+# Constant
+define BUTTON_ACTION $320EC
+define DISPLAY_QTY $32081
+define DIAL_QTY $320EA
+define DIAL_HASH $320EB
+# Alias Register
+alias Device r0
+alias Op1 r1
+alias Op2 r2
+alias Hash r3
+alias Qty r4
+alias IsActive r5
+# Settings
+sd DIAL_QTY Mode 100
+sd DIAL_HASH Mode 1
+move Device 2
+move sp 0
+push -185207387 #Liquid Canister
+start:
+yield
+ld IsActive BUTTON_ACTION Activate
+ld Qty DIAL_QTY Setting
+ld sp DIAL_HASH Setting
+get Hash db sp
+s db Setting Hash
+sd DISPLAY_QTY Setting Qty
+beqal IsActive 1 print
+j start
+
+print:
+clr dr0
+# lock the device
+sll r1 1 8 # TRUE offset by 8b
+or r1 r1 PrinterInstruction.DeviceSetLock
+put dr0 0 r1
+# make sure next recipe is waited for
+or r1 0 PrinterInstruction.WaitUntilNextValid
+put dr0 1 r1
+# create the execution
+sll r1 Qty 8 #offset 8b
+sll r2 Hash 16 #offset 16b
+or r1 r1 r2
+or r1 r1 PrinterInstruction.ExecuteRecipe
+put dr0 2 r1
+# eject reagents after
+or r1 0 PrinterInstruction.EjectAllReagents
+put dr0 3 r1
+# unlock the device
+sll r1 0 8 # FALSE offset by 8b
+or r1 r1 PrinterInstruction.DeviceSetLock
+put dr0 4 r1
+j ra

@@ -28,7 +28,7 @@ alias Temp r15
 # Settings
 move LastEfficiency 0
 move Timer 0
-move IsModel 0
+jal reset_model
 start:
 yield
 #s db Setting Darkness
@@ -111,8 +111,9 @@ move sp -4
 loop_model:
 add sp sp 5 # decale index
 peek Temp
-bgt sp 120 ra # exit
+bgt sp 160 ra # exit 32 plants x 5 lines
 bne Temp Hash loop_model
+put db 255 sp
 add sp sp 4
 pop TimeGrowth
 pop Darkness
@@ -123,4 +124,5 @@ move Clock TimeGrowth
 j ra
 reset_model:
 move IsModel 0
+put db 255 -1
 j ra

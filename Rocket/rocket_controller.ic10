@@ -1,0 +1,74 @@
+# Rocket\rocket_controller.ic10
+# Constant
+define AVIONIC 198530
+define ENGINE 196960
+define PUMP_1 197535
+define PUMP_2 197549
+define ANA_1 197540
+define ANA_2 202963
+define DISPLAY_THROTTLE $316F7
+define DIAL_THROTTLE $316F4
+define MEMORY_THRU $316C0
+define MEMORY_TTW $316C1
+define MEMORY_TROTTLE $316C2
+define PMAX1 15000
+define PMAX2 30000
+define TTW_MAX 1.25
+define Kp 4
+define Kd 0.25
+# Alias Register
+alias Device r0
+alias Pcur r1
+alias Moles r2
+alias IsOn r3
+alias IsFly r4
+alias Cmd r9
+alias Err r10
+alias LastErr r11
+alias TTW r12
+alias Thru r13
+alias Thro r14
+alias Temp r15
+# Settings
+move LastErr 0
+sd DIAL_THROTTLE Mode 100
+sd PUMP_1 Setting 10
+sd PUMP_2 Setting 10
+start:
+yield
+ld Thru AVIONIC Thrust
+ld TTW AVIONIC ThrustToWeight
+ld Thro DIAL_THROTTLE Setting
+sd ENGINE Throttle Thro
+sd MEMORY_THRU Setting Thru
+sd MEMORY_TTW Setting TTW
+sd MEMORY_TROTTLE Setting Thro
+sd DISPLAY_THROTTLE Setting Thro
+ld Pcur ENGINE Pressure
+ld IsFly ENGINE On
+jal fuel
+j start
+
+pid:
+move Cmd 0
+sub Err TTW_MAX TTW # calcul de l'erreur
+mul Cmd Err Kp # U(t)=Up Proportionnelle
+sub Temp Err LastErr # Difference
+move LastErr Err
+mul Err Temp Kd # Ud drive
+sub Cmd Cmd Err # U(t)=Up+Ud
+min Cmd Cmd 1
+s db Setting Cmd
+j ra
+
+fuel:
+ld Temp ANA_1 Pressure
+s db Setting Temp
+slt IsOn Temp PMAX1
+and IsOn IsOn IsFly
+sd PUMP_1 On IsOn
+ld Temp ANA_2 Pressure
+slt IsOn Temp PMAX2
+and IsOn IsOn IsFly
+sd PUMP_2 On IsOn
+j ra

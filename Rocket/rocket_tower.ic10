@@ -1,0 +1,128 @@
+# Rocket\rocket_tower.ic10
+alias Analyser d0
+alias Monitor1 d1
+alias Monitor2 d2
+alias MonitorPower d3
+# Constant
+define TYPE_MONITOR 801677497
+define TYPE_TANK_SMALL -1385712131
+define TYPE_TANK_MEDIUM -1093860567
+define TYPE_VALVE -1280984102
+define TYPE_BATTERY -1125305264
+define MOLES_1 4000
+define MOLES_2 8000
+define DISPLAY_GAS_1 $30DB3
+define DISPLAY_GAS_2 $30DB4
+define DISPLAY_POWER $30DB1
+define MEMORY_GAS_1 $310DF
+define MEMORY_GAS_2 $310E0
+define LED_GAS_1 $30FA2
+define LED_GAS_2 $30FA1
+define LED_POWER $30FA4
+define PUMP_1 $319D8
+define PUMP_2 $319D9
+define BUTTON_GAS_1 $30D2F
+define BUTTON_GAS_2 $30D2E
+define BUTTON_POWER $30D9B
+define LEVER_FUEL $318FD
+define UMBILICAL_POWER $308D3
+define UMBILICAL_CHUTE $308D5
+define UMBILICAL_GAS_1 $2F965
+define UMBILICAL_GAS_2 $308D6
+define KELVIN 273
+# Alias Register
+alias Device r0
+alias Hash r1
+alias Moles r2
+alias Tcur r3
+alias IsOn r4
+alias DColor r5
+alias IsFuel r6
+alias Action r13
+alias Stage r14
+alias Temp r15
+# Settings
+ss Monitor1 0 Mode 1
+ss Monitor2 0 Mode 1
+ss MonitorPower 0 Mode 0
+sd DISPLAY_POWER Mode 1
+init:
+move Stage 0
+start:
+yield
+lb Temp TYPE_BATTERY Ratio 0 # 0:Average 1:Sum 2:Min 3:Max
+sd DISPLAY_POWER Setting Temp
+sd DISPLAY_POWER Color Color.Gray
+ld Temp UMBILICAL_POWER Open
+ld Action BUTTON_POWER Activate
+ld IsFuel LEVER_FUEL Activate
+breq Action 0 3
+select Temp Temp 0 1
+sd UMBILICAL_POWER Open Temp
+select DColor Temp Color.Green Color.Red
+sd LED_POWER Color DColor
+l Tcur Analyser Temperature
+slt IsOn Tcur 300
+sb TYPE_VALVE On IsOn
+move Device TYPE_TANK_SMALL
+jal checkGas
+move Device DISPLAY_GAS_1
+jal display
+sd MEMORY_GAS_1 Setting Hash
+breq IsFuel 1 3
+sgt IsOn Moles 1
+jr 2
+slt IsOn Moles MOLES_1
+ld Temp UMBILICAL_GAS_1 Open
+ld Action BUTTON_GAS_1 Activate
+breq Action 0 3
+select Temp Temp 0 1
+sd UMBILICAL_GAS_1 Open Temp
+select DColor Temp Color.Green Color.Red
+sd LED_GAS_1 Color DColor
+and IsOn IsOn Temp
+sd PUMP_1 Mode IsFuel
+sd PUMP_1 On IsOn
+move Device TYPE_TANK_MEDIUM
+jal checkGas
+move Device DISPLAY_GAS_2
+jal display
+sd MEMORY_GAS_2 Setting Hash
+breq IsFuel 1 3
+sgt IsOn Moles 1
+jr 2
+slt IsOn Moles MOLES_2
+ld Temp UMBILICAL_GAS_2 Open
+ld Action BUTTON_GAS_2 Activate
+breq Action 0 3
+select Temp Temp 0 1
+sd UMBILICAL_GAS_2 Open Temp
+select DColor Temp Color.Green Color.Red
+sd LED_GAS_2 Color DColor
+and IsOn IsOn Temp
+sd PUMP_2 Mode IsFuel
+sd PUMP_2 On IsOn
+add Stage Stage 1
+bgt Stage 4 init
+j start
+display:
+brlt Stage 2 4
+sd Device Setting Moles
+sd Device Color Color.Gray
+j ra
+sd Device Setting Tcur
+sd Device Color Color.Orange
+j ra
+checkGas:
+move Moles 0
+lb Moles Device TotalMoles 1 # 0:Average 1:Sum 2:Min 3:Max
+lb Tcur Device Temperature 3 # 0:Average 1:Sum 2:Min 3:Max
+sub Tcur Tcur KELVIN
+move Hash 0
+lb Temp Device RatioOxygen 3 # 0:Average 1:Sum 2:Min 3:Max
+select Hash Temp GasType.Oxygen Hash
+lb Temp Device RatioVolatiles 3 # 0:Average 1:Sum 2:Min 3:Max
+select Hash Temp GasType.Volatiles Hash
+lb Temp Device RatioNitrousOxide 3 # 0:Average 1:Sum 2:Min 3:Max
+select Hash Temp GasType.NitrousOxide Hash
+j ra

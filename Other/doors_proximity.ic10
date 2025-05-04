@@ -1,0 +1,16 @@
+# Other\doors_proximity.ic10
+alias DoorInt d0
+alias SensorInt d1
+alias DoorExt d3
+alias SensorExt d4
+# Constant
+# Alias Register
+alias IsActive r0
+# Settings
+start:
+yield
+l IsActive SensorInt Activate
+s DoorInt Open IsActive
+l IsActive SensorExt Activate
+s DoorExt Open IsActive
+j start

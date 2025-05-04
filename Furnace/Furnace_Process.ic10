@@ -1,5 +1,6 @@
 # Furnace\Furnace_Process.ic10
 alias Mirror d0
+alias PumpFuel d1
 alias PumpIn d3
 alias PumpOut d4
 # Alias Register
@@ -14,45 +15,55 @@ alias Qty3 r7
 alias Qty r8
 alias Factor r9
 alias Index r10
+alias FuelOn r11
 alias Temp r12
 alias Temp1 r13
 alias Temp2 r14
 alias Value r15
 # Constant
 define TYPE_FURNACE 545937711
-define TYPE_BUTTON 491845673
-define TYPE_LEVER 1220484876
+define BUTTON_ID $28234
+define LEVER_ID $F512
 define TYPE_SENSOR -1252983604
-define DIAL_INGOT_ID $19DA8
-define DIAL_QUANTITY_ID $19DAA
+define DIAL_INGOT_ID $F517
+define DIAL_QUANTITY_ID $F518
 define FACTOR 200
 define QUERY_FREE 9000000
 define QUERY_ITEM 9000101
+define FUEL_DELAY 2
 # Settings
 s db Setting 0
+move FuelOn 0
 move Index 0
 move Active 0
 sd DIAL_INGOT_ID Mode 17
 sd DIAL_QUANTITY_ID Mode 4
 start:
 yield
+ld Temp BUTTON_ID Setting
+beqal Temp 1 checkFuel
 ld Temp DIAL_QUANTITY_ID Setting
 mul Factor Temp FACTOR
 ld sp DIAL_INGOT_ID Setting
 jal loadValues
-lb Temp TYPE_LEVER Setting 1 # Read unique lever
+ld Temp LEVER_ID Setting
 jal checkActive
 jal checkInActive
 jal checkRoom
 jal request
 j start
 
+checkFuel:
+select FuelOn FuelOn 0 1
+s db Setting FuelOn
+s PumpFuel On FuelOn
+s PumpFuel Setting 5
+j ra
 checkActive:
 beq Temp 0 ra # Lever State
 bne Active 0 ra
 move Active 1
 j ra
-
 checkInActive:
 beq Temp 1 ra # Lever State
 bne Active 2 ra
@@ -72,12 +83,10 @@ move Qty rr8
 beq Qty 0 nextOre # Next si Qty=0
 l Temp Mirror Setting # Read Memory Provider via mirror
 yield
-s db Setting QUERY_FREE
 brne Temp QUERY_FREE -3 # Wait
 s d0:0 Channel0 Hash # Write Hash
 s d0:0 Channel1 Qty # Write Quantity
 s d0:0 Channel2 0 # Write Rootage
-s db Setting QUERY_ITEM
 s Mirror Setting QUERY_ITEM # Write Memory Provider via mirror
 l Temp Mirror Setting # Read Memory Provider via mirror
 brne Temp QUERY_FREE -1 # Wait

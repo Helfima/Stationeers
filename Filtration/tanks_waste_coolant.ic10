@@ -1,25 +1,25 @@
-# Filtration\tank_coolant.ic10
+# Filtration\tanks_waste_coolant.ic10
 # Constant
-define TANK_SOURCE_ID $C482
-define TANK_TARGET_ID $C482
-define ANA_EXTERNAL_ID $C4EC
-define VAL_EXTERNAL_ID $C4F5
-define ANA_COOLANT_ID $C4EE
-define VAL_COOLANT_ID $C4F3
-define VAL_FILTRATION_ID $CA6A
-define PUMP_ID $C51C
-define TMAX 293
+define TANK_SOURCE_ID $22322 # tank waste side
+define TANK_TARGET_ID $1778B # tank filtration side
+define ANA_EXTERNAL_ID $2D35F
+define VAL_EXTERNAL_ID $2D2D7
+define ANA_COOLANT_ID $2D360
+define VAL_COOLANT_ID $2D2DB
+define VAL_FILTRATION_ID $22E52
+define PUMP_ID $223EC
+define TMAX 298
 define TMIN 283
-define PMAX 1000
-define PMIN 100
+define MMAX 1000
+define MMIN 100
 # Alias Register
 alias IsCooling r0
 alias IsPumping r1
 alias PScur r2
-alias Pcur r3
+alias Mcur r3
 alias Tcur r4
 alias TCooling r5
-alias PPumping r6
+alias MPumping r6
 alias HasSource r13
 alias IsOn r14
 alias Temp r15
@@ -27,21 +27,21 @@ alias Temp r15
 start:
 yield
 s db Setting TCooling
+jal check_source
 ld PScur TANK_SOURCE_ID Pressure
-ld Pcur TANK_TARGET_ID Pressure
+ld Mcur TANK_TARGET_ID TotalMoles
 ld Tcur TANK_TARGET_ID Temperature
 sgt IsCooling Tcur TCooling
 select TCooling IsCooling TMIN TMAX
-jal check_external
 jal check_coolant
 jal check_filtration
 jal check_pump
 j start
 
-check_external:
+check_source:
+ld Tcur TANK_SOURCE_ID Temperature
 ld Temp ANA_EXTERNAL_ID Temperature
-slt Temp Temp Tcur
-and IsOn IsCooling Temp
+sgt IsOn Tcur Temp
 sd VAL_EXTERNAL_ID On IsOn
 j ra
 
@@ -58,9 +58,10 @@ sd VAL_FILTRATION_ID On IsOn
 j ra
 
 check_pump:
-sgt HasSource PScur 50
-slt IsPumping Pcur PPumping
+ld Temp TANK_SOURCE_ID TotalMoles
+sgt HasSource Temp 50 # check if source tank has mole
+slt IsPumping Mcur MPumping
 and IsPumping IsPumping HasSource
-select PPumping IsPumping PMAX PMIN
+select MPumping IsPumping MMAX MMIN # flip limit to pump
 sd PUMP_ID On IsPumping
 j ra

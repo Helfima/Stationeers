@@ -1,56 +1,74 @@
 move sp 400
-push 176446172   # Alien Mushroom
-push -532672323 # Switch Grass
-push -1057658015 # Wheat
-push 258339687   # Corn
-push 266654416   # Darga Fern
+push 176446172 # Alien Mushroom
 push -1159179557 # Endothermic Plant Creative
-push 892110467   # Fern
 push -1573623434 # Flower (Blue)
 push -1513337058 # Flower (Green)
 push -1411986716 # Flower (Orange)
-push -81376085   # Flower (Red)
-push 1712822019  # Flower (Yellow)
-push -177792789  # Hades Flower (Alpha strain)
-push 1819167057  # Hades Flower (Beta strain)
-push 2044798572  # Mushroom
-push 2042955224  # Peace Lily
-push 1929046963  # Potato
-push 1277828144  # Pumpkin
-push 658916791   # Rize
-push 1924673028  # Soybean
+push -81376085 # Flower (Red)
+push 1712822019 # Flower (Yellow)
+push 2042955224 # Peace Lily
 push -1208890208 # Thermogenic Plant Creative
-push -998592080  # Tomato
-push -800947386  # Tropical Lily
-push 851290561   # Winterspawn (Alpha variant)
-push -1414203269 # Winterspawn (Beta variant)
+push -800947386 # Tropical Lily
+push -532672323 # Switch Grass
+push -906450470 # Strawberry
+push -998592080 # Tomato
+push 173826094 # BlueBerry
+push -1392622903 # WaterMelon
+push 1929046963 # Potato
+push 258339687 # Corn
+push 266654416 # Darga Fern
+push 892110467 # Fern
+push 680051921 # Cocoa
+push -1335056202 # Sugarcane
+push -1057658015 # Wheat
+push 1924673028 # SoyBean
+push 658916791 # Rize
+push 1277828144 # Pumpkin
+push 2044798572 # Mushroom
+push 851290561 # Winterspawn (Alpha strain)
+push -1414203269 # Winterspawn (Beta strain)
+push -177792789 # Hades Flower (Alpha strain)
+push 1819167057 # Hades Flower (Beta strain)
+push 2116552372 # Grass
+push -1345959473 # Flax
+push 921641358 # Gorse
 
 move sp 450
-push 0100503600 # Alien Mushroom
-push 1100504001 # Switch Grass
-push 1100503600 # Wheat
-push 1080307200 # Corn
-push 0100504800 # Darga Fern
-push 0100500720 # Endothermic Plant Creative
-push 1080502400 # Fern
-push 0100500480 # Flower (Blue)
-push 0100500480 # Flower (Green)
-push 0100500480 # Flower (Orange)
-push 0100500480 # Flower (Red)
-push 0100500480 # Flower (Yellow)
-push 0100503600 # Hades Flower (Alpha strain)
-push 0100506000 # Hades Flower (Beta strain)
-push 1001803600 # Mushroom
-push 0100504800 # Peace Lily
-push 1050303000 # Potato
-push 1080214400 # Pumpkin
-push 1100503600 # Rize
-push 1100503600 # Soybean
-push 0100500960 # Thermogenic Plant Creative
-push 1080514400 # Tomato
-push 0100500720 # Tropical Lily
-push 0100503600 # Winterspawn (Alpha variant)
-push 0100504800 # Winterspawn (Beta variant)
+push 0100503601 # Alien Mushroom
+push 0100500721 # Endothermic Plant Creative
+push 0100500481 # Flower (Blue)
+push 0100500481 # Flower (Green)
+push 0100500481 # Flower (Orange)
+push 0100500481 # Flower (Red)
+push 0100500481 # Flower (Yellow)
+push 0100504801 # Peace Lily
+push 0100500961 # Thermogenic Plant Creative
+push 0100500721 # Tropical Lily
+push 1100504131 # Switch Grass
+push 1100515001 # Strawberry
+push 1080511701 # Tomato
+push 1100515601 # BlueBerry
+push 1100515601 # WaterMelon
+push 1050303001 # Potato
+push 1080307201 # Corn
+push 1080503601 # Darga Fern
+push 1080502401 # Fern
+push 1080315001 # Cocoa
+push 1080303331 # Sugarcane
+push 1100502701 # Wheat
+push 1100503601 # SoyBean
+push 1100503601 # Rize
+push 1080214401 # Pumpkin
+push 1001803601 # Mushroom
+push 1100502161 # Winterspawn (Alpha strain)
+push 1100503601 # Winterspawn (Beta strain)
+push 1100502161 # Hades Flower (Alpha strain)
+push 1100502161 # Hades Flower (Beta strain)
+push 0100504801 # Grass
+push 0100504801 # Flax
+push 0100504801 # Gorse
+
+sub r10 sp 450 # number of plants
 
 define DIVISEUR 1000000000
 # Initialize
@@ -77,5 +95,5 @@ div r15 r15 100
 bgt r15 1000 loop
 push r3 # write le reste
 add r0 r0 1
-ble r0 24 start
+ble r0 r10 start # loop on each plant
 s db On 0

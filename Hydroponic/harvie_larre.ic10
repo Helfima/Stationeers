@@ -1,0 +1,127 @@
+# Hydroponic\harvie_larre.ic10
+alias Larre d0
+alias Master d1
+# Constant
+define TYPE_LEVER 1220484876
+define TYPE_CHUTE_EXPORT 1957571043
+define TYPE_CHUTE_IMPORT -850484480
+define TYPE_TRAY -1841632400
+define X_EXPORT 12
+define X_IMPORT 1
+# Alias Register
+alias State r0 # 0:free 1:import 2:plant 3:export 4:seed 5:harvest
+alias IsIdle r1
+alias Position r2
+alias HasArm r3
+alias HasHopper r4
+alias IsMature r6
+alias IsSeeding r7
+alias NeedSeeding r8
+alias IsOccupied r9
+alias HasSeeding r12
+alias IsModel r13
+alias Hash r14
+alias Temp r15
+# Settings
+move IsModel 0
+move State 0
+s Larre Setting 0
+move NeedSeeding 1
+start:
+yield
+get Temp Master 255
+sne IsModel Temp -1
+breq IsModel 0 3
+get HasSeeding Master Temp
+select NeedSeeding HasSeeding NeedSeeding 0 # if not seed need seeding = 0
+s db Setting State
+jal check_harvest
+ls HasArm Larre 0 Occupied
+ls HasHopper Larre 1 Occupied
+beqal State 0 check_export
+beqal State 0 check_import
+beqal State 1 move_import
+beqal State 2 move_plant
+beqal State 3 move_export
+beqal State 4 move_seeding
+beqal State 5 move_harvest
+j start
+check_export:
+lbs IsOccupied TYPE_CHUTE_IMPORT 0 Occupied 3 # 0:Average 1:Sum 2:Min 3:Max
+beq IsOccupied 0 ra # Nothing => exit
+sb TYPE_CHUTE_IMPORT Open 0
+j ra
+check_import:
+lbs IsOccupied TYPE_CHUTE_EXPORT 0 Occupied 3 # 0:Average 1:Sum 2:Min 3:Max
+beq IsOccupied 0 ra # Nothing => exit
+s Larre Setting X_EXPORT
+move State 1 # Go import
+j ra
+move_import:
+l IsIdle Larre Idle
+beq IsIdle 0 ra
+s Larre Activate 1
+move State 2 # Go plant
+sub Position X_EXPORT 1
+s Larre Setting Position
+j ra
+move_plant:
+l IsIdle Larre Idle
+beq IsIdle 0 ra
+beq HasArm 0 move_end
+ls IsOccupied Larre 255 Occupied
+beq IsOccupied 0 plant_harvest
+j move_next
+move_end:
+s Larre Setting X_IMPORT
+move State 3 # Go export
+j ra
+move_export:
+or Temp HasArm HasHopper
+beq Temp 0 end_export
+l IsIdle Larre Idle
+beq IsIdle 0 ra
+s Larre Activate 1
+end_export:
+move State 0 # Go free
+s Larre Setting 0
+j ra
+check_harvest:
+bne State 0 ra # Not free => exit
+beq IsModel 0 ra # Nothing => exit
+lbs IsSeeding TYPE_TRAY 0 Seeding 3 # 0:Average 1:Sum 2:Min 3:Max
+and Temp HasSeeding NeedSeeding
+breq Temp 0 4
+bne IsSeeding 1 ra
+move State 4 # Go seeding
+jr 5
+lbs IsMature TYPE_TRAY 0 Mature 3 # 0:Average 1:Sum 2:Min 3:Max
+beq IsMature 0 ra
+move NeedSeeding 1
+move State 5 # Go harvest
+sub Position X_EXPORT 1
+s Larre Setting Position
+j ra
+move_seeding:
+l IsIdle Larre Idle
+beq IsIdle 0 ra
+ls IsSeeding Larre 255 Seeding
+beq IsSeeding 1 plant_harvest
+sub Position Position 1
+s Larre Setting Position
+bne Position X_IMPORT ra
+move NeedSeeding 0
+j move_end # finish
+move_harvest:
+l IsIdle Larre Idle
+beq IsIdle 0 ra
+ls IsOccupied Larre 255 Occupied
+beq IsOccupied 1 plant_harvest
+move_next:
+sub Position Position 1
+s Larre Setting Position
+beq Position X_IMPORT move_end # finish
+j ra
+plant_harvest:
+s Larre Activate 1
+j ra
