@@ -7,7 +7,6 @@ alias DisplayTim d5
 # Constant
 define TYPE_LIGHT -1758710260
 define TYPE_TRAY -1841632400
-define DAY 20 # 20 min
 define DELAY 300
 # Alias Register
 alias IsOn r0
@@ -31,7 +30,7 @@ move Timer 0
 jal reset_model
 start:
 yield
-#s db Setting Darkness
+s db Setting DarkTime
 lbs IsOccupied TYPE_TRAY 0 Occupied 3 # 0:Average 1:Sum 2:Min 3:Max
 jal read_model
 bdseal DisplayMin check_clock
@@ -45,10 +44,9 @@ mul Timer DELAY 2 # reset timer in second
 j start
 
 check_light:
-mul DarkTime Darkness DELAY
-#add Temp Light Darkness
-div DarkTime DarkTime DAY
-s db Setting DarkTime
+add DarkTime Darkness Light
+div DarkTime Darkness DarkTime
+mul DarkTime DarkTime DELAY
 mul DarkTime DarkTime 2
 sgt IsOn Timer DarkTime # on if not darkness
 sgt Temp Light 0
@@ -58,7 +56,6 @@ select IsOn Temp IsOn 1 # only light
 select IsOn IsOccupied IsOn 0 # turn off
 sb TYPE_LIGHT On IsOn
 j ra
-
 check_clock:
 s DisplayMin On IsOccupied
 s DisplaySec On IsOccupied
@@ -77,14 +74,12 @@ seq Temp Temp Sec
 select Temp Temp 10 11
 s DisplaySec Color Temp
 j ra
-
 check_maturity:
 s DisplayMat On IsOccupied
 lbs Temp TYPE_TRAY 0 Growth 3 # 0:Average 1:Sum 2:Min 3:Max
 s DisplayMat Setting Temp
 s DisplayMat Color 5
 j ra
-
 check_efficiency:
 s DisplayEff On IsOccupied
 lbs Temp TYPE_TRAY 0 Efficiency 3 # 0:Average 1:Sum 2:Min 3:Max
@@ -94,7 +89,6 @@ select Temp Temp 4 2
 s DisplayEff Color Temp
 move LastEfficiency Temp
 j ra
-
 check_timer:
 s DisplayTim On IsOccupied
 div Temp Timer 2
@@ -102,11 +96,12 @@ trunc Temp Temp
 s DisplayTim Setting Temp
 s DisplayTim Color 1
 j ra
-
 read_model:
 beq IsOccupied 0 reset_model # Empty
 beq IsModel 1 ra # already
 lbs Hash TYPE_TRAY 0 PrefabHash 3 # 0:Average 1:Sum 2:Min 3:Max
+brne Hash 0 2 # bpypass if ok, if negative value need load in min mode
+lbs Hash TYPE_TRAY 0 PrefabHash 2 # 0:Average 1:Sum 2:Min 3:Max
 move sp -4
 loop_model:
 add sp sp 5 # decale index

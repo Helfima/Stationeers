@@ -16,12 +16,14 @@ alias IsOn r6
 alias Clock r7
 alias Temp r15
 # Constant
-define TYPE_DISH 439026183 # medium:439026183 large:1913391845
+define TYPE_DISH_MEDIUM 439026183 # medium:439026183 large:1913391845
+define TYPE_DISH_LARGE 1913391845 # medium:439026183 large:1913391845
 define TYPE_COMPUTER -405593895 # retro:-405593895 new:-626563514
 define TYPE_OCCUPANCY 568800213 # proxy:568800213 occupacy:322782515
 define TYPE_DISPLAY -815193061
 define TYPE_LANDINGPAD -2066405918
 define TYPE_BUTTON 491845673
+define TYPE_LEVER 1220484876
 define BUTTON_ACTIVATE HASH("Button Activate")
 define BUTTON_LIGHT HASH("Button Light")
 define TYPE_LIGHT 1592905386
@@ -38,10 +40,11 @@ s DialV Mode 90
 s DialP Mode 10
 start:
 yield
-lb IsPresent TYPE_OCCUPANCY Activate 3 # 0:Average 1:Sum 2:Min 3:Max
+lb IsPresent TYPE_LEVER Open 3 # 0:Average 1:Sum 2:Min 3:Max
 sb TYPE_COMPUTER On IsPresent
 sb TYPE_DISPLAY On IsPresent
-sb TYPE_DISH On IsPresent
+sb TYPE_DISH_MEDIUM On IsPresent
+sb TYPE_DISH_LARGE On IsPresent
 breq IsPresent 1 2
 s DialP Setting 0
 # move dish
@@ -50,7 +53,7 @@ l V DialV Setting
 l P DialP Setting
 
 mul Temp P 5000
-sb TYPE_DISH Setting Temp
+sb TYPE_DISH_MEDIUM Setting Temp
 
 jal move_fly
 jal check_light
@@ -66,17 +69,17 @@ display_settings:
 sb TYPE_DISPLAY Color 1
 s DisplayH Setting H
 s DisplayV Setting V
-lbn Temp TYPE_DISH HashName Setting 3 # 0:Average 1:Sum 2:Min 3:Max
+lbn Temp TYPE_DISH_MEDIUM HashName Setting 3 # 0:Average 1:Sum 2:Min 3:Max
 s DisplayP Setting Temp
 j ra
 
 display_mesure:
 sb TYPE_DISPLAY Color 11
-lbn Temp TYPE_DISH HashName Horizontal 3 # 0:Average 1:Sum 2:Min 3:Max
+lbn Temp TYPE_DISH_MEDIUM HashName Horizontal 3 # 0:Average 1:Sum 2:Min 3:Max
 s DisplayH Setting Temp
-lbn Temp TYPE_DISH HashName Vertical 3 # 0:Average 1:Sum 2:Min 3:Max
+lbn Temp TYPE_DISH_MEDIUM HashName Vertical 3 # 0:Average 1:Sum 2:Min 3:Max
 s DisplayV Setting Temp
-lb Temp TYPE_DISH RequiredPower 1 # 0:Average 1:Sum 2:Min 3:Max
+lb Temp TYPE_DISH_MEDIUM RequiredPower 1 # 0:Average 1:Sum 2:Min 3:Max
 s DisplayP Setting Temp
 j ra
 
@@ -95,12 +98,14 @@ sb TYPE_LIGHT On Temp
 j ra
 
 move_dish:
+sb TYPE_DISH_LARGE Horizontal H
+sb TYPE_DISH_LARGE Vertical V
 move sp 4
 dish_loop:
 pop HashName
 mul Temp sp 90
 add Temp Temp H
-sbn TYPE_DISH HashName Horizontal Temp
-sbn TYPE_DISH HashName Vertical V
+sbn TYPE_DISH_MEDIUM HashName Horizontal Temp
+sbn TYPE_DISH_MEDIUM HashName Vertical V
 bne sp 0 dish_loop
 j ra

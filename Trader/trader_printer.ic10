@@ -14,12 +14,18 @@ alias Op2 r2
 alias Hash r3
 alias Qty r4
 alias IsActive r5
+alias Temp r15
 # Settings
 sd DIAL_QTY Mode 100
-sd DIAL_HASH Mode 1
 move Device 2
 move sp 0
-push -185207387 #Liquid Canister
+push 42280099 # Canister
+push -185207387 # Liquid Canister
+push 119096484 # Kit planter
+push -1193543727 # Kit tray
+push -1166461357 # Liquid pipe
+sub Temp sp 1
+sd DIAL_HASH Mode Temp
 start:
 yield
 ld IsActive BUTTON_ACTION Activate

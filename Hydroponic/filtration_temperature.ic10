@@ -1,0 +1,39 @@
+# Hydroponic\filtration_temperature.ic10
+alias Atmo db
+alias Master d0
+# Constant
+define TMIN 150
+define KELVIN 273
+define TYPE_COCOA 680051921
+# Alias Register
+alias Tmin r0
+alias Tset r1
+alias IsModel r2
+alias IsOn r3
+alias Hash r14
+alias Temp r15
+# Settings
+add Tmin TMIN KELVIN
+start:
+yield
+jal check_temp
+jal ckeck_atmo
+j start
+
+check_temp:
+get Temp Master 255
+sne IsModel Temp -1
+bne IsModel 1 ra
+sub Temp Temp 1
+get Hash Master Temp
+seq Temp Hash TYPE_COCOA
+select Tset Temp 35 25
+add Tset Tset KELVIN
+s Atmo Setting Tset
+j ra
+
+ckeck_atmo:
+l Temp Atmo TemperatureOutput2
+slt IsOn Temp Tmin
+s Atmo Mode IsOn #Turn On/Off 0:idle 1:active
+j ra

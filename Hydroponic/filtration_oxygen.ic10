@@ -47,5 +47,7 @@ l Temp Atmo RatioNitrogenInput
 slt IsOn Temp PERCENT_N2
 slt Temp Pcur PMAX
 and IsOn IsOn Temp
+slt Temp Pcur PMIN
+select IsOn Temp 1 IsOn
 sbn TYPE_PUMP PUMP_N2 On IsOn
 j ra
